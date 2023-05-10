@@ -1,0 +1,20 @@
+section.header {
+    position: relative;
+    height:3.750em;
+    width:100%;
+    z-index: 500;
+    padding: 0 1.5rem;
+    background-color: $bg-light-grey;
+    box-shadow: $shadow;
+
+    @media small {
+        height: auto;
+        padding: 1rem 1.5rem;
+    }
+
+    & > div:not(.mob-show) {
+        @media small {
+            display: none;
+        }
+    }
+}

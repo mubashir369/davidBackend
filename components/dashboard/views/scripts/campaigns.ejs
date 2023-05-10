@@ -1,0 +1,249 @@
+
+<script>
+
+    extendedController = function(){
+
+        scope.view.send_conf = false
+
+        scope.newCampaign = function(){
+
+            scope.new = {}
+            scope.new.recipients = []
+            scope.view.modal = 'show_edit'
+
+        }
+
+        scope.saveCampaign = function(keep_open){
+
+            return new Promise( async (resolve, reject) => {
+
+                delete scope.new.recipient
+
+                let content = document.querySelector('#content')
+
+                if (content){
+                    let content_html = content.innerHTML.replace(/\&lt\;/g,"<").replace(/\&gt\;/g,">")
+
+                    if (content_html.length != scope.new.content.length){
+                        scope.new.tested = false
+                    }
+                    scope.new.content = content_html
+                }
+
+                scope.post('marketing_campaigns',scope.new).then((camp_data)=>{
+
+                    if (!keep_open){
+                        scope.view.modal = false
+                        scope.new = {}
+                        scope.notify('Saved')
+                    }
+
+                    resolve()
+
+                }).catch(err => {
+                    reject(err)
+                })
+
+            })
+
+        }
+
+        scope.sendNow = function(campaign){
+
+            if (!scope.view.send_conf){
+
+                let query = campaign.query.split('|')
+                http('get','/api/marketing_campaigns/'+query[1]+'/'+query[0])
+                    .then((data)=>{
+
+                        scope.new = campaign
+                        scope.view.modal = 'send_conf'
+                        scope.view.send_conf = campaign._key
+                        scope.view.send_count = data
+
+                    })
+
+            } else {
+
+                scope.new = false
+                scope.view.modal = false
+                scope.notify('Sending...','success',999,'reminder')
+
+                http('get','/dashboard/promotional-email/send/'+scope.view.send_conf)
+                    .then((confirm)=>{
+                        scope.notify('Sent!')
+                        scope.view.send_conf = false
+                    }).catch((err)=>{
+                        scope.notify(err,'error')
+                    })
+
+            }
+
+        }
+
+
+        scope.sendTest = function(campaign, editing){
+
+            if (editing){
+
+                scope.saveCampaign(true).then(()=>{
+                    scope.new = JSON.parse(JSON.stringify(campaign))
+
+                    scope.notify('Sending...','success',999,'reminder')
+
+                    http('get','/dashboard/promotional-email/test/'+campaign._key)
+                        .then((confirm)=>{
+                            scope.new.tested = true
+                            scope.notify(confirm)
+                            scope.view.send_conf = false
+                        }).catch((err)=>{
+                            scope.notify(err,'error')
+                        })
+                })
+
+
+            } else {
+
+                if (!scope.view.send_conf){
+
+                    scope.new = campaign
+                    scope.view.modal = 'send_test'
+                    scope.view.send_conf = campaign._key
+
+                } else {
+
+                    scope.new = false
+                    scope.view.modal = false
+                    scope.notify('Sending...','success',999,'reminder')
+
+                    http('get','/dashboard/promotional-email/test/'+scope.view.send_conf)
+                        .then((confirm)=>{
+                            scope.new.tested = true
+                            scope.notify(confirm)
+                            scope.view.send_conf = false
+                        }).catch((err)=>{
+                            scope.notify(err,'error')
+                        })
+
+                }
+
+            }
+
+        }
+
+        scope.viewRecipients = function(campaign){
+
+            window.location.href = '/api/marketing_campaigns/'+campaign._key+'/view_recipients'
+        }
+
+        scope.addRecipient = function(){
+
+            if (!scope.new.recipients){
+                scope.new.recipients = []
+            }
+
+            if (typeof scope.new.recipient == 'string' && scope.new.recipient.match(/^\S+@\S+\.\S+$/)){
+
+                let idx = scope.new.recipients.findIndex((item)=>{
+                    return item.email == scope.new.recipient
+                })
+
+                if (idx >= 0){
+                    scope.notify('Address has already been added','error')
+                    return false
+                }
+                scope.new.recipients.push({email:scope.new.recipient})
+                scope.new.recipient = ''
+
+
+            } else {
+                scope.notify('Please enter a valid email address','error')
+            }
+
+
+        }
+
+        scope.delRecipient = function(email){
+
+            let idx = scope.new.recipients.findIndex((item)=>{
+                return item.email == email
+            })
+
+            if (idx >= 0){
+                scope.new.recipients.splice(idx, 1)
+            }
+
+        }
+
+        scope.getRecipients = function(query){
+
+            query = query.split('|')
+            scope.notify('cancel')
+            http('get','/api/marketing_campaigns/'+query[1]+'/'+query[0])
+                .then((data)=>{
+                    scope.notify(data+' clients targeted')
+                }).catch(err =>{
+                    scope.notify('No clients targeted','error')
+                })
+
+        }
+
+
+        scope.addCampaignImage = function(el){
+
+            scope.new.tested = false
+
+            let idx = el.getAttribute('id').replace(/img\-/,''),
+                btn = document.querySelector('#btn-'+idx+' label'),
+                reader = new FileReader()
+
+            btn.innerHTML = 'Uploading...'
+
+            reader.onload = function(e) {
+
+                var img = new Image();
+                img.src = reader.result;
+
+                let payload = {
+                    img: img.src,
+                    name: scope.new.name.replace(/\s/g,'-').toLowerCase()
+                }
+
+                http('post','/api/marketing_campaigns/add_image',payload).then((img)=>{
+                    img = JSON.parse(img)
+                    scope.new.image = img.img
+                    btn.innerHTML = 'Upload Image'
+                }).catch((err)=>{
+                    btn.innerHTML = 'Upload Image'
+                    scope.notify(err,'error')
+                })
+
+            }
+
+            reader.readAsDataURL(el.files[0])
+
+        }
+
+        scope.removeCampaignImage = function(){
+
+            scope.new.tested = false
+            document.querySelector('#img').src = '/images/products/Product_placeholder.svg'
+            scope.new.image = false
+
+        }
+
+        watch['new.subject'] = function(data){
+            scope.new.tested = false
+        }
+
+        watch['new.button_url'] = function(data){
+            scope.new.tested = false
+        }
+
+        watch['new.button_text'] = function(data){
+            scope.new.tested = false
+        }
+
+    }
+
+</script>

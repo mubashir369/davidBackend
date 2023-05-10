@@ -1,0 +1,138 @@
+
+<script>
+
+    extendedController = function(){
+
+        scope.view.evnt = false
+
+        scope.viewEvent = function(evnt){
+
+            scope.view.evnt = evnt
+            if (evnt.actions && evnt.actions.length > 0){
+                scope.view.actions = evnt.actions
+            } else {
+                scope.view.actions = []
+            }
+
+        }
+
+        scope.testEvent = function(){
+
+            if (scope.view.evnt.actions.length < 1){
+                scope.notify('Please add at least 1 action before testing','error')
+                return
+            }
+
+            scope.post('events/test',{key:scope.view.evnt._key}).then((data)=>{
+                scope.notify('Test complete. Email and SMS messages may take a moment to arrive')
+            }).catch((err)=>{
+                scope.notify(err,'error')
+            })
+
+        }
+
+        scope.saveEvent = function(){
+
+            scope.view.evnt.actions = scope.view.actions
+
+            scope.post('events',scope.view.evnt).then((data)=>{
+                scope.notify('Saved')
+            }).catch((err)=>{
+                scope.notify(err,'error')
+            })
+
+        }
+
+        scope.toggleAction = function(idx){
+
+            scope.view.actions = []
+
+            scope.view.evnt.actions[idx].enabled = !scope.view.evnt.actions[idx].enabled
+            scope.view.actions = scope.view.evnt.actions
+            scope.saveEvent()
+
+        }
+
+        scope.delAction = function(idx){
+
+            if (scope.view.delidx >= 0){
+                scope.view.actions = []
+
+                scope.view.evnt.actions.splice(scope.view.delidx,1)
+                scope.view.actions = scope.view.evnt.actions
+                delete scope.view.delidx
+                modalCloseAll()
+                scope.saveEvent()
+            } else {
+                scope.view.modal = 'del_action'
+                scope.view.delidx = idx
+                console.log(scope.view.delidx)
+            }
+
+        }
+
+        scope.addAction = function(method){
+
+            scope.view.actions = []
+
+            let new_action = {
+                method:method,
+                content:'',
+                enabled:true
+            }
+
+            scope.view.evnt.actions.push(new_action)
+            scope.view.actions = scope.view.evnt.actions
+            modalCloseAll()
+
+        }
+
+        scope.addActionImg = function(el){
+
+            let idx = el.getAttribute('id').replace(/img\-/,''),
+                btn = document.querySelector('#btn-'+idx+' label'),
+                reader = new FileReader()
+
+            btn.innerHTML = 'Uploading...'
+
+            reader.onload = function(e) {
+
+                var img = new Image();
+                img.src = reader.result;
+
+                let payload = {
+                    img: img.src,
+                    name: scope.view.evnt.name.replace(/\s/g,'-').toLowerCase()
+                }
+
+                scope.post('events/add_image',payload).then((img)=>{
+                    scope.view.actions = []
+                    scope.view.evnt.actions[idx].image = img.replace(/\"/g,'')
+                    scope.view.actions = scope.view.evnt.actions
+                    btn.innerHTML = 'Upload Image'
+                    scope.saveEvent()
+                }).catch((err)=>{
+                    btn.innerHTML = 'Upload Image'
+                    scope.notify(err,'error')
+                })
+
+            }
+
+            reader.readAsDataURL(el.files[0])
+
+        }
+
+        scope.removeActionImg = function(idx){
+
+            scope.view.actions = []
+
+            scope.view.evnt.actions[idx].image = ''
+            scope.view.actions = scope.view.evnt.actions
+            scope.saveEvent()
+
+        }
+
+
+    }
+
+</script>

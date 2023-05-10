@@ -1,0 +1,132 @@
+<% layout('customer-page-booking.ejs') -%>
+
+<% if (typeof promotion._key != 'undefined'){ %>
+
+    <div class="pt-5 pb-3 text-center">
+        <div app-init="promoBookInit()"></div>
+        <h1 class="h2 mb-1"><%- promotion.description %></h1>
+
+        <h3><span class="icon time secondary xl left"></span> <span app-bind="parseISODate(promo.date,'dddd Do MMMM [at] h:mma')"></span></h3>
+        <% if (promotion.promotion_parse){ %><div class="mt-2 bg-secondary text-white p-1 rounded"><h3 class="text-normal">Get <%- promotion.promotion_parse %> promotional discount when you book this time with us!</h3></div><% } %>
+    </div>
+
+    <div app-show="view.page == 'services'">
+
+
+
+        <div class="relative layer-5">
+           <div class="">
+               <div class="service grid col-4 col-s-3" app-for="service in filteredServices" app-click="promoAppointment('add_service',service)">
+                   <div class="colspan-2 colspan-s-5 flex flex-middle-left">
+                       <h4 app-bind="service.name" class="text-weight-600"></h4>
+                   </div>
+                   <div class="flex flex-middle-right flex-middle-left-s colspan-2 colspan-s-3 text-light text-right text-left-s pr-1">
+                       <span app-bind="service.duration"></span>mins&nbsp;&nbsp;&nbsp;From&nbsp;<span app-bind="parseDiscountPrice(service.price.value)"></span>
+                       <button class="btn round bg-secondary ml-2 hidden-s"><span class="icon arrowright white"></span></button>
+                   </div>
+
+                   <div class="colspan-5 mt-1 hidden-s" app-bind="service.description" app-show="service.description"></div>
+                   <div class="hidden hidden-m colspan-5 text-right mt-2 mt-s-1">
+                       <button class="btn w-100 bg-secondary">Select <span class="icon arrowright white right"></span></button>
+                   </div>
+               </div>
+
+           </div>
+
+        </div>
+
+    </div>
+
+    <% if (typeof user._key != 'undefined' && user.guard == 'customer'){ %>
+
+
+
+    <% } else { %>
+
+        <div app-show="view.page == 'client'">
+
+            <div class="">
+                <p class="mb-2">We just need these details to get started…</p>
+                <div class="mb-1">
+                    <input type="text" class="thick border" app-model="view.customer.name" placeholder="Your full name *" name="name" autocomplete="name" required>
+                </div>
+                <div class="mb-1">
+                    <input type="text" class="thick border" app-model="view.customer.tel" placeholder="Mobile number *" name="tel" autocomplete="tel" required>
+                </div>
+                <div class="mb-1">
+                    <input type="email" class="thick border" app-model="view.customer.email" placeholder="Email address" name="email" autocomplete="email">
+                </div>
+
+                <div class="text-right mt-2">
+                    <button class="btn bg-secondary w-s-100" app-show="view.add_customer" app-click="promoAppointment('add_customer')">Next <span class="icon arrowright white right"></span></button>
+                </div>
+            </div>
+
+        </div>
+
+    <% } %>
+
+    <div app-show="view.page == 'summary'">
+
+        <div class="table">
+
+            <div class="grid col-12 gap-1 mb-1 bg-white rounded p-2">
+
+                <div><span class="icon time secondary xl"></span></div>
+
+                <div class="colspan-9 colspan-s-11">
+                    <h3 app-bind="parseISODate(promo.date,'dddd Do MMMM [at] h:mma')" class="text-normal mb-1"></h3>
+                    <span class="text-weight-600" app-bind="view.selected_service.name"></span>
+                    <div>
+                        Approx. <span class="" app-bind="view.selected_service.duration"></span>mins
+                    </div>
+                </div>
+
+
+                <div class="colspan-2 colspan-s-12 clickable text-right">
+
+                    <div class="mb-1">
+                        <a class="text-secondary text-weight-600" app-click="view.page = 'services'">Remove</a>
+                    </div>
+                    <!-- <div class="hidden-s">From £<span app-bind="appointment_grp.price"></span></div> -->
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <textarea class="border bg-none" app-model="promo.note" placeholder="Add any notes to this booking..."></textarea>
+
+        <div class="flex flex-row my-1">
+
+            <div class="flex-1"><input type="checkbox" id="confirm-tc" name="confirm-tc" app-click="promo.confirm_tc = !promo.confirm_tc" class="border"></div>
+            <div class="flex-9 flex-s-6">
+                <label for="confirm-tc" class="text-black font-weight-900">Tick this box to confirm you have read and agree to the booking <a href="https://www.davidrozman.co.uk/termsandconditions" target="terms" class="text-secondary">terms and conditions</a></label>
+            </div>
+        </div>
+
+        <div class="my-2 grid col-2 col-s-1 gap-2">
+            <button class="btn border rounded" app-click="view.page = 'services'">Cancel</button>
+            <button class="btn bg-secondary w-s-100 transparent-1" app-hide="promo.confirm_tc" app-click="notify('Please read and accept our terms and conditions','error')">Book Now</button>
+            <button class="bg-secondary rounded" app-show="promo.confirm_tc" app-click="promoAppointment('save')">Book Now</button>
+        </div>
+    </div>
+
+<% } else { %>
+
+    <div class="pt-5 pb-3 text-center">
+        <div app-init="promoBookInit()"></div>
+        <h1 class="h2 mb-1">You must've just missed it!</h1>
+
+        <h3>Our promoted time slots go quick, so make sure to follow us on social media to get the latest offers.</h3>
+
+        <div class="grid col-3 my-6">
+            <a href="https://www.instagram.com/davidrozmanhair/" target="sm" title="Instagram" style="font-size: 3rem"><i class="fab fa-instagram"></i></a>
+            <a href="https://twitter.com/davidrozman/" target="sm" title="Twitter" style="font-size: 3rem"><i class="fab fa-twitter"></i></a>
+            <a href="https://www.facebook.com/davidrozmansalon/" target="sm" title="Facebook" style="font-size: 3rem"><i class="fab fa-facebook-f"></i></a>
+        </div>
+
+    </div>
+
+<% } %>

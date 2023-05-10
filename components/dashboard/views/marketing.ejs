@@ -1,0 +1,238 @@
+<% layout('dashboard.ejs') -%>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+    <%- include ../../dashboard/partials/header.ejs %>
+
+    <div class="page h-100 overflow-y bg-light-grey p-15 pb-8 clientMarketing">
+
+            <h4>Email Marketing</h4>
+            <div class="grid col-12 gap-2 p-0">
+
+                <div class="colspan-3 text-center">
+                    <div class="clientMarketing-box">
+
+                        <p class="py-2 text-small">Overview of the last 30 days of marketing emails</p>
+                        <canvas id="overview" width="150px"></canvas>
+
+                        <script>
+                            var ctx = document.getElementById('overview').getContext('2d');
+                            var myDoughnutChart = new Chart(ctx, {
+                                type: 'doughnut',
+                                data: {
+                                    datasets: [{
+                                        data: [<%- parseFloat(overview.Sent)-parseFloat(overview.Bounced)-parseFloat(overview.Opens) %>, <%- overview.Opens %>, <%- overview.Bounced %>],
+                                        backgroundColor: [
+                                            '#00d6c6',
+                                            '#6abaed',
+                                            '#ED6970'
+                                        ],
+                                    }],
+
+                                    labels: [
+                                        'Unopened',
+                                        'Viewed',
+                                        'Bounced'
+                                    ]
+                                },
+                                options: {
+                                    legend: {
+                                    display: false,
+                                    position: 'bottom',
+                                    }
+                                }
+                            });
+                        </script>
+                    </div>
+                </div>
+                    <div class="colspan-3 text-center">
+                        <div class="clientMarketing-box">
+                            <p class="py-2 text-small">Number of sent emails that have been reported as spam</p>
+                            <canvas id="spam" width="150px"></canvas>
+    
+                            <script>
+                                var ctx = document.getElementById('spam').getContext('2d');
+                                var myDoughnutChart = new Chart(ctx, {
+                                    type: 'doughnut',
+                                    data: {
+                                        datasets: [{
+                                            data: [<%- parseFloat(overview.Sent)-parseFloat(overview.SpamComplaints) %>, <%- overview.SpamComplaints %>],
+                                            backgroundColor: [
+                                                '#00d69c',
+                                                '#793538'
+                                            ],
+                                        }],
+        
+                                        labels: [
+                                            'Sent',
+                                            'Spam'
+                                        ]
+                                    },
+                                    options: {
+                                        legend: {
+                                        display: false,
+                                        position: 'bottom',
+                                        }
+                                    }
+                                });
+                            </script>
+                        </div>
+                    </div>
+                    <div class="colspan-3 text-center">
+                        <div class="clientMarketing-box">
+                            <p class="py-2 text-small">Delivered emails that have been opened or unopened</p>
+                            <canvas id="opens" width="150px"></canvas>
+        
+                            <script>
+                                var ctx = document.getElementById('opens').getContext('2d');
+                                var myDoughnutChart = new Chart(ctx, {
+                                    type: 'doughnut',
+                                    data: {
+                                        datasets: [{
+                                            data: [<%- parseFloat(parseFloat(overview.Sent)-parseFloat(overview.Bounced))-parseFloat(overview.Opens) %>, <%- overview.Opens %>],
+                                            backgroundColor: [
+                                                '#00d6c6',
+                                                '#6abaed'
+                                            ],
+                                        }],
+        
+                                        labels: [
+                                            'Unopened',
+                                            'Viewed'
+                                        ]
+                                    },
+                                    options: {
+                                        legend: {
+                                        display: false,
+                                        position: 'bottom',
+                                        }
+                                    }
+                                });
+                            </script>
+                        </div>
+                    </div>
+                    <div class="colspan-3 text-center">
+                        <div class="clientMarketing-box">
+                            <p class="py-2 text-small">Opened emails that have been viewed or clicked</p>
+                            <canvas id="clicked" width="150px"></canvas>
+        
+                            <script>
+                                var ctx = document.getElementById('clicked').getContext('2d');
+                                var myDoughnutChart = new Chart(ctx, {
+                                    type: 'doughnut',
+                                    data: {
+                                        datasets: [{
+                                            data: [<%- parseFloat(overview.Opens) - parseFloat(overview.TotalClicks) %>, <%- overview.TotalClicks %>],
+                                            backgroundColor: [
+                                                '#6abaed',
+                                                '#9f6aed'
+        
+                                            ],
+                                        }],
+        
+                                        labels: [
+                                            'Viewed',
+                                            'Clicked'
+                                        ]
+                                    },
+                                    options: {
+                                        legend: {
+                                            display: false,
+                                            position: 'bottom'
+                                        }
+                                    }
+                                });
+                            </script>
+                        </div>
+                    </div>
+                
+
+
+
+
+            </div>
+            <div class="grid col-12 gap-2 px-0">
+
+                <div class="colspan-4 colspan-m-12 colspan-s-12 text-center">
+                    <div class="bg-grey px-1 radius-5">
+
+                        <p class="py-2 text-small  radius-5" style="font-weight: 600;">Number of sent emails spanning the last 30 days</p>
+                        <canvas id="sent_count"></canvas>
+
+                        <script>
+                            var ctx = document.getElementById('sent_count').getContext('2d');
+                            var myDoughnutChart = new Chart(ctx, {
+                                type: 'bar',
+                                data: {
+                                    label:'',
+                                    datasets: [{
+                                        data: [
+                                        <% sent.Days.forEach((day, i) => { %>
+                                            <%- day.Sent %>,
+                                        <% }) %>
+                                        ],
+                                        backgroundColor: [
+                                            <% sent.Days.forEach((day, i) => { %>
+                                                '#00d69c',
+                                            <% }) %>
+                                        ],
+                                    }],
+
+                                    labels: [
+                                    <% sent.Days.forEach((day, i) => { %>
+                                        '<%- day.Date %>',
+                                    <% }) %>
+                                    ]
+                                },
+                                options: {
+                                legend: {
+                                    display: false
+                                }
+                                }
+                            });
+                        </script>
+                    </div>
+                </div>
+
+                <div class="colspan-4 colspan-m-12 colspan-s-12  text-center">
+                    <div class="bg-grey px-1 radius-5">
+                        <p class="py-2 text-small text-bold radius-5 text-weight-700" style="font-weight: 600 !important;">Number of clicks from emails over the last 30 days</p>
+                        <canvas id="clicks"></canvas>
+                        <script>
+                            var ctx = document.getElementById('clicks').getContext('2d');
+                            var myDoughnutChart = new Chart(ctx, {
+                                type: 'bar',
+                                data: {
+                                    label:'',
+                                    datasets: [{
+                                        data: [
+                                        <% clicks.Days.forEach((day, i) => { %>
+                                            <%- day.Clicks %>,
+                                        <% }) %>
+                                        ],
+                                        backgroundColor: [
+                                            <% clicks.Days.forEach((day, i) => { %>
+                                                '#9f6aed',
+                                            <% }) %>
+                                        ],
+                                    }],
+
+                                    labels: [
+                                    <% clicks.Days.forEach((day, i) => { %>
+                                        '<%- day.Date %>',
+                                    <% }) %>
+                                    ]
+                                },
+                                options: {
+                                legend: {
+                                    display: false
+                                }
+                                }
+                            });
+                        </script>
+                    </div>
+                </div>
+
+            </div>
+
+
+    </div>

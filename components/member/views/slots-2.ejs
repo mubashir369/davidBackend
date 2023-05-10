@@ -1,0 +1,175 @@
+<% layout('member.ejs') -%>
+
+    <%- include ../partials/header-member.ejs %>
+
+    <div class="hidden" app-init="newAppointment('set_event_type','staff_appointment')"></div>
+    <div class="hidden" app-init="newStaffAppointment('set_opening_times')"></div>
+
+
+    <% if (member_slots[date]){ %>
+        <div class="hidden" app-init="newAppointment('get','<%- JSON.stringify(member_slots[date]) %>')"></div>
+    <% } %>
+
+    <div class="page h-100 overflow-y bg-light-grey p-1">
+
+        <div class="bg-secondary  radius-10">
+
+            <div class="grid col-6 gap-2 ">
+                
+            <div class="colspan-2 layer-1 time-slots-table pt-0">
+            <div class="flex flex-middle-left">
+                <p class="text-weight-600 d-block text-white">Select date first:</p>
+            </div>
+
+                <% if(member.orders){ %>
+                <select onchange="this.options[this.selectedIndex].value && (window.location = '/member/slots?date='+this.options[this.selectedIndex].value);">
+                <option value="">Select date</option>
+                <% for(var i=0; i<member.orders.length; i++) { %>
+                    <% for(var j=0; j<member.orders[i].order.length;j++) { %>
+                    <option value='<%-member.orders[i].order[j].date%>' <%-member.orders[i].order[j].date==date?'selected':''%>><%-member.orders[i].order[j].date%></option>
+                <% } %>
+                <% } %>
+                </select>
+                <% } %>
+            </div>
+
+
+        </div>
+        <div class="divider mt-2"></div>
+        <% if(date){ %>
+                <input type="hidden" app-model="new_appointment.date" value="<%-date%>">
+                <div class="grid col-6  mt-1">
+                    <div class="colspan-4  flex flex-middle-left ">
+                        <p class="text-weight-600 text-white">Time Periods:</p>
+                    </div>
+                    <div class="colspan-8  layer-5">
+
+                        <div class="w-40 flex flex-middle-left">
+
+                            <div class="relative flex-1 pr-1">
+                                <div class="search-dropdown rounded border context-link" app-click="toggleContext('select_start_time')"><span class="icon time secondary left"></span><span app-bind="new_appointment.start_time"> Select start time...</span></div>
+                                <div class="table search-select absolute context" id="context-select_start_time" app-show="view.select_start_time">
+                                    <div class="row clickable" app-for="hr in getHrs()" app-click="newAppointment('set_start',hr)" app-bind="hr">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="relative flex-1 pl-1">
+                                <div class="search-dropdown rounded border context-link" app-click="toggleContext('select_end_time')"><span class="icon time secondary left"></span><span app-bind="new_appointment.end_time"> Select end time...</span></div>
+                                <div class="table search-select absolute context" id="context-select_end_time" app-show="view.select_end_time">
+                                    <div class="row clickable" app-for="hr in getHrs()" app-click="newAppointment('set_end',hr)" app-bind="hr">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+<% } %>
+</div>
+                    <% if(date && member_slots['date_'+date.split('-').join('')]){ %>
+    
+
+    <div class="grid col-12 gap-2 mt-2 ">
+        <div class="colspan-11 layer-1">
+            <h2>Slots</h2>
+            <table class="table app-parent-price mb-5" style="width: 50%;">
+            <tr>      
+            <th> Time</th>
+            <th>Action</th>
+            </tr>
+
+            <% 
+
+            for(key in member_slots['date_'+date.split('-').join('')]) {
+
+            if(member_slots['date_'+date.split('-').join('')].hasOwnProperty(key)) {
+            
+            %>
+            <tr><td><%-member_slots['date_'+date.split('-').join('')][key]%></td>
+            
+            <td> <a app-click="deleteslot('<%-key%>','<%-user._key%>','<%-'date_'+date.split('-').join('')%>')"><span class="icon left black delete"></span></a></td>
+            </tr>
+        <% } } %>
+        </table>
+
+        </div>
+    </div>
+
+    <div class="mb-5"></div>
+
+
+<% } %>
+
+
+
+
+                    <!--div class="flex flex-middle-left layer-4">
+                        <p class="text-weight-600">Closed:</p>
+                    </div>
+                    <div class="colspan-11 layer-4">
+
+                        <div class="w-40 flex flex-middle-left">
+
+                            <label><input type="checkbox" app-click="newAppointment('toggle_closed')"></label>
+
+                        </div>
+
+                    </div-->
+
+
+                    <!--div class="flex flex-middle-left">
+                        <p><span class="text-weight-600">Repeat:</span><br>(optional)</p>
+                    </div>
+                    <div class="colspan-11 flex flex-middle-left layer-2" style="overflow:visible">
+
+                        <div app-show="view.show_repeat">
+
+                            <span class="mr-05">Every</span>
+
+                            <div class="inline-block relative layer-5 mr-05" style="width: 8rem">
+                                <div class="search-dropdown thin border capitalise" app-bind="parseInterval(new_appointment.reoccurence_interval)" app-click="view.reoccurence_interval = !view.reoccurence_interval">Select...</div>
+                                <div class="table search-select absolute context" app-show="view.reoccurence_interval">
+                                    <div class="row clickable" app-click="newStaffAppointment('set_reoccurence_interval','days')">Day</div>
+                                    <div class="row clickable" app-click="newStaffAppointment('set_reoccurence_interval','weeks')">Week</div>
+                                    <div class="row clickable" app-click="newStaffAppointment('set_reoccurence_interval','months')">Month</div>
+                                </div>
+                            </div>
+                            <span class="mr-05">for</span>
+                            <input type="number" app-model="new_appointment.reoccurences" class="border inline mr-05 text-center" style="width: 2rem; padding-left:0; padding-right:0">
+                            <span>occurences</span>
+
+                        </div>
+
+                        <div app-hide="view.show_repeat" class="italic text-33-grey">
+                            Unavailable
+                        </div>
+                    </div>
+
+
+                    <div class="flex-top-left layer-1">
+                        <p><span class="text-weight-600">Note:</span><br>(optional)</p>
+                    </div>
+                    <div class="colspan-11 flex flex-middle-left layer-1" style="overflow:visible">
+                        <textarea class="border w-40 w-m-75 w-s-100" app-model="new_appointment.note" placeholder="Add a note""></textarea>
+                    </div-->
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <section class="footer">
+        <% if (typeof appointment_key != 'undefined'){ %>
+            <button class="btn bg-secondary" app-click="newAppointment('save','<%- appointment_key %>')">Update Booking <span class="icon tick right white"></span></button>
+        <% } else { %>
+            <!--button class="btn border" app-click="storeNewAppointment('cancel')">Cancel <span class="icon close right black"></span></button-->
+            <button class="btn bg-secondary" app-click="newAppointment('push','',<%-user._key%>)">Save <span class="icon tick right white"></span></button>
+        <% } %>
+        </section>
+
+
+    <%- include('../partials/modal/book_seat.ejs') %>
+       

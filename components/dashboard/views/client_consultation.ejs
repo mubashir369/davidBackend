@@ -1,0 +1,624 @@
+<% layout('fullscreen.ejs') -%>
+<div class="consultation">
+
+    <div class="page p-s-0 flex" app-show="view.page == 'start'">
+
+        <div class="back-button">
+        </div>
+
+        <div class="content vh-100">
+            <div class="upper">
+
+                <h1>Hi, welcome to the salon.</h1>
+                <h2>Do you have an appointment?</h2>
+
+            </div>
+
+            <div class="lower">
+
+                <button app-click="getClients()" class="btn bg-secondary big">Yes I've booked</button>
+                <button app-click="view.page = 'desk'" class="btn border big">I haven't booked</button>
+
+            </div>
+        </div>
+
+        <div class="spacer">
+        </div>
+
+    </div>
+
+    <div class="page p-s-0 flex" app-show="view.page == 'clients'">
+
+        <div class="back-button">
+
+        </div>
+
+        <div class="content vh-100">
+            <div class="upper">
+
+                <h1>Ok, let's check you in</h1>
+                <h2>Tap your name below.</h2>
+
+
+            </div>
+
+            <div class="lower">
+                <div class="grid col-4 gap-2">
+
+                    <button class="btn border big" app-for="client in clients" app-click="selectClient(client)">
+                        <span class="capitalise" app-bind="parseShortName(client.name)"></span>
+                    </button>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="spacer">
+        </div>
+
+
+    </div>
+
+    <div class="page p-s-0 flex" app-show="view.page == 'desk'">
+
+        <div class="back-button">
+        </div>
+
+        <div class="content vh-100">
+            <div class="upper">
+
+                <h1>That's ok</h1>
+                <h2>Please go to the front desk</h2>
+
+            </div>
+
+            <div class="lower">
+                <button class="btn border" app-click="reset()">Reset</button>
+            </div>
+        </div>
+
+        <div class="spacer">
+        </div>
+
+    </div>
+
+    <div class="page p-s-0 flex" app-show="view.page == 'client_confirm'">
+
+        <div class="back-button">
+        </div>
+
+        <div class="content vh-100">
+            <div class="upper">
+
+                <h1>Just to confirm...</h1>
+                <h3>Does your phone number end ...<span class="text-weight-700" app-bind="selected_client.parsed_tel"></span>?</h3>
+
+            </div>
+
+            <div class="lower">
+                <button app-click="showClient()" class="btn bg-secondary big">Yes it does</button>
+                <button app-click="view.page = 'desk'" class="btn border big">That's not my number!</button>
+            </div>
+        </div>
+
+        <div class="spacer">
+        </div>
+
+    </div>
+
+
+    <div class="page p-s-0 flex" app-show="view.page == 'show_client'">
+
+        <div class="back-button">
+        </div>
+
+        <div class="content vh-100">
+            <div class="upper">
+
+                <h1>Welcome, <span class="capitalise" app-bind="selected_client.name.first"></span>!</h1>
+                <h3>Please take this tablet with you and take a seat</h3>
+
+            </div>
+
+            <div class="lower">
+                <div class="mb-4">When you're ready tap start</div>
+                <button app-click="startConsultation()" class="btn bg-secondary">Start</button>
+                <button app-click="view.page = 'info'" class="btn border">Wait, how does this work?</button>
+            </div>
+        </div>
+
+        <div class="spacer">
+        </div>
+
+    </div>
+
+    <div class="page p-s-0 flex" app-show="view.page == 'info'">
+
+        <div class="back-button">
+        </div>
+
+        <div class="content vh-100">
+            <div class="upper">
+
+                <h2>How does this work?</h2>
+                <div class="flex">
+                    <button app-click="view.page = 'show_client'" class="btn bg-secondary">Ok thanks</button>
+                </div>
+            </div>
+
+            <div class="lower">
+
+            </div>
+        </div>
+
+        <div class="spacer">
+        </div>
+
+    </div>
+
+    <div class="page p-s-0 flex" app-show="view.page == 'show_consultation'">
+
+        <div class="back-button">
+            <a app-click="view.page = 'show_client'"><span class="icon arrowleft black xl"></span></a>
+        </div>
+
+        <div class="content vh-100">
+            <div class="upper">
+
+                <h4 class="bold">Please confirm your hair profile</h4>
+                <div>This is the information you've given us about your hair</div>
+
+            </div>
+            <div class="middle box">
+
+                <div class="question">
+                    <div class="w-100">You describe your hair as&nbsp;<span app-bind="consultation.hair_description"></span>,&nbsp;<span app-bind="consultation.hair_length"></span>&nbsp;and&nbsp;<span app-bind="consultation.hair_texture"></span></div>
+                </div>
+
+                <div class="question">
+                    <div class="w-100">Your style is usually&nbsp;<span app-bind="consultation.hair_styling"></span></div>
+                </div>
+                <div class="question" app-hide="consultation.tools_used == 'none'">
+                    <div class="w-100">You tend to use&nbsp;<span app-bind="consultation.tools_used"></span></div>
+                </div>
+                <div class="question" app-show="consultation.tools_used == 'none'">
+                    <div class="w-100">You don't use any tools on your hair</div>
+                </div>
+                <div class="question" app-hide="consultation.chemical_services == 'none'">
+                    <div class="w-100">You've recently had&nbsp;<span app-bind="consultation.chemical_services"></span></div>
+                </div>
+                <div class="question" app-show="consultation.chemical_services == 'none'">
+                    <div class="w-100">You've had no chemical services recently, like colouring or highlights</div>
+                </div>
+                <div class="question">
+                    <div class="w-100">When wet, your hair feels&nbsp;<span app-bind="consultation.wet_hair_feeling"></span></div>
+                </div>
+                <div class="question">
+                    <div class="w-100">You usually wash your hair&nbsp;<span app-bind="consultation.wash_frequency"></span>&nbsp;times per week</div>
+                </div>
+                <div class="question" app-show="consultation.hair_achieve">
+                    <div class="w-100">You want to&nbsp;<span app-bind="consultation.hair_achieve"></span></div>
+                </div>
+
+            </div>
+
+            <div class="lower">
+                <button app-click="saveConsultation()" class="btn bg-secondary">Yes, that's right</button>
+                <button app-click="view.page = 'new_consultation'" class="btn bg-none">Update this</button>
+            </div>
+        </div>
+
+        <div class="spacer">
+        </div>
+
+    </div>
+
+    <div class="page p-s-0 flex" app-show="view.page == 'new_consultation'">
+
+        <div class="back-button">
+            <a app-click="view.page = 'show_client'"><span class="icon arrowleft black xl"></span></a>
+        </div>
+
+        <div class="content vh-100">
+            <div class="upper">
+
+                <h4 class="bold">Update your hair profile</h4>
+                <div>Please tell us about your hair, so we can achieve your look</div>
+
+            </div>
+
+            <div class="middle box">
+                <div class="question">
+                    <div>How would you describe your hair?</div>
+
+                        <select app-model="consultation.hair_description">
+                            <option value="">Please select...</option>
+                            <option>fine</option>
+                            <option>normal</option>
+                            <option>thick</option>
+                            <option>thinning</option>
+                        </select>
+
+                </div>
+                <div class="question">
+                    <div>Is your hair length</div>
+
+                        <select app-model="consultation.hair_length">
+                            <option value="">Please select...</option>
+                            <option>short</option>
+                            <option>shoulder length</option>
+                            <option>below shoulder length</option>
+                        </select>
+
+                </div>
+                <div class="question">
+                    <div>Is your natural hair texture</div>
+
+                        <select app-model="consultation.hair_texture">
+                            <option value="">Please select...</option>
+                            <option>straight</option>
+                            <option>wavy</option>
+                            <option>curly</option>
+                            <option>afro caribbean</option>
+                        </select>
+
+                </div>
+                <div class="question">
+                    <div>How do you generally style your hair?</div>
+
+                        <select app-model="consultation.hair_styling">
+                            <option value="">Please select...</option>
+                            <option>dry naturally</option>
+                            <option>blow dry smooth</option>
+                            <option>blow dry with volume</option>
+                            <option>diffuse dry</option>
+                        </select>
+
+                </div>
+                <div class="question">
+                    <div>What styling tools do you use?</div>
+
+                        <select app-model="consultation.tools_used">
+                            <option value="">Please select...</option>
+                            <option>none</option>
+                            <option>hair dryer</option>
+                            <option>straighteners</option>
+                            <option>wand/tongs</option>
+                            <option>rollers non heated</option>
+                            <option>heated rollers</option>
+                        </select>
+
+                </div>
+                <div class="question">
+                    <div>What best describes any chemical services that have been applied to your hair and are still present?</div>
+
+                        <select app-model="consultation.chemical_services">
+                            <option value="">Please select...</option>
+                            <option>none</option>
+                            <option>full hair colour</option>
+                            <option>bleach</option>
+                            <option>highlights</option>
+                            <option>permanent wave/straightening</option>
+                            <option>keratin smoothing</option>
+                        </select>
+
+                </div>
+                <div class="question">
+                    <div>What best describes the feeling of your hair when wet?</div>
+
+                        <select app-model="consultation.wet_hair_feeling">
+                            <option value="">Please select...</option>
+                            <option>smooth and healthy</option>
+                            <option>a little bit dry</option>
+                            <option>very dry, damaged</option>
+                        </select>
+
+                </div>
+                <div class="question">
+                    <div>How many times per week on average do you wash your hair?</div>
+
+                        <select app-model="consultation.wash_frequency">
+                            <option value="">Please select...</option>
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                            <option>6</option>
+                            <option>7</option>
+                        </select>
+
+                </div>
+                <div class="question">
+                    <div>What would you like to achieve with your hair?</div>
+
+                        <select app-model="consultation.hair_achieve">
+                            <option value="">Please select...</option>
+                            <option>leave it as it is</option>
+                            <option>improve it's condition</option>
+                            <option>achieve smoother hair</option>
+                            <option>achieve more volume</option>
+                            <option>grow it longer</option>
+                        </select>
+
+                </div>
+            </div>
+
+            <div class="lower">
+                <button app-click="saveConsultation()" class="btn bg-secondary">Save</button>
+                <button app-click="view.page = 'show_client'" class="btn bg-none">Cancel</button>
+            </div>
+        </div>
+
+        <div class="spacer">
+        </div>
+
+    </div>
+
+    <div class="page p-s-0 flex" app-show="view.page == 'style_selection'">
+
+        <div class="back-button">
+            <a app-click="view.page = 'show_client'"><span class="icon arrowleft black xl"></span></a>
+        </div>
+
+        <div class="content vh-100">
+            <div class="upper">
+
+                <h4 class="bold">Welcome back <span class="capitalise" app-bind="selected_client.name.first"></span>!</h4>
+                <div>Let's get started.</div>
+
+            </div>
+
+            <div class="middle grid col-2 gap-2">
+
+                <div class="box text-center" app-click="view.page = 'past_styles'" app-show="selected_client.consultation_images">
+                    <img src="/images/Graphic-HeadSideStraight.svg" class="block mt-2 mb-3">
+                    <button class="btn border">Look at my past styles</button>
+                </div>
+                <div class="box text-center" app-click="view.page = 'new_style'">
+                    <img src="/images/Graphic-HeadSideWavy.svg" class="block mt-2 mb-3">
+                    <button class="btn border">Try something new</button>
+                </div>
+
+            </div>
+
+            <div class="lower">
+                <div class="spacer"></div>
+            </div>
+        </div>
+
+        <div class="spacer">
+        </div>
+
+    </div>
+
+    <div class="page p-s-0 flex" app-show="view.page == 'past_styles'">
+
+        <div class="back-button" style="height: auto; margin-top: 2rem;">
+            <a app-click="view.page = 'style_selection'"><span class="icon arrowleft black xl"></span></a>
+        </div>
+
+        <div class="content">
+            <div class="upper pt-2 pb-0">
+
+                <h4 class="bold">Review your past styles.</h4>
+                <div>Choose a style from a previous visit as a starting point.</div>
+            </div>
+
+        </div>
+
+        <div class="spacer">
+        </div>
+        <div class="img-wrap">
+            <div app-for="img in selected_client.consultation_images">
+                <img app-src="img.img" app-click="addImage(img.img)">
+            </div>
+        </div>
+
+    </div>
+    <div class="page p-s-0 flex" app-show="view.page == 'new_style'">
+
+        <div class="back-button">
+            <a app-click="view.page = 'style_selection'"><span class="icon arrowleft black xl"></span></a>
+        </div>
+
+        <div class="content vh-100">
+            <div class="upper">
+
+                <h4 class="bold">Ooh, a new look?</h4>
+                <div>How do you feel about it?</div>
+
+            </div>
+
+            <div class="middle grid col-2 gap-2">
+
+                <div class="box text-center" app-click="addText()">
+                    <img src="/images/Graphic-HeadSideShort.svg" class="block mt-2 mb-3">
+                    <button class="btn border">I know what I want</button>
+                </div>
+                <div class="box text-center" app-click="view.page = 'inspiration'">
+                    <img src="/images/Graphic-HeadSideMulti.svg" class="block mt-4 mb-45">
+                    <button class="btn border">I need inspiration</button>
+                </div>
+
+            </div>
+
+            <div class="lower">
+
+            </div>
+        </div>
+
+        <div class="spacer">
+        </div>
+
+    </div>
+
+    <div class="page p-s-0 flex" app-show="view.page == 'text_input'">
+
+        <div class="back-button">
+            <a app-click="view.page = 'style_selection'"><span class="icon arrowleft black xl"></span></a>
+        </div>
+
+        <div class="content vh-100">
+            <div class="upper">
+
+                <h4 class="bold">Know exactly what you want?</h4>
+                <div>Tell us about it.</div>
+
+
+            </div>
+
+            <textarea id="look-text" app-model="consultation.specific_instruction" placeholder="eg. Shoulder length, choppy and fun. Copper highlights."></textarea>
+
+            <div class="lower">
+                <button app-click="saveConsultation('end_consultation')" class="btn bg-secondary">Ok, send to stylist</button>
+                <button app-click="removeSpecificInstruction()" class="btn bg-none">Now I'm not so sure</button>
+            </div>
+        </div>
+
+        <div class="spacer">
+        </div>
+
+    </div>
+
+    <div class="page p-s-0 flex" app-show="view.page == 'inspiration'">
+
+        <div class="back-button" style="height: auto; margin-top: 2rem;">
+            <a app-click="view.page = 'style_selection'"><span class="icon arrowleft black xl"></span></a>
+        </div>
+
+        <div class="content">
+            <div class="upper pt-2 pb-0">
+
+                <h4 class="bold">Browse some of our recent styles</h4>
+                <div>Feel free to choose one or discuss with your stylist</div>
+
+            </div>
+
+        </div>
+
+        <div class="spacer">
+        </div>
+        <div class="img-wrap">
+            <% for (var i in looks){ %>
+                <div><img src="/media/300/60/looks/<%- looks[i].defaultLookImage.fileName %>" app-click="addImage('/media/300/60/looks/<%- looks[i].defaultLookImage.fileName %>')"></div>
+            <% } %>
+        </div>
+
+    </div>
+
+    <div class="page p-s-0 flex" app-show="view.page == 'end_consultation'">
+
+        <div class="back-button">
+        </div>
+
+        <div class="content vh-100">
+            <div class="upper">
+
+                <h4 class="bold">Thanks, one last step</h4>
+                <div>We'll do our best to help you achieve the style you've asked for.</div>
+                <div>We can't always guarantee the results will be identical to a previous image or description.</div><div>If you have any questions or concerns, just ask your stylist.</div>
+                <div class="mt-3">Are you happy to continue?</div>
+
+            </div>
+
+            <div class="lower">
+                <button app-click="confirmConsultation()" class="btn bg-secondary">Yes, I understand</button>
+            </div>
+        </div>
+
+        <div class="spacer">
+        </div>
+
+    </div>
+
+    <div class="page p-s-0 flex" app-show="view.page == 'stylist_confirmation'">
+
+        <div class="back-button">
+        </div>
+
+        <div class="content vh-100">
+            <div class="upper">
+
+                <h4 class="bold">Quick summary for your stylist, <span app-bind="consultation.stylist.name.first"></span></h4>
+                <div>Please confirm you're clear about Sally's treatment below.</div>
+
+            </div>
+
+            <div class="lower">
+
+                <div app-hide="consultation.stylist_id">
+
+                    <label>Select the stylist</label>
+                    <select app-model="consultation.stylist_id">
+                        <option app-for="stylist in staff" app-bind="parseName(stylist.name)" app-value="stylist._key">
+                    </select>
+
+                </div>
+
+                <div app-show="consultation.stylist_id">
+
+                    <button app-click="stylistConfirmation()" class="btn bg-secondary">Ready to go</button>
+                    <button app-click="view.page = 'style_selection'" class="btn border">Make a change</button>
+                    <button app-click="view.page = 'contraindication'" class="btn border">Add a contraindication</button>
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="spacer">
+        </div>
+
+    </div>
+
+
+    <div class="page p-s-0 flex" app-show="view.page == 'contraindication'">
+
+        <div class="back-button">
+        </div>
+
+        <div class="content vh-100">
+            <div class="upper">
+
+                <h4 class="bold">Add a contraindication</h4>
+                <div>What does this mean for your treatment</div>
+
+            </div>
+
+            <textarea app-model="consultation.contraindication"></textarea>
+
+            <div class="lower">
+                <button app-click="saveConsultation('stylist_confirmation')" class="btn bg-secondary">Save this</button>
+                <button app-click="view.page = 'stylist_confirmation'" class="btn bg-none">Cancel</button>
+            </div>
+        </div>
+
+        <div class="spacer">
+        </div>
+
+    </div>
+
+    <div class="page p-s-0 flex" app-show="view.page == 'finish'">
+
+        <div class="back-button">
+        </div>
+
+        <div class="content vh-100">
+            <div class="upper">
+
+                <h2>Done</h2>
+
+            </div>
+
+            <div class="lower">
+                <button app-click="reset()" class="btn bg-secondary">Reset</button>
+            </div>
+        </div>
+
+        <div class="spacer">
+        </div>
+
+    </div>
+    <a app-click="reset()" class="pb-1 transparent">Reset</a>
+</div>

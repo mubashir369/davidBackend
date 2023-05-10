@@ -1,0 +1,139 @@
+<script>
+
+    extendedController = function(){
+
+        scope.initCart = function(){
+
+            scope.get('click_collect/get_cart').then((cart_data) => {
+
+                scope.cart = cart_data
+
+                scope.cart.items_count = scope.cart.items.reduce((sum, item) => {
+                                        return sum + item.quantity
+                                    }, 0)
+
+                scope.cart.items_count = scope.cart.items_count+''
+
+            }).catch((err)=>{
+
+                scope.cart = {
+                    items:[],
+                    sub_total:0,
+                    tax:0,
+                    total:0
+                }
+
+            })
+        }
+
+        scope.emptyCart = function(){
+
+            scope.get('click_collect/empty_cart').then((cart_data) => {
+
+                scope.cart = cart_data
+
+            }).catch((err)=>{
+
+                scope.cart = {
+                    items:[],
+                    sub_total:0,
+                    tax:0,
+                    total:0
+                }
+
+            })
+        }
+
+        scope.submitCart = function(){
+
+            if (scope.cart && scope.cart.items && scope.cart.items.length > 0){
+
+                scope.get('click_collect/submit_cart').then((cart_data) => {
+
+                    scope.notify('Your items will be ready to collect at your next appointment').then(()=>{
+                        window.location.href = "/account"
+                    })
+
+                }).catch((err)=>{
+
+                    console.log(err)
+
+                })
+
+            } else {
+                scope.notify('Please add items before submitting','error')
+            }
+
+        }
+
+        scope.removeSavedCart = function(){
+
+            if (scope.cart && scope.cart.items && scope.cart.items.length > 0){
+
+                scope.get('click_collect/remove_saved_cart').then((cart_data) => {
+
+                    scope.notify('Your items have been removed from your appointment').then(()=>{
+                        window.location.href = "/account"
+                    })
+
+                }).catch((err)=>{
+
+                    console.log(err)
+
+                })
+
+            } else {
+                scope.notify('Please add items before submitting','error')
+            }
+
+        }
+
+        scope.addToClickCollect = function(key, remove){
+
+            if (remove){
+
+                scope.get('click_collect/remove_item', {key:key}).then((cart_data) => {
+
+                    scope.cart = cart_data
+                    scope.notify('Item removed')
+
+                }).catch((err) => {
+                    scope.notify(err,'error')
+                })
+
+            } else {
+
+                scope.post('click_collect/add_item', {key:key}).then((cart_data) => {
+
+                    window.location.href = "/shop/cart"
+
+                }).catch((err) => {
+                    scope.notify(err,'error')
+                })
+
+            }
+
+
+        }
+
+        scope.inCart = function(key){
+
+            if (scope.cart && scope.cart.items && scope.cart.items.length > 0){
+
+                let idx = scope.cart.items.findIndex((item,i)=>{
+                    return item._key == key
+                })
+
+                if (idx >= 0){
+                    return scope.cart.items[idx].quantity
+                } else {
+                    return false
+                }
+
+            }
+
+        }
+
+    }
+
+</script>

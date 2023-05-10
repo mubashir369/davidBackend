@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <%- include('partials/html_head.ejs') %>
+
+    <script src="https://js.stripe.com/v3/"></script>
+
+
+
+</head>
+
+    <body class="bg-light-grey">
+
+        <%- include('partials/top_nav.ejs') %>
+
+        <section class="main">
+
+            <%- body -%>
+
+        </section>
+
+        <%- include('partials/footer.ejs') %>
+
+        <%- include('partials/scripts.ejs') %>
+        <script src="/js/checkout-controller.js?v=1.0.20"></script>
+        <script src="/js/dashboard-functions.js?v=1.0.0"></script>
+
+    </body>
+</html>

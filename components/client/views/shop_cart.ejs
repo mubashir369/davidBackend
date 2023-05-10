@@ -1,0 +1,79 @@
+<% layout('customer-page.ejs') -%>
+
+<div class="my-4 my-s-1 pt-2 text-left" app-init="initCart()">
+
+        <div class="grid col-12 col-s-1 mt-2">
+
+            <div class="colspan-7 pt-2 pr-2 pb-2 pt-s-0 pr-s-0">
+
+                <h2>Your Items</h2>
+
+                <div class="mt-2 mb-1">
+                    <div class="grid col-5 gap-1">
+                        <div class="colspan-3 text-weight-600">Item</div>
+                        <div class="text-center text-weight-600">Qty</div>
+                        <div class="text-right text-weight-600">Price</div>
+                    </div>
+                </div>
+                <div class="mb-2 mt-1">
+                    <div app-for="item in cart.items" class="grid col-5 gap-1">
+                        <div class="colspan-3 text-weight-600" app-bind="item.name"></div>
+                        <div class="text-center" app-bind="item.quantity"></div>
+                        <div class="text-right" app-bind="parsePrice(item.price)"></div>
+                    </div>
+                </div>
+                <div class="grid col-2 gap-1">
+                    <div>
+                        <a app-click="emptyCart()" class="text-secondary">Empty Cart</a>
+                    </div>
+
+                    <div class="text-right">
+                        <a href="/shop" class="text-secondary">Add more items</a>
+                    </div>
+                </div>
+
+            </div>
+            <div class="colspan-5 bg-white p-2 rounded mb-4">
+
+                <h2>Order Total</h2>
+
+                <div class="grid col-2 my-2">
+                    <div class="">
+                        <h4>Sub Total</h4>
+                    </div>
+                    <div class="">
+                        <h4><span app-bind="parsePrice(cart.sub_total)"></span></h4>
+                    </div>
+                    <div class="">
+                        <h4 class="text-weight-600">Total</h4>
+                    </div>
+                    <div class="">
+                        <h4 class="text-weight-600"><span app-bind="parsePrice(cart.total)"></span></h4>
+                    </div>
+                </div>
+
+                <div class="text-center" app-hide="cart.items[0]">
+                    <a href="/shop" class="text-secondary">Add some products to begin</a>
+                </div>
+
+                <div class="" app-show="cart.items[0]">
+                    <button app-click="submitCart()" app-hide="cart.saved" class="btn bg-secondary thick w-100">Add to appointment</button>
+                    <button app-click="submitCart()" app-show="cart.saved" class="btn bg-secondary thick w-100">Update appointment items</button>
+
+                    <button app-click="removeSavedCart()" app-show="cart.saved" class="btn bg-white thick w-100 mt-1">I no longer want these items</button>
+                </div>
+
+                <div class="mt-2">
+                    <% if (typeof next_appointment == 'object'){ %>
+                        <h4 class="mb-1">Your next appointment is on <%- moment(next_appointment.date).format('dddd Do') %> with <%- next_appointment.staff_name %></h4>
+                    <% } %>
+
+                    <p>These items will be waiting for you once your salon appointment has finished. You can add or remove any of these items before your appointment.</p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+</div>

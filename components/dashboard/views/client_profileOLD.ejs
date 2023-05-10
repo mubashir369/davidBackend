@@ -1,0 +1,538 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+
+    <div class="hidden" app-init="get('salon','54855602')"></div>
+
+    <div class="page grid col-12 col-s-1 client" app-init="get('customers','<%- client_data._key %>','client_profile')">
+
+        <div class="colspan-4 colspan-m-3 pr-2 bg-white">
+
+            <div class="">
+                <img src="/images/avatars/Profile_Placeholder.svg" app-src="client_profile.avatar" class="avatar lg">
+
+                <div class="mt-1">
+                        <div class="capitalise text-weight-600" app-bind="parseName(client_profile.name)"></div>
+                        <div app-bind="client_profile.tel"></div>
+
+                </div>
+                <div class=" mb-1" app-bind="client_profile.email" app-class="{'text-red':client_profile.email_bounce == 'true'}"></div>
+
+                <div class="grid col-1 col-m-1 gap-1">
+                    <div><a class="btn bg-secondary" app-click="addNewEvent('customer_appointment',client_profile._key)">New Appointment<span class="icon calendar right white"></span></a></div>
+
+                    <div><a class="text-secondary" app-click="view.more_actions = !view.more_actions">More actions</a></div>
+
+                </div>
+
+                <div class="grid col-1 col-m-1 gap-1 mt-2" app-show="view.more_actions">
+
+                    <div><a class="btn bg-secondary" app-click="edit('customers',client_profile)">Edit Client Details<span class="icon edit right white"></span></a></div>
+                    <div><a class="btn border" app-click="sendAuthLink(client_profile._key)">Send Login Link<span class="icon signin right secondary"></span></a></div>
+                    <div><a class="btn border" app-click="newTransaction(client_profile._key)">New Transaction<span class="icon transaction right secondary"></span></a></div>
+                    <div>
+                        <a class="btn border" app-click="view.modal = 'send_notification'">Contact Client<span class="icon reminder right secondary"></span></a>
+                    </div>
+                </div>
+
+                <div class="text-small my-3">
+                    <div class="grid col-2">
+                        <div>Account</div>
+                        <div class="text-right text-weight-600">£<% if (client_data.balance){ %><%- parseFloat(client_data.balance.total).toFixed(2) %><% } else { %>0<% } %></div>
+                    </div>
+                    <div class="grid col-2">
+                        <div>Risk Level</div>
+                        <div class="text-right text-weight-600">
+                            <div class="text-red" app-bind="parseConfidence(client_profile)"></div>
+                        </div>
+                    </div>
+                    <div class="grid col-2">
+                        <div>Skin Test</div>
+                        <div class="text-right text-weight-600 clickable" app-click="updateSkinTest(client_profile._key)">
+                            <span app-show="client_profile.skin_test" app-bind="parseISODate(client_profile.skin_test)"></span>
+                            <span app-hide="client_profile.skin_test">Update</span>
+                        </div>
+                    </div>
+
+                    <div class="grid col-2">
+                        <div>Stripe</div>
+                        <div class="text-right">
+                            <% if (client_data.stripe_id){ %>
+                                <i class="fas fa-check text-33-green"></i>
+                            <% } else { %>
+                                <i class="fas fa-times text-33-red"></i>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <div class="grid col-2">
+                        <div>Marketing</div>
+                        <div class="text-right">
+                            <% if (client_data.unsubscribe && client_data.unsubscribe === true){ %>
+                                <i class="fas fa-times text-33-red"></i>
+                            <% } else { %>
+                                <i class="fas fa-check text-33-green"></i>
+                            <% } %>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="bg-light-grey rounded p-1 my-1 text-small" app-show="client_profile.notes" app-bind="client_profile.notes">
+                </div>
+
+                <div><a class="btn border mb-3" app-click="viewClientNote(client_profile)">Edit Client Notes<span class="icon note right secondary"></span></a></div>
+
+            </div>
+
+        </div>
+
+        <div class="colspan-8 colspan-m-9 bg-33-light-grey p-2 overflow-hidden">
+
+            <div class="tabs" style="width: 100%">
+                <a class="clickable" app-click="view.tab = 'one'" app-class="{'active':view.tab == 'one'}">Appointments</a>
+                <a class="clickable" app-click="view.tab = 'six'" app-class="{'active':view.tab == 'six'}">Membership</a>
+                <a class="clickable" app-click="view.tab = 'two'" app-class="{'active':view.tab == 'two'}">Consultations</a>
+                <a class="clickable" app-click="view.tab = 'three'" app-class="{'active':view.tab == 'three'}">Receipts</a>
+                <a class="clickable" app-click="view.tab = 'four'" app-class="{'active':view.tab == 'four'}">Documents</a>
+                <a class="clickable" app-click="view.tab = 'five'" app-class="{'active':view.tab == 'five'}">Logs</a>
+            </div>
+
+            <div class="overflow-y pb-5">
+
+            <div  app-show="view.tab == 'one'">
+
+                <h4 class="text-primary mt-2 mb-2">Upcoming Appointments</h4>
+
+                <div class="appointment-wrap">
+
+                    <% var month_curr, month_prev %>
+
+                    <% client_data.appointments.forEach((appointment) => { %>
+
+                        <% if (appointment.date >= new Date().toISOString()) { %>
+
+                            <% month_curr = functions.getMonth(appointment.date) %>
+
+                            <% if (month_curr != month_prev){ %>
+                                <h4><%- month_curr %></h4>
+                            <% } %>
+
+                            <div class="appointment <%- appointment.status %>">
+                                <div class="date">
+                                    <div class="day"><%- functions.getDay(appointment.date) %></div>
+                                    <div class="date"><%- functions.getDate(appointment.date) %></div>
+                                </div>
+                                <div class="info">
+                                    <div class="text-bold"><%- functions.getStart(appointment.date) %></div>
+                                    <div class=""><span class="capitalise"><%- appointment.service_name %></span> with <span class="capitalise"><%- appointment.staff.name.first %></span></div>
+                                    <div class=""><%- appointment.source %> - <%- appointment.status %></div>
+                                </div>
+                                <div class="action">
+                                <% if (appointment.status != 'deleted') { %>
+                                    <a href="/dashboard/calendar/<%- functions.parseCalendarLink(appointment.date) %>?appointment_id=<%- appointment._key %>" class="btn border">View</a>
+                                <% } else { %>
+                                    <span><%- appointment.note %></span>
+                                <% } %>
+                                </div>
+                            </div>
+
+                            <% month_prev = month_curr %>
+
+                        <% } %>
+
+                    <% }) %>
+
+                </div>
+
+                <h4 class="text-primary mt-2 mb-2">Past Appointments</h4>
+
+                <div class="appointment-wrap">
+
+                    <% var month_curr, month_prev %>
+
+                    <% client_data.appointments.forEach((appointment) => { %>
+
+                        <% if (appointment.date < new Date().toISOString()) { %>
+
+                            <% month_curr = functions.getMonth(appointment.date) %>
+
+                            <% if (month_curr != month_prev){ %>
+                                <h4><%- month_curr %></h4>
+                            <% } %>
+
+                            <div class="appointment <%- appointment.status %>">
+                                <div class="date">
+                                    <div class="day"><%- functions.getDay(appointment.date) %></div>
+                                    <div class="date"><%- functions.getDate(appointment.date) %></div>
+                                </div>
+                                <div class="info">
+
+                                    <div class="text-bold"><%- functions.getStart(appointment.date) %></div>
+                                    <div><span class="capitalise"><%- appointment.service_name %></span> with <span class="capitalise"><%- appointment.staff.name.first %></span></div>
+
+                                    <div class="capitalise text-33-dark-grey text-small">
+                                        <% if (appointment.service_client_id && appointment.service_client_id == client_data._key){ %>
+                                            Booked by <a href="/dashboard/clients/<%- appointment.customer_id %>" class="capitalise text-primary"><%- appointment.customer.name.first %> <%- appointment.customer.name.last %></a><br>
+                                        <% } %>
+                                        <% if (appointment.service_client_id && appointment.service_client_id != client_data._key && typeof appointment.service_client == 'object' && appointment.service_client.name){ %>
+                                            Service booked for <a href="/dashboard/clients/<%- appointment.service_client_id %>" class="capitalise text-primary"><%- appointment.service_client.name.first %> <%- appointment.service_client.name.last %></a><br>
+                                        <% } %>
+                                        <%- appointment.source %> - <%- appointment.status %>
+                                    </div>
+
+                                </div>
+                                <div class="action">
+                                    <% if (appointment.status != 'deleted') { %>
+                                        <a href="/dashboard/calendar/<%- functions.parseCalendarLink(appointment.date) %>?appointment_id=<%- appointment._key %>" class="btn border">View</a>
+                                    <% } else { %>
+                                        <span><%- appointment.note %></span>
+                                    <% } %>
+                                </div>
+                            </div>
+
+                            <% month_prev = month_curr %>
+
+                        <% } %>
+
+                    <% }) %>
+
+                </div>
+
+            </div>
+
+            <div class="" app-show="view.tab == 'two'" app-init="get('customers/<%- client_data._key %>/recommended_products','','recommended_products')">
+
+                <h4 class="text-primary mt-2 mb-2">Gallery</h4>
+
+                <div class="grid col-3 gap-1">
+                    <div class="flex flex-middle-left flex-column h-100" app-click="openClientImage(client_profile.image_1)">
+                        <img src="/images/avatars/Profile_Placeholder.svg" app-src="client_profile.image_1" class="object-fit">
+                        <label for="image_1" class="btn outline clickable mt-1">Upload Image</label>
+                        <input id="image_1" type="file" app-model="client_profile.image_1" app-change="post('customers',client_profile)">
+                    </div>
+                    <div class="flex flex-middle-left flex-column h-100" app-click="openClientImage(client_profile.image_2)">
+                        <img src="/images/avatars/Profile_Placeholder.svg" app-src="client_profile.image_2" class="object-fit">
+                        <label for="image_2" class="btn outline clickable mt-1">Upload Image</label>
+                        <input id="image_2" type="file" app-model="client_profile.image_2" app-change="post('customers',client_profile)">
+                    </div>
+                    <div class="flex flex-middle-left flex-column h-100" app-click="openClientImage(client_profile.image_3)">
+                        <img src="/images/avatars/Profile_Placeholder.svg" app-src="client_profile.image_3" class="object-fit">
+                        <label for="image_3" class="btn outline clickable mt-1">Upload Image</label>
+                        <input id="image_3" type="file" app-model="client_profile.image_3" app-change="post('customers',client_profile)">
+                    </div>
+
+                </div>
+
+                <div class="pb-7 relative layer-2 mt-4">
+                    <h4 class="text-primary mt-2 mb-2">Recommended Products</h4>
+
+                     <div class="relative layer-5">
+
+                        <div class="mt-1">
+                            <input type="text" class="search-dropdown context-link" placeholder="Search products..." app-model="view.search"  app-click="toggleContext('recommended_products','products')" onkeyup="scope.searchApi('products',this.value)">
+                        </div>
+
+                        <div class="table search-select absolute context" id="context-recommended_products" app-show="view.search">
+                            <div class="row clickable flex" app-for="product in products" app-click="addRecommendedProduct('<%- client_data._key %>',product._key)">
+
+                                <div class="text-bold flex-2" app-bind="product.name"></div>
+                                <div class="text-bold flex-2" app-bind="product.description"></div>
+                                <div class="text-light flex-1" app-bind="product.category"></div>
+                                <div class="text-light text-right flex-1">£<span app-bind="product.price"></span></div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="bg-33-light-grey mt-1">
+
+                        <div class="grid col-5 px-2 py-1 mb-05 bg-33-white rounded" app-for="rp in recommended_products">
+                            <div class="colspan-3"><span class="text-weight-600" app-bind="rp.brand"></span> <span class="text-bold" app-bind="rp.name"></span><br><span class="text-small text-primary">Recommended By: <span  app-bind="parseName(rp.staff.name)"></span></div>
+                            <div class="flex flex-middle-right pr-1">£<span  app-bind="rp.price"></span></div>
+                            <div class="flex flex-middle-right">
+                                <div class="flex-1 text-right" app-click="addRecommendedProduct('<%- client_data._key %>',rp._key,true)"><span class="icon close black right"></span></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="" app-show="view.tab == 'three'">
+                <h4 class="text-primary mt-2 mb-2">Receipts</h4>
+
+
+                <% if (typeof transactions != 'undefined'){ %>
+                    <% var month_curr, month_prev %>
+
+                    <div class="appointment-wrap">
+
+                        <% transactions.forEach((transaction) => { %>
+
+                            <% month_curr = functions.getMonth(transaction._created) %>
+
+                            <% if (month_curr != month_prev){ %>
+                                <h4><%- view.functions.parseDate(transaction._created, 'MMMM YYYY') %></h4>
+                            <% } %>
+
+                            <div class="appointment paid">
+                                <div class="date">
+                                    <div class="day"><%- functions.getDay(transaction._created) %></div>
+                                    <div class="date"><%- functions.getDate(transaction._created) %></div>
+                                </div>
+                                <div class="info grid col-3 text-small">
+
+                                    <% transaction.items.forEach((item) => { %>
+                                        <div class="colspan-2">
+                                            <%- item.name %>
+                                            <% if (item.type == 'vouchers' && item.barcode){ %>
+                                                <br><small><a class="text-primary" href="/dashboard/checkout/vouchers?search=<%- item.barcode %>"><%- item.barcode %></a></small>
+                                            <% } %>
+                                        </div>
+                                        <div class="text-right">
+                                            £<%- view.functions.getPrice(item,false,true) %>
+                                        </div>
+                                    <% }) %>
+
+                                    <div class="colspan-2 text-33-grey">Method</div>
+                                    <div class="text-right text-33-grey capitalise"><%- transaction.method %></div>
+                                    <div class="colspan-2 text-weight-600">Total</div>
+                                    <div class="text-right text-weight-600">£<%- transaction.total %></div>
+
+                                    <% if (transaction.refund_value){ %>
+                                        <div class="my-1">£<%- transaction.refund_value %> refunded <% if (transaction.refund_method){ %>via <%- transaction.refund_method %><% } %></div>
+                                    <% } %>
+
+                                    <% if (transaction.note){ %>
+                                        <div class="mt-1 colspan-3 bg-light-grey rounded p-1 w-100"><%- transaction.note %></div>
+                                    <% } %>
+
+                                </div>
+                                <div class="action">
+                                    <% if (typeof user != "undefined" && user.guard == 'admin' || typeof user != "undefined" && user.guard == 'staff' && user.role >= 2){ %>
+                                        <a href="/dashboard/checkout/<%- transaction._key %>" class="btn border">Edit</a>
+                                    <% } %>
+                                    <a href="/dashboard/checkout/transactions/print/<%- transaction._key %>" target="print" class="btn border">Print</a>
+                                    <a app-click="emailReceipt('<%- transaction._key %>')" class="btn border">Resend</a>
+                                </div>
+                            </div>
+
+                            <% month_prev = month_curr %>
+
+                        <% }) %>
+                    </div>
+                <% } %>
+            </div>
+
+            <div class="" app-show="view.tab == 'four'">
+                <div class="grid col-2 col-s-1 mb-2 mt-2">
+                    <div class="flex flex-middle-left">
+                        <h4 class="text-primary">Uploaded Documents</h4>
+                    </div>
+                    <div class="text-right">
+
+                        <form method="post" action="/dashboard/clients/upload/<%- client_data._key %>" enctype="multipart/form-data">
+                            <input type="file" id="upload" name="upload" class="hidden hidden-m hidden-s" onchange="uploadForm()">
+                            <label for="upload" class="btn bg-secondary w-s-100 mt-s-2" id="upload_label">Add a new document <span class="icon add right white"></span></label>
+                            <input type="submit" value="Upload" class="btn bg-secondary" id="upload_submit" style="display:none">
+                        </form>
+
+                        <script>
+                            function uploadForm(){
+                                document.getElementById('upload_submit').style.display = 'inline-block'
+                                var label = document.getElementById('upload_label')
+                                label.classList.remove('bg-primary')
+                                var fullPath = document.getElementById('upload').value;
+                                if (fullPath) {
+                                    var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+                                    var filename = fullPath.substring(startIndex);
+                                    if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+                                        filename = filename.substring(1);
+                                    }
+                                    label.innerHTML = filename;
+                                }
+                            }
+                        </script>
+
+                    </div>
+
+                </div>
+
+                <div class="mt-2 appointment-wrap">
+                    <% if (typeof client_data.documents == 'object' && client_data.documents != null){ %>
+                        <% client_data.documents.forEach((document) => { %>
+
+                            <div class="appointment">
+                                <div class="date">
+                                    <div class="day"><%- functions.getMonth(document._created) %></div>
+                                    <div class="date text-small"><%- functions.getYear(document._created) %></div>
+                                </div>
+                                <div class="info">
+                                    <div class="text-bold"><%- document.name %></div>
+                                </div>
+                                <div class="text-right"><a class="btn border" href="/dashboard/clients/download/<%- document.path %>" download><i class="fas fa-download"></i></a></div>
+                            </div>
+
+                        <% }) %>
+                    <% } %>
+
+
+                </div>
+
+            </div>
+
+            <div class="" app-show="view.tab == 'five'">
+                <div class="my-2">
+                    <div class="mb-2">
+                        <h4 class="text-primary">Client Logs</h4>
+                    </div>
+                    <div>
+                        <div app-for="log in client_profile.log">
+                            <div class="text-small text-33-grey"><span app-bind="parseISODate(log.date,'D/MM/YY [-] h:mma')"></span>
+                                <span app-show="log.user.name"><br><span app-bind="log.user.name"></span></span>
+                            </div>
+                            <div class="mb-1" app-bind="log.log"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="" app-show="view.tab == 'six'" app-init="get('/dashboard/clients/memberships','prices','memberships')">
+
+                <% if (typeof membership != 'undefined'){ %>
+
+                    <div class="my-2" app-show="client_profile.membership">
+                        <div class="mb-2 grid col-2">
+                            <h4 class="text-primary">Client Membership</h4>
+                            <div class="text-right">
+                                <button class="btn bg-secondary" id="<%- membership.id %>" app-click="unsubscribe('<%- client_data._key %>','<%- membership.id %>')">Cancel Membership<span class="icon close white right"></span></button>
+                                <button class="btn border transparent-2" id="wait-<%- membership.id %>" style="display: none">Please wait...</button>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-2 rounded grid col-12 text-small">
+
+                            <div class="colspan-2 text-weight-600">Membership</div><div class="colspan-10 capitalise"><%- membership.items.data[0].plan.nickname %></div>
+                            <div class="colspan-2 text-weight-600">Amount</div><div class="colspan-10 capitalise">£<%- (membership.items.data[0].plan.amount/100).toFixed(2) %> every <% if (membership.items.data[0].plan.interval_count > 1){ %><%- membership.items.data[0].plan.interval_count %> <%- membership.items.data[0].plan.interval %>s<% } else { %><%- membership.items.data[0].plan.interval %><% } %></div>
+                            <div class="colspan-2 text-weight-600">Status</div><div class="colspan-10 capitalise"><%- membership.status %></div>
+                            <div class="colspan-2 text-weight-600">Membership Start</div><div class="colspan-10 capitalise"><%- moment.unix(membership.created).format('dddd Do MMMM YYYY') %></div>
+                            <div class="colspan-2 text-weight-600">Collection Method</div><div class="colspan-10 capitalise"><%- membership.collection_method %></div>
+
+                        </div>
+                    </div>
+
+                <% } %>
+
+                    <div class="my-2" app-hide="client_profile.membership">
+                        <div class="mb-2">
+                            <h4 class="text-primary">Memberships</h4>
+                        </div>
+                        <div>
+                            <div app-for="mbshp in memberships" class="mb-05 bg-white p-2 rounded grid col-2">
+                                <div class="flex flex-middle-left flex-column capitalise">
+                                    <div class="text-weight-600" app-bind="mbshp.name"></div>
+                                    <div app-bind="mbshp.description"></div>
+                                </div>
+                                <div class="text-right">
+                                    <button class="btn bg-secondary" app-attr="{'id':mbshp._key}" app-click="subscribe('','<%- client_data._key %>',mbshp._key)">Subscribe<span class="icon cardpayment white right"></span></button>
+                                    <button class="btn border transparent-2" app-attr="{'id':'wait-'+mbshp._key}" style="display: none">Please wait...</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+            </div>
+
+        </div>
+
+
+        </div>
+
+    </div>
+
+    <%- include('../../dashboard/partials/modal/client_notes.ejs') %>
+    <%- include('../../dashboard/partials/modal/client_profile.ejs') %>
+    <%- include('../../dashboard/partials/modal/consultation.ejs') %>
+
+    <div class="modal" app-show="view.modal == 'send'" anim="{'enter':'fade-in'}">
+
+        <div class="modal-body" anim="{'enter':'move-up','duration':'0.2'}">
+
+            <div class="grid col-12 pb-1 gap-2">
+                <div class="colspan-11">
+                    <h4 class="text-light">
+                        Receipt will be emailed to the customers current email address. Ok to send?
+                    </h4>
+                </div>
+                <div class="text-right">
+                    <h4 class="close-icon text-light clickable" onclick="modalCloseAll()">&times;</h4>
+                </div>
+
+            </div>
+            <div class="grid col-2 pb-1 gap-2">
+                <div class="text-right pt-1">
+                    <a class="btn w-100" app-click="modalCloseAll()">
+                        Cancel
+                    </a>
+                </div>
+
+                <div class="text-right pt-1">
+                    <a class="btn bg-secondary w-100" app-click="emailReceipt()">
+                        Send
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="modal" app-show="view.modal == 'send_notification'" anim="{'enter':'fade-in'}">
+
+        <div class="modal-body" anim="{'enter':'move-up','duration':'0.2'}">
+
+            <div class="grid col-12 pb-1 gap-2">
+                <div class="colspan-11">
+                    <h4 class="text-light">
+                        Send a notification
+                    </h4>
+                </div>
+                <div class="text-right">
+                    <h4 class="close-icon text-light clickable" onclick="modalCloseAll()">&times;</h4>
+                </div>
+
+            </div>
+            <textarea app-model="view.client_notification_msg" autofocus></textarea>
+            <div class="my-1 flex">
+                <% if (typeof client_data != 'undefined' && client_data.tel && client_data.tel.match(/^(07|\+447)/)){ %>
+                    <button class="btn border mr-1 flex-none" app-click="view.client_notification_method = 'sms'" app-class="{'bg-secondary':view.client_notification_method == 'sms'}">Via SMS</button>
+                <% } %>
+                <button class="btn border flex-none" app-click="view.client_notification_method = 'email'" app-class="{'bg-secondary':view.client_notification_method == 'email'}">Via Email</button>
+                <div class="flex-1 text-right" app-class="{'text-33-red':view.client_notification_msg.length > '160'}" app-bind="view.client_notification_msg.length"></div>
+            </div>
+            <div class="grid col-2 pb-1 gap-2">
+                <div class="text-right pt-1">
+                    <a class="btn border w-100" onclick="modalCloseAll()">
+                        Cancel
+                    </a>
+                </div>
+
+                <div class="text-right pt-1">
+                    <a class="btn bg-secondary w-100" app-click="sendSMS()">
+                        Send
+                        <span class="icon message right white"></span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>

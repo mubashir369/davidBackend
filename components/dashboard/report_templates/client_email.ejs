@@ -1,0 +1,7 @@
+<% if (typeof result != 'undefined'){ %>
+    <h4 class="text-light mb-1">Report Complete</h4>
+    <p class="mb-1">Please click the button below to download the client list</p>
+    <a href="<%- result %>" class="btn bg-secondary thick" download>Download Client List</a>
+    <% } else { %>
+        No file generated: <%- error %>
+    <% } %>

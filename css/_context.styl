@@ -1,0 +1,106 @@
+.context {
+
+    &.dropdown {
+        position: absolute;
+        left: 0;
+        right:auto;
+        top: 0;
+        min-width: 9rem;
+        background-color: white;
+        font-size: 0.875rem !important;
+        padding: 0.938rem;
+        color: $brand-black;
+        border-radius: 0.250em;
+        -webkit-box-shadow: 0px 20px 15px 0px rgba(0,0,0,0.26);
+        -moz-box-shadow: 0px 20px 15px 0px rgba(0,0,0,0.26);
+        box-shadow: 0px 20px 15px 0px rgba(0,0,0,0.26);
+        z-index: 750;
+
+        transition: max-height 0.4s, box-shadow 0.2s;
+
+        &.open {
+            padding:0;
+            max-height: 999px;
+            overflow: hidden;
+        }
+
+        &.closed {
+            box-shadow: none;
+            padding:0;
+            max-height:0;
+            overflow: hidden;
+        }
+
+        &.right {
+            left: auto;
+            right:0;
+        }
+
+        .link {
+            display: block;
+            cursor: pointer;
+            font-weight: 400;
+
+            &:hover {
+                span.icon {
+                    background-color: $brand-secondary
+                }
+            }
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+
+        .spacer {
+            border-bottom: 1px solid #E8E8E8;
+            margin: 0.4rem 0;
+        }
+
+        .icon {
+            margin-left: 0;
+        }
+    }
+
+}
+
+.appointment .context.dropdown {
+    left: auto;
+    right: 0;
+    top: 2rem;
+
+    @media small {
+        right: 0;
+    }
+}
+
+.context-link + .context {
+    min-width:12rem;
+    top: 2.188rem;
+    padding: 0.375rem;
+
+    @media small {
+        min-width:70vw;
+    }
+
+    .link {
+        opacity: 1;
+        border-radius: 0.250em;
+        padding: 0.4rem 0.625rem;
+        margin-bottom: 0;
+
+        &:hover {
+            background-color: $bg-light-grey;
+            opacity: 1
+        }
+
+    }
+}
+
+.cell .btn + .context {
+    left: auto;
+    right:0;
+    top: 2.7rem;
+    border: 1px solid #f2f2f2;
+    border-top:none;
+}

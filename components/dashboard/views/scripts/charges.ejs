@@ -1,0 +1,145 @@
+<script>
+  extendedController = function () {
+    scope.updateCafeCharge=function(){
+        
+    }
+    // let form = document.getElementById("updateCafeCharge");
+    // let formSalon = document.getElementById("updateSalonCharge");
+    // form.addEventListener("submit", (e) => {
+    //   e.preventDefault();
+    //   let formData = new FormData(form);
+    //   let vat = formData.get("vat");
+    //   let delivery = formData.get("delivery");
+    //   let body = {
+    //     vat,
+    //     delivery,
+    //   };
+    //   let url = `/api/cafeproducts/updateCharge`;
+    //   http("post", url, body).then((data) => {
+    //     window.location.reload()
+    //   });
+    // });
+    // formSalon.addEventListener("submit", (e) => {
+    //   e.preventDefault();
+    //   let formData = new FormData(formSalon);
+    //   let vat = formData.get("vat");
+    //   let delivery = formData.get("delivery");
+    //   let body = {
+    //     vat,
+    //     delivery,
+    //   };
+    //   let url = `/api/products/updateCharge`;
+    //   http("post", url, body).then((data) => {
+    //     // window.location.reload()
+    //   });
+    // });
+  
+
+    scope.setValue = (v, type, charge, id) => {
+      if (type == "cafe") {
+        if (charge == "vat") {
+          scope.cafe_vat = {
+            id: id,
+            value: v,
+          };
+        } else if (charge == "delivery") {
+          scope.cafe_delivery = {
+            id: id,
+            value: v,
+          };
+        }
+      } else if ((type = "salon")) {
+        if (charge == "vat") {
+          scope.salon_vat = {
+            id: id,
+            value: v,
+          };
+        } else if (charge == "delivery") {
+          scope.salon_delivery = {
+            id: id,
+            value: v,
+          };
+        }
+      }
+    };
+    
+    scope.parsePrice = function (price) {
+      if (!isNaN(parseFloat(price))) {
+        return "£" + parseFloat(price).toFixed(2);
+      } else {
+        return "£0.00";
+      }
+    };
+  
+ 
+    scope.updateProductCharges = function (product, type, charge, val) {
+      if (type == "cafe") {
+        let url = `/api/cafeproducts/updateCharge`;
+
+        if (isNaN(parseInt(scope.cafe_vat.value))) {
+          scope.cafe_vat.value = 0;
+        }
+        if (isNaN(parseInt(scope.cafe_delivery.value))) {
+          scope.cafe_delivery.value = 0;
+        }
+
+        scope.cafe_delivery.value =
+          scope.cafe_delivery.id == product._id ? scope.cafe_delivery.value : 0;
+        scope.cafe_vat.value =
+          scope.cafe_vat.id == product._id ? scope.cafe_vat.value : 0;
+        let body = {
+          id: product._id,
+          type: charge,
+          vat: scope.cafe_vat.value || 0,
+          delivery: scope.cafe_delivery.value || 0,
+        };
+        if (
+          scope.cafe_vat.id == product._id ||
+          scope.cafe_delivery.id == product._id
+        ) {
+          http("post", url, body).then((data) => {
+            // console.log("get data",data);
+            window.location.reload();
+          });
+        }
+      } else if (type == "salon") {
+        let url = `/api/products/updateCharge`;
+        if (isNaN(parseInt(scope.salon_vat.value))) {
+          scope.salon_vat.value = 0;
+        }
+        if (isNaN(parseInt(scope.salon_delivery.value))) {
+          scope.salon_delivery.value = 0;
+        }
+        scope.salon_delivery.value =
+          scope.salon_delivery.id == product._id
+            ? scope.salon_delivery.value
+            : 0;
+        scope.salon_vat.value =
+          scope.salon_vat.id == product._id ? scope.salon_vat.value : 0;
+        let body = {
+          id: product._id,
+          type: charge,
+          vat: scope.salon_vat.value || 0,
+          delivery: scope.salon_delivery.value || 0,
+        };
+        if (
+          scope.salon_vat.id == product._id ||
+          scope.salon_delivery.id == product._id
+        ) {
+          http("post", url, body).then((data) => {
+            // console.log("get data",data);
+            window.location.reload();
+          });
+        }
+      }
+    };
+    scope.getAllSalonProduct = function () {
+      let url = `/api/products`;
+      http("get", url).then((data) => {
+        data = JSON.parse(data);
+        console.log("get data", data);
+        scope.salon_products = data;
+      });
+    };
+  };
+</script>

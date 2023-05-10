@@ -1,0 +1,398 @@
+<% layout('customer-page-booking.ejs') -%>
+
+<% if (typeof appt_key != 'undefined'){ %>
+    <div class="hidden" app-init="bookInit('<%- appt_key %>')"></div>
+<% } else { %>
+    <div class="hidden" app-init="bookInit()"></div>
+<% } %>
+
+
+<div class="contain">
+
+<% if (typeof user._key != 'undefined' && user.guard == 'customer'){ %>
+
+    <div class="hidden" app-init="newAppointment('add_customer','<%- user._key %>')"></div>
+
+<% } else { %>
+
+    <div app-show="view.page == 'customer'">
+
+        <div class="title"><h2>Book an appointment</h2></div>
+
+        <div class="login grid">
+
+            <div class="new-client">
+                <h3 class="mb-1">First time with us?</h3>
+                <p class="mb-2">We just need these details to get started…</p>
+                <div class="mb-1">
+                    <input type="text" class="thick border" app-model="view.customer.name" placeholder="Your full name *" name="name" autocomplete="name" required>
+                </div>
+                <div class="mb-1">
+                    <input type="text" class="thick border" app-model="view.customer.tel" placeholder="Mobile number *" name="tel" autocomplete="tel" required>
+                </div>
+                <div class="mb-1">
+                    <input type="email" class="thick border" app-model="view.customer.email" placeholder="Email address" name="email" autocomplete="email">
+                </div>
+
+                <div class="text-right mt-2">
+                    <button class="btn bg-secondary w-s-100" app-show="view.add_customer" app-click="newAppointment('add_customer')">Start booking <span class="icon arrowright white right"></span></button>
+                </div>
+            </div>
+
+            <div class="existing-client">
+                <h3 class="mb-1">Existing Clients</h3>
+                <p>If you have booked with us before, you can log in to your account to make and manage your appointments</p>
+                <a href="/login" class="btn outline mt-1 w-s-100">Log In</a>
+            </div>
+
+        </div>
+
+    </div>
+
+<% } %>
+
+    <div class="" app-show="view.page == 'service'">
+
+        <div class="title"><h2>Welcome</h2></div>
+
+        <div class="stylist-select p-2" app-click="selectService('colour')">
+
+            <div class="flex flex-middle-right">
+                <div class="flex-none mr-2"><span class="icon color secondary xl"></span></div>
+                <div class="flex-3 text-weight-600"><h3>Choose a colour service</h3></div>
+            </div>
+
+        </div>
+
+        <div class="stylist-select p-2" app-click="selectService('cut')">
+
+            <div class="flex flex-middle-right">
+                <div class="flex-none mr-2"><span class="icon stylist secondary xl"></span></div>
+                <div class="flex-3 text-weight-600"><h3>Choose a cut</h3></div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="" app-show="view.page == 'colour'">
+
+        <div class="title"><div class="back-link"><a app-click="view.page = 'service'""><span class="icon arrowleft black left"></span><span class="text">Services</span></a></div><h2>Choose your colour service</h2></div>
+
+         <div class="relative layer-5">
+            <div class="">
+                <div class="service grid col-5 col-s-3" app-for="c_service in filteredServices" app-click="newAppointment('add_service',c_service)">
+                    <div class="colspan-3 colspan-s-5 flex flex-middle-left">
+                        <h4 app-bind="c_service.name" class="text-weight-600"></h4>
+                    </div>
+                    <div class="flex flex-middle-right flex-middle-left-s colspan-s-5 text-light text-right text-left-s">
+                        <span app-bind="c_service.duration"></span>mins,&nbsp;from £<span app-bind="c_service.from_price"></span>
+                    </div>
+                    <div class="flex flex-middle-right text-right hidden-s">
+                        <button class="btn round bg-secondary"><span class="icon arrowright white"></span></button>
+                    </div>
+                    <div class="colspan-5 mt-1 hidden-s" app-bind="c_service.description" app-show="c_service.description"></div>
+                    <div class="hidden hidden-m colspan-5 text-right mt-2 mt-s-1">
+                        <button class="btn w-100 bg-secondary">Select <span class="icon arrowright white right"></span></button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="text-right my-2" app-show="appointments.length">
+            <button class="btn bg-secondary" app-click="view.page = 'book'">Continue to Book <span class="icon arrowright white right"></span></button>
+        </div>
+
+    </div>
+
+
+    <div class="" app-show="view.page == 'cut'">
+
+        <div class="title"><div class="back-link"><a app-click="view.page = 'service'""><span class="icon arrowleft black left"></span><span class="text">Services</span></a></div><h2>Choose your cut</h2></div>
+
+        <div class="relative">
+            <div class="tabs fade bg-white rounded pt-1 px-2" style="width:100%">
+                <a app-for="category in salon.categories" app-bind="category.name" app-click="serviceFilter({{index}})" class="categories" app-attr="{'id':'cat-'+{{index}}}"></a>
+            </div>
+        </div>
+
+         <div class="relative layer-5">
+            <div class="">
+                <div class="service grid col-5 col-s-3" app-for="service in filteredServices" app-click="newAppointment('add_service',service)">
+                    <div class="colspan-3 colspan-s-5 flex flex-middle-left">
+                        <h4 app-bind="service.name" class="text-weight-600"></h4>
+                    </div>
+                    <div class="flex flex-middle-right flex-middle-left-s colspan-s-5 text-light text-right text-left-s">
+                        <span app-bind="service.duration"></span>mins&nbsp;&nbsp;&nbsp;From £<span app-bind="service.from_price"></span>
+                    </div>
+                    <div class="flex flex-middle-right text-right hidden-s">
+                        <button class="btn round bg-secondary"><span class="icon arrowright white"></span></button>
+                    </div>
+                    <div class="colspan-5 mt-1 hidden-s" app-bind="service.description" app-show="service.description"></div>
+                    <div class="hidden hidden-m colspan-5 text-right mt-2 mt-s-1">
+                        <button class="btn w-100 bg-secondary">Select <span class="icon arrowright white right"></span></button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="text-right my-2" app-show="appointments.length">
+            <button class="btn bg-secondary" app-click="view.page = 'book'">Continue to Book <span class="icon arrowright white right"></span></button>
+        </div>
+
+    </div>
+
+    <div class="" app-show="view.page == 'customer_note'">
+
+        <div class="back-link"><a app-click="selectService()"><span class="icon arrowleft black left"></span><span class="text">Services</span></a></div>
+
+        <div class="mt-2 bg-white rounded-bottom p-2 px-s-1"">
+
+            <div class="flex flex-row">
+                <div class="flex-1"><span class="icon noshow secondary xl"></span></div>
+                <div class="flex-9 flex-s-6">
+                    <h3 class="text-normal mb-1">Skin test required</h3>
+                    <span app-show="view.skin_test_required == 'true'">This service requires a skin test, to make sure our products are safe to use on your skin. A skin test can be arranged 48 hours before your appointment, either by post or coming into the salon.</span>
+                    <span app-hide="view.skin_test_required == 'true'">This service requires a skin test, however our records show your last skin test was on <span class="text-secondary" app-bind="parseISODate(view.selected_customer.skin_test,'Do MMMM YYYY')"></span>. You can request a new skin test, or tick the box at the bottom to confirm you don't need one.</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- <p class="mt-2 italic text-weight-500">Some information about your service</p>
+        <p class="mb-2 italic text-light" app-bind="new_appointment.service.required_information"></p> -->
+
+        <div class="px-2 pb-2 px-s-0 mt-2">
+            <!-- <div class="text-center">
+                <textarea app-model="new_appointment.note" placeholder="Add any relevant information here..."></textarea>
+            </div> -->
+            <p class="text-weight-600">Please post a skin test to</p>
+            <input type="text" app-model="view.selected_customer.address.line1" placeholder="Address Line 1" class="rounded mb-1" autocomplete="address-line1">
+            <input type="text" app-model="view.selected_customer.address.line2" placeholder="Address Line 2" class="rounded mb-1" autocomplete="address-line2">
+            <input type="text" app-model="view.selected_customer.address.town" placeholder="Town / City" class="rounded mb-1" autocomplete="city">
+            <input type="text" app-model="view.selected_customer.address.county" placeholder="County" class="rounded mb-1" autocomplete="address-level1">
+            <input type="text"  app-model="view.selected_customer.address.postcode" placeholder="Postcode" class="rounded mb-1" autocomplete="postal-code">
+
+            <p class="text-weight-600 mt-1">I'll collect a skin test</p>
+            <div class="flex flex-row mt-1">
+                <div class="flex-1"><input id="skin-test-collection" name="skin-test-collection" type="checkbox" app-click="new_appointment.skin_test_collection = !new_appointment.skin_test_collection" class="border"></div>
+                <div class="flex-9 flex-s-6">
+                    <label for="skin-test-collection" class="italic">I'll visit the salon to collect the skin test</label>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="px-2 pb-2 px-s-0 mt-1" app-show="view.skin_test_required == 'false'">
+            <p class="text-weight-600">I've had a skin test recently</p>
+
+            <div class="flex flex-row mb-1">
+
+                <div class="flex-1"><input type="checkbox" id="skin-test-confirm" name="skin-test-confirm" app-click="new_appointment.skin_test = !new_appointment.skin_test" class="border"></div>
+                <div class="flex-9 flex-s-6">
+                    <label for="skin-test-confirm" class="italic">I confirm that I have had a skin test in the past 6 months and understand that the salon cannot be held responsible for any reaction caused by this treatment</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- <div class="mb-2">
+            <div class="text-center">
+                <textarea app-model="new_appointment.note" class="border" placeholder="Add any relevant information here..."></textarea>
+            </div>
+        </div> -->
+
+        <div class="grid col-2">
+            <div class="text-left">
+                <a class="btn border" app-click="view.page = 'service'">Cancel<span class="icon close right black"></span></a>
+            </div>
+
+            <div class="text-right">
+                <button class="btn bg-secondary" app-click="skinTest()">Next <span class="icon arrowright white right"></span></button>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="" app-show="view.page == 'date'">
+
+        <div class="title"><div class="back-link"><a app-click="selectService()"><span class="icon arrowleft black left"></span><span class="text">Service</span></a></div><h2>Choose your date</h2></div>
+
+        <div class="mb-2">
+            <div class="text-center">
+                <%- include partials/date-picker.ejs %>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="mb-3" app-show="view.page == 'staff'">
+
+        <div class="title"><div class="back-link"><a app-click="view.page = 'date'"><span class="icon arrowleft black left"></span><span class="text">Dates</span></a></div><h2>Choose your stylist</h2></div>
+
+        <div class="relative layer-3 mb-2">
+
+            <div class="" id="context-select_stylist">
+
+                <div class="stylist-select" app-for="member in filteredStaff" app-click="newAppointment('add_stylist',member)" app-class="{'selected':new_appointment.staff_id == member._key}">
+
+                    <div class="flex flex-middle-right">
+                        <div class="flex-none mr-2"><img app-src="member.avatar" class="avatar sm" src="/images/avatars/Profile_Placeholder.svg"></div>
+                        <div class="flex-1 text-weight-600" app-bind="parseName(member.name)"></div>
+                        <div class="flex-1 text-right">From £<span app-bind="getPrice(member.level)"></span></div>
+                        <div class="flex-1 text-right hidden-s"><a class="btn bg-secondary">Show Availability <span class="icon time white right"></span></a></div>
+                    </div>
+
+                </div>
+
+                <div class="stylist-select" app-show="filteredStaff.length == 0">
+
+                    <div class="flex flex-middle-right">
+                        <div class="flex-1">Unfortunately there's no stylists available for this service</div>
+                        <div class="flex-none text-right py-1"><a class="btn bg-secondary" app-click="view.page = 'service'">Choose another service <span class="icon arrowright white right"></span></a></div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <div id="select_dates"></div>
+
+        <div app-show="view.available_dates">
+
+            <h4 class="text-light mb-1">We can't find any available slots with <span app-bind="new_appointment.staff_name"></span> on <span app-bind="view.appointment_date_parse"></span>. Are any of the following dates suitable?</h4>
+
+            <div class="relative layer-2 mb-2 mt-2">
+                <div class="table item-list">
+                    <div class="row clickable" app-for="available_date in available_dates" app-class="{'selected':selected_date.full == available_date.date}">
+                        <div class="cell" app-click="selectDate(available_date.date)">
+                            <div class="flex" style="font-size: 1rem;">
+                                <div class="flex-1"><span class="icon calendar secondary left"></span><span app-bind="parseISODate(available_date.date,'long_day')"></span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div app-show="new_appointment.staff_id">
+
+            <div app-hide="view.available_dates">
+
+                <div class="flex hidden-s">
+                    <div class="flex-1 text-light mb-1 text-primary">Choose your time on <span app-bind="view.appointment_date_parse"></span> with <span app-bind="new_appointment.staff_name"></span></div>
+                    <a class="flex-none text-secondary" app-click="view.page = 'date'">Change your date</a>
+                </div>
+
+
+                <div class="hidden hidden-m">
+                    <div class="text-light mb-1 text-primary">Choose your time on <span app-bind="view.appointment_date_parse"></span> with <span app-bind="new_appointment.staff_name"></span></div>
+                </div>
+
+                <div class="relative layer-2 mb-2">
+
+                    <div class="time-list flex" app-hide="avail_hours.length == 0">
+                        <div class="time" app-for="hr in avail_hours" app-click="newAppointment('set_start',hr)">
+                            <div><span class="icon time secondary left"></span><span app-bind="hr.time_12"></span></div>
+                        </div>
+                    </div>
+
+                    <div class="flex clickable mt-1 mb-5" app-click="noStylist()" app-show="avail_hours.length == 0" >
+                        <div class="flex-none flex flex-middle">
+                            <span class="icon calendar secondary left"></span>
+                        </div>
+                        <div class="flex-1 text-grey italic">Unfortunately we can't fit you in with <span app-bind="new_appointment.staff_name">your chosen stylist</span>, please select another stylist or try another date.</div>
+                    </div>
+
+                </div>
+
+                <div class="hidden hidden-m">
+                    <a class="text-secondary" app-click="view.page = 'date'">Change your date</a>
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <div class="" app-show="view.page == 'book'">
+
+        <div class="title"><h2>Confirm your booking</h2></div>
+
+        <div class="table">
+            <div class="grid col-12 gap-1 mb-1 bg-white rounded p-2" app-for="appointment_grp in visual_appointments">
+
+                <div><span class="icon time secondary xl"></span></div>
+
+                <div class="colspan-9 colspan-s-11">
+                    <h3 app-bind="appointment_grp.date" class="text-normal mb-1"></h3>
+                    <span class="text-weight-600" app-bind="appointment_grp.name"></span>
+                    <div app-hide="appointment_grp.service_items">
+                        with <span class="" app-bind="appointment_grp.staff_name"></span><br>
+                        Approx. <span class="" app-bind="appointment_grp.duration"></span>mins
+                    </div>
+                </div>
+
+
+                <div class="colspan-2 colspan-s-12 clickable text-right">
+
+                    <div class="mb-1">
+                        <a class="text-secondary text-weight-600" app-click="newAppointment('remove',{{index}})">Remove</a>
+                    </div>
+                    <!-- <div class="hidden-s">From £<span app-bind="appointment_grp.price"></span></div> -->
+
+                </div>
+
+            </div>
+
+            <div class="flex flex-middle mb-1 bg-white rounded py-4" app-show="visual_appointments.length == 0">
+
+                <h3 class="text-normal">You have no services selected.</h3>
+                <button class="ml-2 btn bg-secondary" app-click="storeNewAppointment('cancel')">Choose a service <span class="icon arrowright white right"></span></button>
+
+            </div>
+
+        </div>
+
+        <a app-show="view.service_type == 'colour'" class="add-cut-service" app-click="selectService('cut')">Next, add your cut <span class="icon add secondary right"></span></a>
+
+        <a class="mt-1 mb-2 text-right" app-hide="view.service_type == 'colour'" app-click="selectService('cut')">Add Another Service <span class="icon add secondary right"></span></a>
+
+        <textarea class="border bg-none" app-model="new_appointment.note" placeholder="Add any notes to this booking..."></textarea>
+
+        <div class="flex flex-row my-1">
+
+            <div class="flex-1"><input type="checkbox" id="confirm-tc" name="confirm-tc" app-click="new_appointment.confirm_tc = !new_appointment.confirm_tc" class="border"></div>
+            <div class="flex-9 flex-s-6">
+                <label for="confirm-tc" class="text-black font-weight-600">Tick this box to confirm you have read and agree to the booking <a href="https://www.davidrozman.co.uk/termsandconditions" target="terms" class="text-secondary">terms and conditions</a></label>
+            </div>
+        </div>
+
+
+        <div class="my-2 grid col-2 col-s-1 gap-2">
+            <div class="hidden-s">
+                <button class="btn border" app-click="storeNewAppointment('cancel')">Cancel <span class="icon close black right"></span></button>
+            </div>
+            <div class="flex flex-middle-right" app-show="new_appointment.confirm_tc">
+                <button class="btn bg-secondary w-s-100" app-show="view.ok_to_book" app-click="newAppointment('save')">Send Booking Request <span class="icon arrowright white right"></span></button>
+            </div>
+
+            <div class="flex flex-middle-right" app-hide="new_appointment.confirm_tc">
+                <button class="btn bg-secondary w-s-100 transparent-1" app-show="view.ok_to_book" app-click="notify('Please read and accept our terms and conditions','error')">Send Booking Request <span class="icon arrowright white right"></span></button>
+            </div>
+
+            <div class="hidden hidden-m">
+                <button class="btn border w-s-100" app-click="storeNewAppointment('cancel')">Cancel <span class="icon close black right"></span></button>
+            </div>
+        </div>
+
+    </div>

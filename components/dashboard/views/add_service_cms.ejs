@@ -1,0 +1,269 @@
+
+<% layout('dashboard.ejs') -%>
+
+<%- include ../../dashboard/partials/header.ejs %>
+
+<div class="page px-2 px-s-0 bg-white common-form common-form-border " app-init="get('services_cms_data','<%-service_id%>')">
+            
+             <!-- --------------Price ------------- -->
+             <div class="">
+                
+                <div class="list-item-wrap">
+                    <!--div class="text-right mb-2">
+                        <button onclick="ShowHide()" class="dp-btn bg-primary">Add New <span class="icon add white right"></span></button>
+                    </div-->
+                    <div class="grid col-12 table-header text-white row py-1">
+                        <div class="cell middle colspan-2 pl-1">
+                            <div>Service Icon </div>
+                        </div>
+                        <div class="cell middle colspan-4 text-left"><div>Service Name</div></div>
+                        <div class="cell middle colspan-2 text-left"><div>Service Slug</div></div>
+                    </div>
+                    <div class="divider mb-1"></div>
+
+                    <div class="grid gap-1 col-12 mb-1 ">
+                        <div class="colspan-2">
+                            <label for="iconImg" class="clickable">   
+                                <img src="/images/products/upload.svg" app-src="services_cms_data.icon" class="object-fit">
+                            </label>
+                            <input type="file" app-model="services_cms_data.icon" id="iconImg" class="app-hidden">
+                        </div>
+                        <div class="colspan-4 cell middle">
+                            <input type="text" app-model="services_cms_data.name" placeholder="Service Name" class="" value="<%-service_name%>" disabled />
+                            <input type="hidden" app-model="services_cms_data.service_id" value="<%-service_id%>" />
+                            <input type="hidden" app-model="services_cms_data._key" />
+                        </div>
+                        <div class="colspan-4 cell middle text-right">
+                            <input type="text" app-model="services_cms_data.slug" placeholder="Service Slug" class="">
+                        </div>
+                        <!--div class="colspan-1 text-center ">
+                            <a class="" ><span class="icon close black right"></span></a>
+                        </div-->
+
+
+                        <div class="divider mb-1 colspan-12"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="list-item-wrap pt-0" id="">
+                <div class="text-small">
+                    <div class="grid col-12 text-white gap-1 py-1">
+                        <div class="cell middle colspan-2 ">
+
+                        <div class="text-black">Icon</div>
+                            <label for="HeaderImg" class="clickable">   
+                                <img src="/images/products/upload.svg" app-src="services_cms_data.image1" class="object-fit">
+                            </label>
+                            <input type="file" app-model="services_cms_data.image1" id="HeaderImg" class="app-hidden">
+                       
+
+
+                            <!-- <div class="bg-white box-shadow p-1 radius-10 border"> -->
+                                <div class="text-black">Header Image</div>
+                                <label for="HeaderImg2" class="clickable mt-1">   
+                                    <img src="/images/products/upload.svg" app-src="services_cms_data.image2" class="object-fit">
+                                </label>
+                                <input type="file" app-model="services_cms_data.image2" id="HeaderImg2" class="app-hidden">
+                            <!-- </div> -->
+
+
+                        </div>
+                        <div class="cell middle colspan-10">
+                            <div class="grid col-12 row gap-1">
+                                <div class="cell middle colspan-12">
+                                    <h4 class="text-weight-700 text-black mb-1">Heading 1</h4>
+                                    <div class="divider  p-0"></div>
+                                </div>
+                                <div class="cell middle colspan-6">
+                                    <div class="text-black">Heading  </div>
+                                    <input type="text" placeholder="Heading" app-model="services_cms_data.heading_1">
+                                </div>
+                                <div class="cell middle colspan-6">
+                                        <div class="text-black">Description </div>
+                                        <textarea  app-model="services_cms_data.description_1" placeholder="Description" class="text-left"></textarea>
+                                </div>
+                            </div>
+                            <div class="grid col-12 row gap-1">
+                                <div class="cell middle colspan-12">
+                                    <h4 class="text-weight-700 text-black mb-1">Heading 2</h4>
+                                    <div class="divider  p-0"></div>
+                                </div>
+                                <div class="cell middle colspan-6">
+                                    <div class="text-black">Heading  </div>
+                                    <input type="text" placeholder="Heading" app-model="services_cms_data.heading_2">
+                                </div>
+                                <div class="cell middle colspan-6">
+                                        <div class="text-black">Description </div>
+                                        <textarea app-model="services_cms_data.description_2" placeholder="Description" class="text-left"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="colspan-12">
+                            <div class="divider mb-2 p-0"></div>
+                        </div>
+                        <!-- <div class="cell middle colspan-12"> <div class="divider"></div> </div> -->
+                        <div class="cell middle colspan-12">
+                            <div class="p-0">
+                                <h4 class="text-weight-700 text-black mb-1">Other Heading</h4>
+                                <div class="divider mb-2 p-0"></div>
+                            </div>
+                            <div class="grid col-12 text-white gap-1 py-1">
+                                <div class="cell middle colspan-2">
+                                    <label for="OtherHeading" class="clickable">   
+                                        <img src="/images/products/upload.svg" app-src="services_cms_data.image3" class="object-fit">
+                                    </label>
+                                    <input type="file" app-model="services_cms_data.image3" id="OtherHeading" class="app-hidden">
+                                </div>
+                                <div class="cell middle colspan-4">
+                                    <input type="text" app-model="services_cms_data.heading_3" placeholder="Other Heading" class="">
+                                </div>
+                                <div class="cell middle colspan-6">
+                                    <textarea app-model="services_cms_data.description_3" placeholder="Description" class="text-left"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+               
+                
+                <!-- --------------Price ------------- -->
+                <!-- <div class="bg-white box-shadow p-2 radius-10 border">
+                    <div class=" p-0">
+                        <h4 class="text-weight-700 mb-1">Price</h4>
+                        <div class="divider mb-2 p-0"></div>
+                    </div>
+                    <div class="list-item-wrap">
+                        <div class="grid col-12 table-header text-white row py-1">
+                            <div class="cell middle colspan-4 pl-1">
+                                <div>Service Name </div>
+                            </div>
+                            <div class="cell middle colspan-2 "><div>Senior Stylist Price</div></div>
+                            <div class="cell middle colspan-2 "><div>Executive Stylist Price</div></div>
+                            <div class="cell middle colspan-2  "><div>David Rozman Price</div></div>
+                        </div>
+                        <div class="divider mb-1"></div>
+
+                        <div app-for="price_items in services_cms_data.service_prices" class="grid gap-1 col-12 mb-1 addPlusCard">
+                            <div class="text-bold colspan-4">
+                                <input type="text" app-model="price_items.name" placeholder="Service Name" class="">
+                            </div>
+                            <div class="colspan-2">
+                                <input type="text" app-model="price_items.senior_price" placeholder="0.00" class="">
+                            </div>
+                            <div class="colspan-2">
+                                <input type="text" app-model="price_items.exe_price" placeholder="0.00" class="">
+                            </div>
+                            <div class="colspan-2">
+                                <input type="text" app-model="price_items.david_price" placeholder="0.00" class="">
+                            </div>
+                            <div class="colspan-2 text-center flex flex-middle-right">
+                                <a class="" app-click="price_itemsBtn('remove',{{index}})"><span class="icon close black right"></span></a>
+                            </div>
+
+
+                            <div class="divider mb-1 colspan-12"></div>
+                        </div>
+                    </div>
+                    <div class="text-left my-1">
+                        <button class="dp-btn bg-primary" app-click="price_itemsBtn()">Add Service and Price<span class="icon add white right"></span></button>
+                    </div>
+                </div> -->
+
+                <!-- --------------Chhose Style ------------- -->
+                <div class="bg-white box-shadow p-2 radius-10 border mt-2">
+                    <div class="p-0">
+                        <h4 class="text-weight-700 mb-1">CHOOSE YOUR STYLE</h4>
+                        <div class="divider mb-2 p-0"></div>
+                    </div>
+                    <div class="p-0">
+                        <div class="colspan-12">
+                            <div class="text-black">Main Description  </div>
+                            <textarea app-model="services_cms_data.ChooseStyle_description" placeholder="Description" class="text-left"></textarea>
+                        </div>
+                    </div>
+                    <div class="list-item-wrap">
+                        <div class="grid col-12 table-header text-white row py-1">
+                            <div class="cell middle colspan-4 pl-1">
+                                <div>Style Name </div>
+                            </div>
+                            <div class="cell middle colspan-2 "><div>Style Description</div></div>
+                        </div>
+                        <div class="divider mb-1"></div>
+
+
+                        <div app-for="ChooseStyle in services_cms_data.ChooseStyle_items" class="grid gap-1 col-12 mb-1">
+                            <div class="colspan-4">
+                                <input type="text" app-model="ChooseStyle.heading" placeholder="Heading" class="">
+                            </div>
+
+                            <div class="colspan-6">
+                                <textarea  app-model="ChooseStyle.description" placeholder="Description" class="text-left"></textarea>
+                            </div>
+
+                            <div class="colspan-2 text-right flex flex-middle-right">
+                                <a class="" app-click="choose_itemsBtn('remove',{{index}})"><span class="icon close black right"></span></a>
+                            </div>
+
+
+                            <div class="divider mb-1 colspan-12"></div>
+                        </div>
+                    </div>
+                    <div class="text-left my-1">
+                        <button class="dp-btn bg-primary" app-click="choose_itemsBtn()">Add Style<span class="icon add white right"></span></button>
+                    </div>
+                </div>
+
+                <div class="bg-white box-shadow p-2 radius-10 border mt-2">
+                    <div class="grid col-12 row gap-1">
+                        <div class="cell middle colspan-12">
+                            <h4 class="text-weight-700 text-black mb-1">Same Day Booking</h4>
+                            <div class="divider p-0"></div>
+                        </div>
+                        <div class="cell middle colspan-6">
+                            <div class="text-black">Heading  </div>
+                            <input type="text" placeholder="Heading" app-model="services_cms_data.heading_4">
+                        </div>
+                        <div class="cell middle colspan-6">
+                                <div class="text-black">Description </div>
+                                <textarea app-model="services_cms_data.description_4" placeholder="Description" class="text-left"></textarea>
+                        </div>
+
+                         <div class="cell middle colspan-6">
+                                <div class="text-black">Look Book Link </div>
+                                <input app-model="services_cms_data.lookbook_link" placeholder="" class="text-left" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="text-left my-1">
+                <button class="dp-btn bg-primary" app-click="saveServiceData()">Save</button>
+            </div>
+
+            <div class="mb-50"></div>
+ 
+</div>
+
+
+<script>
+    function ShowHide() {
+        let servItem = document.getElementById("serviceDropdown");
+        servItem.classList.add("d-block")
+        //    if (servItem.classList.contains("d-block")){
+        //         servItem.classList.remove("d-block")
+        //        }else{
+        //             servItem.classList.add("d-block")
+        //            }
+        //         console.log("ajay", {servItem})
+        //         console.log("ajay", servItem.classList.contains("d-block"))
+
+    }
+    
+</script>
+
+

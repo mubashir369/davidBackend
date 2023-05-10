@@ -1,0 +1,136 @@
+<% layout('dashboard.ejs') -%>
+
+<%- include ../../dashboard/partials/header.ejs %>
+        <form method="post" action="/dashboard/save-profile" id="formm">
+
+    <!-- <div class="hidden" app-init="get('salon','54855602')"></div> -->
+
+    <div class="page grid col-12 col-s-1 client overflow-hidden" >
+
+            
+
+            <div class="colspan-12 bg-33-light-grey pb-5">
+
+               <div class="grid col-2 gap-1">
+
+                    <div>
+
+                        <div class="grid col-4 mb-1">
+                            <!-- <div class="" app-init="new.avatar = ''" style="width: 5rem">
+                                <label>Member Image</label>
+                                <label for="image_1" class="clickable" id="fileDisplayArea">
+                               
+                                    <img src="/images/products/upload.svg" app-src="new.avatar" class="avatar radius-0">
+                               
+                                </label>
+                                <input id="image_1" type="file" name="avatar1"  app-model="new.avatar">
+                                <input type="hidden" id="avatar" name="avatar">
+                                <input type="hidden" id="updated" value="<%- isSaved%>"></input>
+                            </div> -->
+                            <div class="colspan-12 grid col-1 gap-1">
+                                <div class="colspan-6 bg-white p-2 radius-10">
+                                        <h4 class="text-primary ">Basic Detail</h4>
+                                        <div class="divider my-1"></div>
+                                    <div class="mt-1">
+                                        <label>Full Name</label>
+                                        <input type="text" name="name" placeholder="Full name" class="rounded" value="<%- user.name.first %> <%- user.name.last%>" readonly>
+                                    </div>
+
+                                    <div class="mt-1">
+                                        <label>Email</label>
+                                        <input type="text" name="email" placeholder="Email address" class="rounded" value="<%- user.email%>" readonly>
+                                        <!-- <input type="text" name="_key" placeholder="Email address" class="rounded" value="<%- user._key[0]%>" hidden readonly> -->
+                                    </div>
+                                </div>
+
+                                <div class="colspan-6 bg-white p-2 radius-10">
+                                    <h4 class="text-primary ">Change Password</h4>
+                                    <div class="divider my-1"></div>
+                                
+                                    <div class="mt-1">
+                                        <label>New password</label>
+                                        <div class="iconInput">
+                                            <input id="password1" type="password" name="password" placeholder="New Password">
+                                            <div class="iconInputIcon" onclick="passwordToggle('pass1')"><i class="fa fa-eye" aria-hidden="true"></i></div>
+                                        </div>
+                                        <!-- <input type="password" id="password1" name="password" placeholder="New Password"  class="rounded"> -->
+                                    </div>                                
+                                    <div class="mt-1">
+                                        <label>Confirm Password</label>
+                                        <div class="iconInput">
+                                            <input type="password" id="password2" name="password_conf" placeholder="Confirm Password" class="rounded" >
+                                            <div class="iconInputIcon" onclick="passwordToggle('pass2')"><i class="fa fa-eye" aria-hidden="true"></i></div>
+                                        </div>
+                                    </div>                                
+                                </div>                                
+  
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                   
+
+
+                </div>
+
+             
+
+            </div>
+
+
+        <section class="footer">
+       
+            
+          <input type="hidden" name="_key" value="">
+<button class="dp-btn bg-secondary" type="button" id="submitform" onclick="submmit()">Save <span class="icon tick right white"></span></button>
+            
+       
+        </section>
+
+
+    </div>
+                </form>
+
+
+    <script>
+        if(document.getElementById("updated").value ==="true"){
+            console.log(document.getElementById("updated").value)
+            alert("data saved successfully");
+        }
+        document.getElementById("password1").value=''
+    function submmit(){
+        if (document.getElementById("password1").value!=='' && document.getElementById("password1").value===document.getElementById("password2").value){
+        document.getElementById('formm').submit()
+        }
+        else{
+        alert("Password Not Matched");
+        return false;
+    }}
+
+
+    function passwordToggle(passField) {
+        var password1 = document.getElementById("password1");
+        var password2 = document.getElementById("password2");
+
+        switch (passField) {
+            case 'pass1':
+                password1.type === "password" ?   password1.type = "text" :  password1.type = "password" 
+                break;
+            case 'pass2':
+                password2.type === "password" ?   password2.type = "text" :  password2.type = "password" 
+                break;
+            default:
+                break;
+        }
+             
+        // if (password1.type === "password") {
+        //     password1.type = "text";
+        // } else {
+        //     password1.type = "password";
+        // }
+    }
+
+
+    </script>

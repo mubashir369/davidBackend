@@ -1,0 +1,207 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+
+    <div class="page grid col-12 col-s-1 client overflow-hidden" app-init="get('salon','54855602')">
+
+       
+
+        <div class="colspan-12 p-2 bg-light-grey">
+
+            <div class="tabs">
+                <a class="clickable" app-click="view.tab = 'one'" app-class="{'active':view.tab == 'one'}">Food Category Settings</a>
+                <a class="clickable" app-click="view.tab = 'three'" app-class="{'active':view.tab == 'three'}">Liquor Category Settings</a>
+                <!--a class="clickable" app-click="view.tab = 'five'" app-class="{'active':view.tab == 'five'}">Product Settings</a>
+                <a class="clickable" app-click="view.tab = 'four'" app-class="{'active':view.tab == 'four'}">Consultation Templates</a-->
+            </div>
+
+
+          
+
+            <div app-show="view.tab == 'one'" class="overflow-y pb-5 pr-2">
+
+                <h4 class="text-primary mt-2 mb-2">Food Categories</h4>
+
+                <div class="not-sortable list-item-wrap" app-sort="post('salon',salon)">
+                    <div class="mb-1 grid col-4 px-15 py-05 bg-white rounded">
+                        <div class="colspan-3 flex flex-middle-left">
+                            <input type="text" app-model="new.food_categories.name" class="no-style" placeholder="Type here to add a new category">
+                        </div>
+                        <div class="flex flex-middle-right"><button class="btn bg-secondary" app-click="push(salon.food_categories,new.food_categories,'salon',salon)" app-show="new.food_categories.name">Add <span class="icon add white right"></span></div>
+                    </div>
+                    <div app-for="product_category in salon.food_categories" class="grid col-4 list-item">
+                        <div class="colspan-3" app-click="view.save = 'salon'"><input type="text" app-model="product_category.name" class="no-style"></div>
+                        <div class="colspan-1 text-left"><button class="btn bg-white" app-click="splice(salon.food_categories,{{index}},'salon',salon)"><span class="icon close black"></span></button></div>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div app-show="view.tab == 'three'" class="overflow-y pb-5 pr-2">
+
+                <h4 class="text-primary mt-2 mb-2">Liquor Categories</h4>
+
+                <div class="not-sortable list-item-wrap" app-sort="post('salon',salon)">
+                    <div class="mb-1 grid col-4 px-15 py-05 bg-white rounded">
+                        <div class="colspan-3 flex flex-middle-left">
+                            <input type="text" app-model="new.liquor_categories.name" class="no-style" placeholder="Type here to add a new category">
+                        </div>
+                        <div class="colspan-1  flex flex-middle-left"><button class="btn bg-secondary" app-click="push(salon.liquor_categories,new.liquor_categories,'salon',salon)" app-show="new.liquor_categories.name">Add <span class="icon add white right"></span></div>
+                    </div>
+                    <div app-for="product_category in salon.liquor_categories" class="grid col-4 list-item">
+                        <div class="colspan-3" app-click="view.save = 'salon'"><input type="text" app-model="product_category.name" class="no-style"></div>
+                        <div class="colspan-1 text-left"><button class="btn bg-white" app-click="splice(salon.liquor_categories,{{index}},'salon',salon)"><span class="icon close black"></span></button></div>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+        </div>
+
+        <section class="footer flex flex-middle-right" app-show="view.save">
+
+            <button class="btn bg-secondary" app-click="save('salon',salon)">Save</button>
+
+        </section>
+
+    </div>
+
+    <div class="modal" app-show="view.modal == 'show_edit'" anim="{'enter':'fade-in'}">
+
+        <div class="modal-body p-0 w-80 w-m-90" anim="{'enter':'move-up','duration':'0.2'}">
+
+            <div class="modal-header text-primary">
+                <div class="title">
+                    <p class="m-0">Salon Details</p>
+                </div>
+                <div class="close">
+                    <span class="icon close white clickable" onclick="modalCloseAll()"></span>
+                </div>
+            </div>
+
+            <div class="modal-content p-2">
+
+                <div class="grid col-2 gap-2">
+
+                    <div>
+                        <div class="mb-1">
+                            <label>Salon Name</label>
+                            <input type="text" app-model="salon.name" placeholder="Name" class="rounded">
+                        </div>
+                        <div class="grid col-2 gap-1 pb-1">
+                            <div class="">
+                                <label>Phone Number</label>
+                                <input type="text" app-model="salon.tel" placeholder="Telephone" class="rounded">
+                            </div>
+                            <div class="">
+                                <label>Email Address</label>
+                                <input type="text" app-model="salon.email" placeholder="Email" class="rounded">
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label>Open and Closing times</label>
+                        <div class="grid col-3 gap-1 mb-1">
+
+                            <% for (var day in [0,1,2,3,4,5,6]){ %>
+                                <div class="" app-bind="getDay('<%- day %>')"></div>
+                                <div class="">
+                                    <select app-model="salon.opening_times[<%- day %>].open" class="rounded">
+                                        <option app-value="closed">Closed</option>
+                                        <option app-for="hrs in getHrs" app-value="hrs" app-bind="hrs"></option>
+                                    </select>
+                                </div>
+                                <div class="">
+                                    <select app-model="salon.opening_times[<%- day %>].close" class="rounded">
+                                        <option value="closed">Closed</option>
+                                        <option app-for="hrs_close in getHrs" app-value="hrs_close" app-bind="hrs_close"></option>
+                                    </select>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-appointment-actions flex flex-middle-right">
+                <a class="btn border" onclick="modalCloseAll()">
+                    <span>Cancel</span>
+                    <span class="icon close right black"></span>
+                </a>
+                <a class="btn bg-secondary" app-click="saveSalon(salon)">
+                    <span>Save</span>
+                    <span class="icon add right white"></span>
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="modal" app-show="view.modal == 'show_template'" anim="{'enter':'fade-in'}">
+
+        <div class="modal-body" anim="{'enter':'move-up','duration':'0.2'}">
+
+            <div class="grid col-2 pb-1">
+                <div>
+                    <h3 class="text-primary">Consultation Template</h3>
+
+                </div>
+                <div class="text-right">
+                    <h4 class="close-icon  clickable" onclick="modalCloseAll()">&times;</h4>
+                </div>
+            </div>
+            <div class="pb-1">
+                <label>Template Name</label>
+                <input type="text" app-model="new.name" placeholder="Template Name">
+            </div>
+            <div class="">
+                <label>Template Fields</label>
+                <div>
+                    <div class="mb-1 grid col-4 gap-2" app-for="input in new.inputs">
+                        <div class="flex">
+                            <a class="flex-none mr-1" app-click="newTemplate('remove_input',{{index}})">&times;</a>
+                            <input type="text" app-model="input.description" placeholder="description" class="flex-4">
+                        </div>
+                        <select app-model="input.type">
+                            <option value="textparagraph">Custom Text</option>
+                            <option value="text">Text Input</option>
+                            <option value="textarea">Text Multiple Line Input</option>
+                            <option value="image">Image</option>
+                            <option value="checkbox">Tick Box</option>
+                            <option value="select">Select List</option>
+                        </select>
+
+                        <div class="colspan-2" app-show="input.type == 'textparagraph'">
+                            <textarea app-model="input.value" placeholder="Enter text here..."></textarea>
+                        </div>
+
+                        <div class="colspan-2" app-show="input.type == 'select'">
+                            <div>
+                                <div class="mb-05" app-for-sub="option in input.options">
+                                    <input type="text" app-model="option.value">
+                                </div>
+                            </div>
+                            <p class="text-primary text-right clickable" app-click="newTemplate('add_option',{{index}})">+ Add Option</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn border" app-click="newTemplate('add_input')">Add Field</button>
+            </div>
+
+            <div class="text-right pt-1">
+                <a class="btn bg-secondary" app-click="newTemplate('save')">
+                    <img src="/icons/add.svg" class="icon left">
+                    <span>Save</span>
+                </a>
+            </div>
+
+        </div>
+
+    </div>

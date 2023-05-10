@@ -1,0 +1,700 @@
+
+<script>
+
+    extendedController = function(){
+
+        <% if (typeof customer != 'undefined') { %>
+            scope.selected_customer = <%- JSON.stringify(customer) %>
+
+            if (scope.selected_customer.membership && scope.selected_customer.membership.membership_id){
+
+                scope.get('memberships',scope.selected_customer.membership.membership_id).then((membership) => {
+                    console.log(membership)
+                    scope.selected_customer.membership_details = membership
+                })
+
+            }
+
+        <% } else { %>
+            scope.selected_customer = {}
+        <% } %>
+
+        scope.view.transaction_filter = 'all'
+
+        scope.pasted = function(e) {
+            setTimeout(function(){
+                scope.view.pasted = true
+                scope.searchApi('products',e.value,'product')
+                e.value = ''
+                e.focus()
+            }, 100)
+        }
+
+        if (scope.query && scope.query.page){
+            setTimeout(function(){
+                scope.view.checkout_page = scope.query.page
+            },500)
+        }
+
+        watch['selected_customer.skin_test'] = function(date, old_date){
+
+            if (!date.match(/"/) && date != old_date){
+
+                var payload = {
+                    _key: scope.selected_customer._key,
+                    date: date
+                }
+
+                scope.post('customers/update_skin_test',payload).then((data)=>{
+
+                    if (scope.client_profile){
+                        scope.client_profile.skin_test = data.replace(/"/g,'')
+                    } else {
+                        scope.selected_customer.skin_test = data
+                    }
+
+                })
+            }
+
+        }
+
+        watch['cart.method'] = function(method, old_method){
+
+            if (scope.cart && scope.cart.stripe_data && scope.cart.stripe_data.succeeded && scope.cart.stripe_data.succeeded === true && method != 'stripe' && old_method == 'stripe'){
+                scope.cart.method = old_method
+                scope.notify('Full payment has been taken via Stripe','error',5,'fa-exclamation-circle')
+                return
+            }
+
+            var arr = ['petty_cash','cash_transfer_in','cash_transfer_out']
+            if (arr.indexOf(method) >= 0){
+                // var item = {
+                //     name:'Cash',
+                //     price: 0,
+                //     quantity:1
+                // }
+                // if (scope.cart.items.length == 0){
+                //    scope.cart.items.push(item)
+                // }
+
+            } else if (old_method == 'split' && method != 'split' || old_method == 'cash' && method != 'cash'){
+
+            }
+
+            if (method == 'payment_link'){
+                scope.cart.pl_notification_method = 'sms'
+            } else {
+                delete scope.cart.pl_notification_method
+            }
+
+            scope.cart.payment.bacs = 0
+            scope.cart.payment.card = 0
+            scope.cart.payment.cash = 0
+            scope.cart.payment.stripe = 0
+            scope.cart.payment.payment_link = 0
+            scope.cart.payment.change = 0
+            scope.cart.outstanding = 0
+
+            scope.updateCart('totals')
+
+
+        }
+
+        watch['cart.payment.card'] = function(val){
+            scope.updateCart()
+        }
+
+        watch['cart.payment.bacs'] = function(val){
+            scope.updateCart()
+        }
+
+        watch['cart.payment.cash'] = function(val){
+            scope.updateCart()
+        }
+
+        watch['cart.payment.petty_cash_out'] = function(val){
+            scope.updateCart()
+        }
+
+        scope.selectItemType = function(type){
+
+            contextCloseAll()
+            scope.view.item_add_type = type
+
+            if (type == 'Petty_Cash'){
+                scope.cart.method = 'petty_cash'
+            }
+
+        }
+
+        scope.updateCart = function(){
+
+            scope.view.update_cart = true
+
+            if (!scope.cart.payment){
+                scope.cart.payment = {}
+            }
+
+            if (!scope.cart.payment.card){
+                scope.cart.payment.card = 0
+            }
+
+            if (!scope.cart.payment.bacs){
+                scope.cart.payment.bacs = 0
+            }
+
+            if (!scope.cart.payment.cash){
+                scope.cart.payment.cash = 0
+            }
+
+            if (!scope.cart.payment.vouchers){
+                scope.cart.payment.vouchers = 0
+            }
+
+            if (!scope.cart.payment.change){
+                scope.cart.payment.change = 0
+            }
+
+            if (scope.cart.method == 'card'){
+                scope.cart.payment.card = scope.cart.total
+            }
+
+
+            if (scope.cart.method == 'bacs'){
+                scope.cart.payment.bacs = scope.cart.total
+            }
+
+            if (scope.cart.method == 'vouchers'){
+                scope.cart.payment.vouchers = scope.cart.vouchers_total
+            }
+
+            if (scope.cart.method == 'account'){
+                scope.cart.payment.account = scope.cart.account_total
+            }
+
+            if (scope.cart.method == 'payment_link'){
+                scope.cart.payment.payment_link = scope.cart.total
+            }
+
+            if (scope.cart.method == 'stripe' && scope.stripe_data){
+                scope.cart.stripe_data = scope.stripe_data
+                scope.cart.payment.stripe = scope.parseStripeAmount(scope.stripe_data.total)
+
+            } else if (scope.cart.method == 'stripe'){
+                scope.cart.payment.stripe = scope.cart.total
+            }
+
+            // if (scope.cart.method == 'account'){
+            //     scope.cart.payment.account = scope.cart.payment.account
+            // }
+
+            if (scope.cart.method.match(/^cash|split/i)){
+
+                let outstanding = parseFloat(scope.cart.total) - parseFloat(scope.cart.payment.cash) - parseFloat(scope.cart.payment.card)
+
+                if (outstanding > 0){
+                    scope.cart.outstanding = outstanding.toFixed(2)
+                    delete scope.cart.payment.change
+                } else if (outstanding < 0){
+                    console.log('out',outstanding)
+                    scope.cart.payment.change = Math.abs(outstanding).toFixed(2)
+                    delete scope.cart.outstanding
+                } else {
+                    delete scope.cart.outstanding
+                }
+
+            } else if (scope.cart.method == 'petty_cash'){
+
+                // delete scope.cart.outstanding
+                // let outstanding = parseFloat(scope.cart.item_total) - parseFloat(scope.cart.payment.petty_cash_out)
+
+                // if (isNaN(outstanding)){
+                    
+                //     scope.cart.payment.petty_cash_in = '0.00'
+                // } else {
+                //     console.log('pci',outstanding)
+                //     scope.cart.payment.petty_cash_in = outstanding.toFixed(2)
+                // }
+
+
+            }
+
+        }
+
+        scope.addToCart = function(type, key, cart_id, data){
+
+            contextCloseAll()
+
+            let delay = 0
+
+            clearTimeout(scope.view.timer)
+
+            if (type == 'products' || type == 'petty_cash' || type == 'service'){
+
+                if (!key){
+                    return false
+                }
+
+            }
+
+            if (!cart_id){
+                cart_id = scope.cart.id
+            }
+
+            scope.view.timer = setTimeout(function(){
+
+                let payload = {
+                        type: type,
+                        key: key,
+                        cart_id: cart_id
+                    },
+                    url = '/api/transactions/add_to_cart'
+
+                if (data){
+                    payload.data = data
+                }
+
+                console.log(payload)
+
+                http('post',url,payload)
+                    .then((data) => {
+
+                        data = JSON.parse(data)
+
+                    //    let items = JSON.parse(JSON.stringify(data.items))
+                        scope.cart = data
+                    //    scope.cart.items = items
+
+                        if (data.customer_id){
+                            scope.get('customers',data.customer_id,'selected_customer')
+                        } else {
+                            scope.selected_customer = {}
+                        }
+
+                        scope.updateCart()
+
+                        if (scope.view.grouped_carts){
+                            scope.groupTransaction('calc_totals')
+                        }
+
+                        if (key){
+                            scope.notify('Updated')
+                        }
+
+                        let voucher_input = document.getElementById('voucher_code')
+                        if (voucher_input){
+                            voucher_input.value = ''
+                        }
+
+                    }).catch((err)=>{
+                        console.log(err)
+                        scope.notify(err,'error',5,'fa-exclamation-circle')
+                    })
+
+            },delay)
+        }
+
+        scope.checkoutPage = function(page){
+
+            if (scope.cart.method == 'petty_cash'){
+
+                if (page && page == 'items'){
+                    scope.view.checkout_page = page
+                } else if (page){
+                    scope.view.checkout_page = 'payment'
+                } else if (!scope.view.checkout_page) {
+                    scope.view.checkout_page = 'items'
+                } else {
+                    scope.view.checkout_page = 'payment'
+                }
+
+            } else {
+
+                if (page){
+                    scope.view.checkout_page = page
+                } else if (!scope.view.checkout_page) {
+                    scope.view.checkout_page = 'items'
+                } else if (scope.view.checkout_page == 'items'){
+                    scope.view.checkout_page = 'discounts'
+                } else if (scope.view.checkout_page == 'discounts'){
+                    scope.view.checkout_page = 'client_details'
+                } else if (scope.view.checkout_page == 'client_details'){
+                    scope.view.checkout_page = 'payment'
+                } else if (scope.view.checkout_page == 'payment'){
+                    scope.view.checkout_page = 'complete'
+                } else {
+                    scope.view.checkout_page = 'items'
+                }
+
+            }
+
+
+
+            // scope.updateCart()
+            if (scope.cart && scope.cart.items && scope.cart.items.length > 0){
+                scope.addToCart('update',false,false,scope.cart)
+            }
+
+
+        }
+
+        scope.addStylistService = function(idx,confirm){
+
+            if (confirm == 'view'){
+
+                scope.view.modal = 'select_stylist'
+                scope.view.service_item = idx
+
+            } else {
+
+                scope.cart.items[scope.view.service_item].staff_id = idx
+                scope.cart.items[scope.view.service_item].staff_name = confirm
+                scope.addToCart('update',true,false,scope.cart)
+                scope.view.modal = false
+                delete scope.view.service_item
+
+            }
+
+        }
+
+        scope.checkoutPage()
+
+        scope.clickButtonPress = (news) => {
+            console.log(news)
+        }
+        // to save offer code ..
+        scope.setValueAndSave = (data) => {
+            var data ={}
+                            Array.from(document.getElementsByTagName('input')).forEach( input => {
+                             console.log(input.id,input.value)
+                             data[input.id]=input.value
+                          });
+                          data.method = document.getElementById('method').value
+                          data.type = document.getElementById('type').value
+                          data.customer_to = document.getElementById('customer_to').value?
+                          document.getElementById('customer_to').value:'custom'
+                          data._key = document.getElementById('_key').value
+                       
+                scope.post('vouchers/saveOfferCode',data).then((data)=>{
+
+                    scope.notify('saved','success',1).then(()=>{
+                            // window.location.href="/offer-codes"
+                            // location.reload();
+                            window.location.href = window.location.href
+                        })
+
+                })
+        }
+        scope.deleteCafeTransaction = function(cart_id, conf, status){
+
+if (conf){
+    if (status && status == 'complete'){
+        scope.get('transactions','remove_cart?id='+cart_id).then(()=>{
+            scope.notify('Editing Completed','success',1).then(()=>{
+                window.location.href="/dashboard/foodcafe/foodCafeCheckout"
+            })
+        })
+    } else {
+        scope.get('transactions','delete_cart?id='+cart_id).then(()=>{
+            scope.notify('Transaction Deleted','success',1).then(()=>{
+                window.location.href="/dashboard/foodcafe/foodCafeCheckout"
+            })
+        })
+    }
+
+} else {
+    scope.new.cart_id = cart_id
+    scope.new.status = 'new'
+    if (status && status == 'complete'){
+        scope.view.modal_title = 'This transaction is being edited. Click Editing Complete to remove from this list.'
+        scope.view.modal_button = 'Editing Complete'
+        scope.new.status = status
+    } else {
+        scope.view.modal_title = 'Delete Transaction'
+        scope.view.modal_button = 'Delete'
+    }
+
+    scope.view.modal = 'remove'
+}
+
+}
+
+        scope.deleteTransaction = function(cart_id, conf, status){
+
+            if (conf){
+                if (status && status == 'complete'){
+                    scope.get('transactions','remove_cart?id='+cart_id).then(()=>{
+                        scope.notify('Editing Completed','success',1).then(()=>{
+                            window.location.href="/dashboard/checkout"
+                        })
+                    })
+                } else {
+                    scope.get('transactions','delete_cart?id='+cart_id).then(()=>{
+                        scope.notify('Transaction Deleted','success',1).then(()=>{
+                            window.location.href="/dashboard/checkout"
+                        })
+                    })
+                }
+
+            } else {
+                scope.new.cart_id = cart_id
+                scope.new.status = 'new'
+                if (status && status == 'complete'){
+                    scope.view.modal_title = 'This transaction is being edited. Click Editing Complete to remove from this list.'
+                    scope.view.modal_button = 'Editing Complete'
+                    scope.new.status = status
+                } else {
+                    scope.view.modal_title = 'Delete Transaction'
+                    scope.view.modal_button = 'Delete'
+                }
+
+                scope.view.modal = 'remove'
+            }
+
+        }
+
+        scope.rebookAppointment = function(days){
+
+            let day_str = moment().add(days,'days').format('YYYY/M/D')
+            window.location.href= "/dashboard/calendar/"+day_str+'?client_id='+scope.cart.customer_id
+
+        }
+
+        scope.newTransaction = function(key){
+
+            scope.get('transactions','new_transaction?type=customer&&key='+key).then(()=>{
+                window.location.href="/dashboard/checkout"
+            }).catch((err)=>{
+                scope.notify(err,'error')
+            })
+
+        }
+
+        scope.saveTransaction = function(confirm){
+
+            if (!scope.cart.items || scope.cart.items.length == 0){
+                scope.notify('Please add at least 1 item to the transaction','error')
+                return
+            }
+
+            if (scope.cart.payment && scope.cart.payment.payment_link){
+                // skip stripe check
+            } else if (scope.cart.method == 'stripe' && !scope.cart.stripe_data || scope.cart.method == 'stripe' && scope.cart.stripe_data && scope.cart.stripe_data.succeeded != true){
+                scope.notify('Please complete a transaction through Stripe, by clicking the "Take Payment" button','error',15,'fa-exclamation-circle')
+                return false
+            }
+
+            let account_credit_check = false
+            scope.cart.items.map((item)=>{
+                if (item.type == 'account' && !scope.cart.customer_id){
+                    scope.notify('Please add a client for the account credit payment','error',5,'fa-exclamation-cirlce')
+                    account_credit_check = true
+                    return
+                }
+            })
+
+            if (account_credit_check === true){
+                return
+            }
+
+            if (confirm){
+
+                if (scope.cart.outstanding){
+                    scope.notify('Amount Remaining £'+scope.cart.outstanding,'error',5,'fa-exclamation-circle')
+                } else {
+                    scope.addToCart('update',false,false,scope.cart)
+                    scope.view.modal = 'complete'
+                }
+
+            } else if (scope.view.grouped_carts){
+
+                let grouped_str = scope.view.grouped_carts.map((item)=>{
+                    item = item.id
+                    return item
+                }).join('|')
+
+                scope.get('transactions',grouped_str+'/save_grouped').then((data)=>{
+                    localStorage.removeItem('grouped_transactions')
+                    scope.notify('Saved').then(()=>{
+                        window.location.href="/dashboard/checkout"
+                    })
+                }).catch((err)=>{
+                    scope.notify(err, 'error',4,'fa-exclamation-circle')
+                })
+
+            } else {
+
+                if (!scope.cart.method){
+                    scope.view.modal = false
+                    scope.notify('Please enter the payment method','error',4,'fa-exclamation-circle')
+                } else {
+                    delete scope.cart.outstanding
+                    console.log(scope.cart)
+                    scope.post('transactions',scope.cart).then((data)=>{
+                        scope.notify('Saved').then(()=>{
+                            window.location.href="/dashboard/checkout"
+                        })
+                    }).catch((err)=>{
+                        scope.notify(err, 'error',4,'fa-exclamation-circle')
+                    })
+                }
+
+            }
+
+        }
+
+        scope.filterTransactions = function(status){
+
+            scope.view.transaction_filter = status
+
+            let trans = document.getElementsByClassName('transaction')
+            if (trans){
+                for (var i in trans){
+                    if (trans[i] && trans[i].classList && !trans[i].classList.contains('cart-'+status)){
+                        trans[i].style.display = 'none'
+                    } else if (trans[i] && trans[i].style && trans[i].style.display) {
+                        trans[i].style.display = 'grid'
+                    }
+                    if (trans[i] && trans[i].style && trans[i].style.display && status == 'all'){
+                        trans[i].style.display = 'grid'
+                    }
+                }
+            }
+
+        }
+
+        scope.initStripe = function(){
+
+            stripePayment()
+
+            let url = '/dashboard/checkout/stripe/'+scope.cart.id
+
+            http('get',url).then((stripe_data)=>{
+                console.log(stripe_data)
+                scope.view.modal = 'stripe'
+                scope.stripe_data = JSON.parse(stripe_data)
+                console.log(scope.stripe_data )
+            }).catch((err)=>{
+                console.log(err)
+            })
+
+        }
+
+        scope.setMethod = function(id){
+            scope.stripe_data.selected_method = id
+        }
+
+        scope.parseStripeAmount = function(amount){
+            return parseFloat((amount/100)).toFixed(2)
+        }
+
+
+    }
+
+    var stripePayment = function(){
+
+    var stripe = Stripe('<%- config.stripe_publishable_key %>');
+    var elements = stripe.elements();
+
+
+    // Custom styling can be passed to options when creating an Element.
+    var style = {
+      base: {
+        // Add your base input styles here. For example:
+        fontSize: '14px',
+        color: '#32325d',
+      },
+    };
+
+    // Create an instance of the card Element.
+    var card = elements.create('card', {style: style});
+
+    // Add an instance of the card Element into the `card-element` <div>.
+
+    var card_el = document.getElementById('card-element')
+
+    if (card_el){
+        card.mount('#card-element');
+    } else {
+        return false
+    }
+
+    card.addEventListener('change', function(event) {
+        var displayError = document.getElementById('card-errors');
+        if (event.error) {
+            displayError.textContent = event.error.message;
+        } else {
+            displayError.textContent = '';
+        }
+    });
+
+//    var form = document.getElementById('payment-form');
+
+    var button = document.getElementById('pay-now');
+
+    // form.addEventListener('submit', function(ev) {
+    button.addEventListener('click', function(ev) {
+
+        ev.preventDefault();
+
+        var clientSecret = scope.stripe_data.intent.client_secret,
+            pay_button = document.getElementById('pay-now'),
+            payment_method = {
+                card: card,
+                billing_details: {
+                    name: scope.stripe_data.user.name.first+' '+scope.stripe_data.user.name.last
+                }
+            }
+
+        if (scope.stripe_data.user && scope.stripe_data.user.email){
+            payment_method.billing_details.email = scope.stripe_data.user.email
+        }
+
+        if (scope.stripe_data.user && scope.stripe_data.user.tel){
+            payment_method.billing_details.phone = scope.stripe_data.user.tel
+        }
+
+        if (scope.stripe_data.selected_method){
+            payment_method = scope.stripe_data.selected_method
+        }
+
+        pay_button.innerHTML = "Processing..."
+        pay_button.disabled = true
+
+        stripe.confirmCardPayment(clientSecret, {
+            payment_method: payment_method
+        }).then(function(result) {
+            if (result.error) {
+                // Show error to your customer (e.g., insufficient funds)
+                scope.stripe_data.succeeded = false
+                document.getElementById('card-errors').innerHTML = result.error.message
+                pay_button.innerHTML = "Pay Now"
+                pay_button.disabled = false
+            } else {
+                // The payment has been processed!
+                if (result.paymentIntent.status == 'succeeded') {
+                    scope.view.modal = false
+                    scope.stripe_data.succeeded = true
+                    scope.updateCart('totals')
+                    setTimeout(function(){
+                        scope.addToCart('update',true,false,scope.cart)
+                    },500)
+                } else {
+                    scope.stripe_data.succeeded = false
+                    scope.view.modal = false
+                    pay_button.innerHTML = "Pay Now"
+                    pay_button.disabled = false
+                    // scope.updateCart('totals')
+                    // setTimeout(function(){
+                    //     scope.addToCart('update',true,false,scope.cart)
+                    // },500)
+                    scope.notify('Stripe status is: '+result.paymentIntent.status+'. Please check the payment via the Stripe dashboard','error',15,'fa-exclamation-circle')
+                }
+            }
+        });
+    });
+
+}
+
+
+</script>

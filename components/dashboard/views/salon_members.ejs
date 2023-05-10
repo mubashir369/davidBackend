@@ -1,0 +1,113 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+
+    <div class="page px-2 px-s-0">
+
+        <div class="px-2 pt-2 pb-0 hidden hidden-m">
+            <input type="text" class="search colspan-2 border" placeholder="Search..." app-model="view.search" onkeyup="scope.searchApi('products',this.value)" spellcheck="false">
+        </div>
+
+            <!--<%- include('../../dashboard/partials/filters.ejs',{type:'products'}) %>-->
+
+        <div>
+
+            <div class="table align-middle" app-init="get('members')">
+
+
+                <div class="row table-header">
+
+                    <div class="cell middle" style="width: 5rem;"></div>
+                    <div class="cell middle mobile-cell">Name</div>
+                    <div class="cell middle">Email</div>
+                    <div class="cell middle">Phone</div>
+                    
+                    <div class="cell middle  hidden-m" style="width: 5rem;">Status</div>
+                    <div class="cell middle text-right" style="width: 8rem;">Action</div>
+
+                </div>
+
+
+
+                <div class="row" app-for="product in members">
+
+                    <div class="cell middle text-bold p-1 clickable" app-click="edit('products',product)"><img app-src="product.avatar" src="/images/testimonials/Product_placeholder.svg"></div>
+                    <div class="cell middle text-weight-600 capitalise clickable mobile-cell" app-bind="product.name" app-click="edit('products',product)"></div>
+                    <div class="cell middle capitalise clickable" app-bind="product.email" app-click="edit('products',product)"></div>
+                    <div class="cell middle capitalise clickable" app-bind="product.phone" app-click="edit('products',product)"></div>
+                    
+                   
+                        
+
+
+                        <div class="cell middle capitalise clickable mt-4" app-show="product.status=='true'">Active</div>
+
+                        <div class="cell middle capitalise clickable mt-4" app-show="product.status=='false'">Not Active</div>
+
+
+                    
+         
+                    <div class="cell middle text-right action-icons" app-attr="{id:'cell-'+product._key}">
+
+                        <div class="context-link btn border" app-click="toggleContext(product._key)">
+                            <span class="icon black arrowdown sm"></span>
+                        </div>
+                        <div class="context dropdown text-left" style="display: none" app-attr="{id:'context-'+product._key}">
+
+                            
+                            <div class="link" app-click="edit('products',product)">
+                                <span class="icon black edit left"></span>
+                                Edit
+                            </div>
+                            <div class="link" app-click="edit('products',product,'delete')">
+                                <span class="icon black delete left"></span>
+                                Delete
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <%- include('../../dashboard/partials/modal/member_profile.ejs') %>
+
+    <div class="modal" app-show="view.modal == 'show_delete'" anim="{'enter':'fade-in','exit':'fade-out'}">
+
+        <div class="modal-body p-0" anim="{'enter':'move-up','duration':'0.2'}">
+
+                <div class="modal-header text-primary" style="border: 0;">
+                    <div class="title">
+                        <h4 class="text-light">
+                            Delete <span app-bind="new.name"></span>?
+                        </h4>
+                    </div>
+                    <!-- <div class="text-right">
+                        <h4 class="close-icon clickable" onclick="modalCloseAll()">&times;</h4>
+                    </div> -->
+                </div>
+                <div class="modal-appointment-actions flex flex-middle-right">
+                    <div class="text-right ">
+                        <a class="btn border w-100" onclick="modalCloseAll()" app-click="modalCloseAll()">
+                            Cancel
+                        </a>
+                    </div>
+
+                    <div class="text-right ml-1">
+                        <a class="btn bg-secondary w-100" app-click="delete('members',new._key)">
+                            Delete
+                            <span class="icon delete white right"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>

@@ -1,0 +1,124 @@
+<script>
+
+    extendedController = function(){
+
+        scope.promoBookInit = function(){
+
+            scope.promo = <%- JSON.stringify(promotion) %>
+
+            <% if (typeof user._key != 'undefined' && user.guard == 'customer'){ %>
+                scope.view.customer = <%- JSON.stringify(user) %>
+            <% } else { %>
+                scope.view.customer = {}
+            <% } %>
+
+            scope.get('services','all').then(()=>{
+                scope.get('salon','54855602').then((salon_data)=>{
+
+                    scope.view.page = 'services'
+                    scope.view.duration = moment('<%- promotion.end_date %>').diff(moment('<%- promotion.date %>'),'minutes')
+
+                    setTimeout(function(){
+                        scope.promoServiceFilter()
+                    },500)
+
+                })
+            })
+
+        }
+
+        scope.promoServiceFilter = function(filter){
+
+            if (scope.services){
+
+                scope.view.serviceFilter = filter
+                scope.filteredServices = scope.services.filter(function(item,i){
+                    if (scope.promo.stylist && scope.promo.stylist[0] && scope.promo.stylist[0].level){
+                        item.price = item.prices[scope.promo.stylist[0].level]
+                    } else {
+                        item.price = item.prices[0]
+                    }
+                    return item.duration <= scope.view.duration && item.public == 'true' && scope.promo.promotion_categories.indexOf(item.category) >= 0
+                })
+
+            }
+
+        }
+
+        scope.promoAppointment = function(type, data){
+
+            if (type == 'add_service'){
+
+                scope.view.selected_service = data
+                scope.promo.service_id = data._key
+                if (scope.view.customer._key){
+                    scope.view.page = 'summary'
+                } else {
+                    scope.view.page = 'client'
+                }
+
+
+            } else if (type == 'add_customer'){
+
+                scope.post('/book/find-or-save',scope.view.customer).then((client_data)=>{
+                //    localStorage.setItem('appointment_customer',JSON.stringify(data))
+                    http('post','/api/customers/new_appointment', {date:moment().toISOString(),type: 'Interested in promo: '+scope.promo.description+' on '+moment(scope.promo.date).format('Do MMM [at] h:mma')+'.<br><b>'+scope.view.selected_service.name+'</b>', _key:client_data._key, data: client_data.name.first+' '+client_data.name.last})
+
+                    scope.view.customer = client_data
+                    scope.view.page = 'summary'
+
+                }).catch((err)=>{
+                    scope.notify(err, 'error')
+                })
+
+            } else if (type == 'save'){
+
+                http('post','/api/customers/new_appointment', {complete:true})
+
+                scope.promo.customer_id = scope.view.customer._key
+                scope.promo.event_type = 'customer_appointment'
+                scope.promo.duration = scope.view.selected_service.duration
+
+                http('post','/api/appointments',scope.promo)
+                    .then((data)=>{
+                        data = JSON.parse(data)
+
+
+                        window.location.href = '/checkout/stripe/appointment-deposit?appointment_id='+data.confirm_id+'&&client_id='+data.customer_id
+
+                    }).catch((data)=>{
+
+                        scope.notify(data,'error')
+                    })
+
+            }
+
+        }
+
+        scope.parseDiscountPrice = function(price){
+
+            if (scope.promo){
+
+                if (!scope.promo.promotion){
+                    return price
+                }
+                let adjustment = scope.promo.promotion.replace(/\$|\£|\#|p/,'')
+
+                if (adjustment.match(/%/)){
+
+                    let adjustment_value = adjustment.replace(/%/,'')
+                    adjustment_value = (price/100)*adjustment_value
+                    return '<span class="strikethrough">£'+price+'</span> <span style="font-weight:500">£'+(parseFloat(price)+parseFloat(adjustment_value)).toFixed(2)+'</span>'
+
+                } else {
+
+                    return '<span class="strikethrough">£'+price+'</span> <span style="font-weight:500">£'+(parseFloat(price)+parseFloat(adjustment))+'</span>'
+
+                }
+            }
+
+        }
+
+    }
+
+</script>

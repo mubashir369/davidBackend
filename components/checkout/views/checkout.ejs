@@ -1,0 +1,54 @@
+<% layout('checkout.ejs') -%>
+
+<div class="hidden" id="stripe-id" data-stripe-id="<%- stripe_id %>"></div>
+
+<div class="main contain px-2 px-s-1">
+    <div class="contain flex flex-middle flex-column vh-50">
+
+<% if (type == 'success'){ %>
+
+    <h3 class="mb-1 text-weight-500 text-primary"><span class="icon tick secondary left"></span>Payment Successful</h3>
+
+    <p>Your payment has been accepted, thank you!</p>
+
+    <a href="/account" class="btn bg-secondary mt-2">Your Account<span class="icon client white right"></span></a>
+
+<% } else if (type == 'success_payment_link'){ %>
+
+    <h3 class="mb-1 text-weight-500 text-primary"><span class="icon tick secondary left"></span>Payment Successful</h3>
+
+    <p>A receipt for this payment can be found on your <a href="/account" class="text-primary">account page.</a></p>
+
+<% } else if (type == '404'){ %>
+
+    <h3 class="mb-1 text-weight-500 text-primary"><span class="icon noshow secondary left"></span>Oops... something went wrong</h3>
+
+    <p>We were unable to find your transaction, please check the link and try again.<br><br>If you are having any trouble, please contact the salon directly on <a href="tel:<%- view.site.tel %>" class="text-primary"><%- view.site.tel %></a></p>
+
+<% } else if (type == 'gateways'){ %>
+
+    <a class="btn border" href="stripe">Stripe</a>
+
+<% } else if (type == '400') { %>
+
+    <h4 class="mb-1"><span class="icon delete secondary left"></span>Cancelled</h4>
+
+    <p>Your transaction has been canceled</p>
+
+    <% if (typeof error != "undefined"){ %>
+        <div id="card-errors" class="my-2 text-33-red"><%- error %></div>
+    <% } %>
+
+<% } else { %>
+
+    <h4 class="mb-1"><span class="icon noshow secondary left"></span>Transaction Error</h4>
+
+    <p>Unfortunately, it looks like there has been an issue with your transaction.<br>Payment has been made successfully, but further information may be required. A notification has been sent to the salon to investigate. Please don't re-attempt payment unless the salon contacts you.</p>
+
+    <% if (typeof error != "undefined"){ %>
+        <div id="card-errors" class="my-2 text-33-red"><%- error %></div>
+    <% } %>
+
+<% } %>
+</div>
+    </div>

@@ -1,0 +1,96 @@
+<% layout('customer-page.ejs') -%>
+
+<div class="hidden" app-init="bookInit()"></div>
+
+<div class="contain px-6 px-s-0 pb-3 text-left">
+    <div class="vw-30 vw-s-100 px-s-2 text-center">
+
+        <div class="" >
+
+            <div class="mb-2">
+                <div class="text-center rounded-bottom">
+                    <%- include partials/date-picker.ejs %>
+                </div>
+            </div>
+
+            <div class="text-left">
+                <a class="btn outline" app-click="view.page = 'service'"><img src="/icons/left-arrow.svg" class="icon left"> Back</a>
+            </div>
+
+        </div>
+
+        <div class="mb-3 pb-5" app-show="view.page == 'staff'">
+
+            <div class="relative layer-3 mb-2">
+
+                <div class="table item-list" id="context-select_stylist">
+
+                    <div class="row clickable" app-for="member in filteredStaff" app-click="newAppointment('add_stylist',member)" app-class="{'bg-purple':new_appointment.staff_id == member._key}">
+                        <div class="cell">
+                            <div class="flex flex-middle-right">
+                                <div class="flex-none mr-2"><img app-src="member.avatar" class="avatar sm" src="/images/avatars/Profile_Placeholder.svg"></div>
+                                <div class="flex-1 text-weight-600" app-bind="parseName(member.name)"></div>
+                                <div class="flex-1" app-show="member.unavailable">Unavailable. Click to show availability</div>
+                                <div class="flex-1 text-right">From £<span app-bind="getPrice(member.level)"></span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div app-show="view.available_dates">
+
+                <h4 class="text-light mb-1"><span app-bind="new_appointment.staff_name"></span> is available on the following dates:</h4>
+
+                <div class="relative layer-2 mb-2">
+                    <div class="table item-list">
+                        <div class="row clickable" app-for="available_date in available_dates" app-class="{'bg-purple':selected_date.full == available_date.date}">
+                            <div class="cell" app-click="selectDate(available_date.date)">
+                                <div class="flex">
+                                    <div class="flex-1" app-bind="parseISODate(available_date.date,'long_day')"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div app-show="new_appointment.staff_id">
+
+                <h4 class="text-light mb-1 text-primary">Select a Time</h4>
+
+                <div class="relative layer-2 mb-2">
+                    <div class="table item-list">
+                        <div class="row clickable" app-for="hr in avail_hours">
+                            <div class="cell pl-15" app-click="newAppointment('set_start',hr.time)">
+                                <div class="flex">
+                                    <div class="flex-none flex flex-middle">
+                                        <img src="/icons/DR_Icon_Clock.svg" class="icon">
+                                    </div>
+                                    <div class="flex-3" app-bind="hr.time"></div>
+                                    <div class="flex-1 text-right"></div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="grid col-2">
+                <div class="text-left">
+                    <a class="btn outline" app-click="view.page = 'date'"><img src="/icons/left-arrow.svg" class="icon left"> Back</a>
+                </div>
+
+                <div class="mt-2 text-right" app-show="new_appointment.start_time">
+                    <button class="btn thick w-100 bg-primary" app-click="newAppointment('push')">Add <i class="fa fa-chevron-right ml-1"></i></button>
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+</div>

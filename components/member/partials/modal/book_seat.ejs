@@ -1,0 +1,73 @@
+<div class="modal smallModal" app-show="view.modal == 'show_edit'" id="myid" anim="{'enter':'fade-in'}">
+
+    <div class="modal-body p-0 w-60 w-m-90" id="mbody" anim="{'enter':'move-up','duration':'0.2'}">
+
+        <div class="modal-header text-primary">
+            <div class="title">
+                <p class="m-0">
+                    Book seats
+                </p>
+            </div>
+            <div class="close">
+                 <span class="icon close white clickable" onclick="modalCloseAll()"></span>               
+            </div>
+        </div>
+
+        <div class="modal-content p-2">
+
+            <div app-show="view.tab == 'one'">
+
+                <div class="grid col-1 gap-1">
+
+                    <div>
+
+                        <div class="grid col-1 mb-1">                            
+                            <div class="colspan-3 grid col-1 gap-1 lableTheme">
+
+                            <div>   <label>Available Seats</label>
+                                    <input type="number" app-model="new.seats" id="mseats" placeholder="Add seats available" class="rounded" disabled> 
+                                </div>
+
+
+
+                                <div>
+                                    <label>Price</label>
+                                    <input type="number" app-model="new.price" id="mseats" placeholder="Add seats available" class="rounded" disabled> 
+                                </div>
+                                <div>
+                                   
+                                    <input type="text" app-model="new.date" style="display:none" />
+                                    <input type="text" app-model="new.addseat" value="1" style="display:none" />
+
+                                </div>
+                                
+
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                    
+
+                </div>
+            </div>
+
+           
+
+        </div>
+
+
+        <div class="modal-appointment-actions flex flex-middle-right">
+               
+            <a class="dp-btn text-white bg-primary" app-click="addtocart()">
+                <span app-show="new._key">Add to cart <span class="icon tick white right"></span></span>
+                <span app-hide="new._key">Add  <span class="icon add white right"></span></span>
+            </a>
+        </div>
+
+    </div>
+
+</div>
+

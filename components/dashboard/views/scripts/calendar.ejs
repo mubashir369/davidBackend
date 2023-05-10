@@ -1,0 +1,1375 @@
+
+<script>
+
+    extendedController = function(){
+
+        scope.view.modal_tab = 'one'
+
+    //    scope.get('salon','54855602')
+
+        scope.newEvent = function(data, staff_id, customer_id){
+
+            let slot = document.getElementById(staff_id+'-'+data.replace(':','')),
+                menu = document.getElementById('context-new_appointment'),
+                staff_col = document.getElementById('staff-'+staff_id)
+
+            if (scope.view.context || scope.view.open_appointment === true){
+                scope.view.open_appointment = false
+                menu.classList.remove('open')
+                menu.classList.add('closed')
+                scope.view.context = false
+                appointmentCloseAll()
+                return
+            }
+
+            if (data.match(/\:/) && scope.view.reschedule && scope.view.reschedule.enabled === true){
+
+                scope.selectDate(data, false, 'time')
+
+                scope.view.reschedule.time = data
+                scope.view.reschedule.staff_id = staff_id
+
+                if (scope.view.reschedule.chg_day){
+                    scope.view.modal = 'confirm_linked'
+                } else {
+                    scope.view.modal = 'confirm'
+                }
+
+            } else if (data == 'confirm' && scope.view.reschedule && scope.view.reschedule.enabled === true){
+
+                let payload
+
+                if (scope.view.reschedule.time && scope.view.reschedule.staff_id){
+
+                    let new_start_time = scope.view.reschedule.time,
+                        staff = scope.view.reschedule.staff_id
+                        payload = {
+                            _key:scope.view.reschedule.key,
+                            staff_id:staff,
+                            prev_start_time: scope.view.reschedule.prev_start_time,
+                            date: scope.selected_date.full,
+                            end_date: moment(scope.selected_date.full).utc().add(scope.view.reschedule.duration,'minutes').toISOString(),
+                            add_log:["Moved appointment to "+moment(scope.selected_date.full).utc().format('DD/MM/YYYY h:mma')]
+                        }
+
+                } else {
+
+                    payload = {
+                        _key:scope.view.reschedule.key,
+                        duration: scope.view.reschedule.duration,
+                        add_log:["Changed duration to "+scope.view.reschedule.duration]
+                    }
+
+                }
+
+                if (scope.view.reschedule.chg_day === true){
+                    payload.link_id = 'false'
+                }
+
+                scope.post('appointments', payload).then((data)=>{
+
+                    let appointment = document.getElementById('appointment-'+scope.view.reschedule.key)
+
+                    if (appointment){
+
+                        appointment.dataset.duration = data.duration
+                        appointment.dataset.start = data.staff_id+'-'+data.start_time.replace(':','')
+
+                        let new_end_time = getPreviousSlot(data.end_time)
+                        appointment.dataset.end = data.staff_id+'-'+new_end_time
+
+                        let time_text = appointment.querySelector('.time')
+                        if (time_text){
+                            time_text.innerHTML = data.start_time+' - '+data.end_time
+                        }
+
+                        let appt_details = appointment.querySelector('.appointment-details')
+                        appt_details.classList.remove('single-slot','double-slot','triple-slot')
+
+                        if (data.duration == 15){
+                            appt_details.classList.add('single-slot')
+                        }
+                        if (data.duration == 30){
+                            appt_details.classList.add('double-slot')
+                        }
+                        if (data.duration == 45){
+                            appt_details.classList.add('triple-slot')
+                        }
+
+                        scope.view.reschedule.enabled = false
+                        scope.view.reschedule.key = ''
+                        scope.view.reschedule.prev_start_time = ''
+                        setLayer('staff',1)
+                        positionAppointments()
+
+                    } else {
+
+                        location.reload()
+
+                    }
+
+                    scope.view.reschedule.enabled = false
+                    scope.view.reschedule.key = ''
+                    scope.view.reschedule.duration = ''
+                    scope.view.reschedule.prev_start_time = ''
+                    delete scope.view.reschedule.data
+                    scope.view.header = 'calendar'
+
+                    contextCloseAll()
+                    scope.view.modal = false
+
+                    localStorage.removeItem('reschedule')
+
+                }).catch(err => {
+                    scope.notify(err,'error')
+                })
+
+            } else if (data == 'confirm_linked' && scope.view.reschedule && scope.view.reschedule.enabled === true){ //move linked appointments
+
+                if (scope.view.reschedule.time && scope.view.reschedule.staff_id){
+
+                    let new_start_time = scope.view.reschedule.time,
+                        staff = scope.view.reschedule.staff_id
+                        payload = {
+                            _key:scope.view.reschedule.key,
+                            staff_id:staff,
+                            prev_start_time: scope.view.reschedule.prev_start_time,
+                            date: scope.selected_date.full,
+                            end_date: moment(scope.selected_date.full).utc().add(scope.view.reschedule.duration,'minutes'),
+                            add_log:["Moved appointment to "+moment(scope.selected_date.full).utc().format('DD/MM/YYYY h:mma')]
+                        }
+
+                } else {
+
+                    scope.notify("Selected slot or staff member not valid","error")
+                    return
+
+                }
+
+                if (scope.view.reschedule.chg_day){
+                    payload.link_id = 'false'
+                }
+
+                scope.post('appointments/move_linked', payload).then((data)=>{
+
+                    localStorage.removeItem('reschedule')
+                    location.reload()
+
+
+                }).catch(err => {
+                    scope.notify(err,'error')
+                })
+
+            } else {
+
+                if (slot && menu){
+
+                    menu.style.display = 'block'
+                    menu.style.top = (slot.offsetTop+12)+'px'
+                    menu.style.left = (staff_col.offsetLeft-2)+'px'
+                    menu.style.width = (slot.offsetWidth+4)+'px'
+                    menu.querySelector('.appointment-details .time').innerHTML = data
+                    menu.querySelector('.appointment-details .name').innerHTML = 'With '+staff_col.dataset.name
+                    menu.classList.remove('closed')
+                    menu.classList.add('open')
+
+                    scope.selectDate(data, false, 'time')
+                    scope.view.selected_staff = staff_id
+                    scope.view.context = true
+
+                }
+
+            }
+
+        }
+
+        scope.addNewEvent = function(type, data){
+
+            if (type == 'shift'){
+
+                let payload = {
+                    date: scope.selected_date.obj.toISOString(),
+                    staff_id: scope.view.selected_staff
+                }
+
+                if (data == 'start'){
+                    payload.type = 'available_start'
+                } else if (data == 'end'){
+                    payload.type = 'available_end'
+                }
+
+                http('post', '/api/appointments/add_staff_availability', payload)
+                    .then((appt_data)=>{
+
+                        appt_data = JSON.parse(appt_data)
+
+                        if (appt_data && appt_data[0]){
+
+                            let appointment = document.getElementById('appointment-'+appt_data[0]._key),
+                                start = moment(appt_data[0].date).utc(),
+                                end = moment(appt_data[0].end_date).utc(),
+                                duration = end.diff(start,'minutes')
+
+                        //    if (data == 'start'){
+                                end = end.subtract(15, 'minutes')
+                        //    }
+
+                            if (appointment){
+
+                                appointment.dataset.start = scope.view.selected_staff+'-'+start.format('HHmm')
+                                appointment.dataset.end = scope.view.selected_staff+'-'+end.format('HHmm')
+                                appointment.dataset.duration = duration
+                                appointment.dataset.slots = duration/15
+
+                            } else {
+
+                                appointment = document.createElement('div')
+
+                                appointment.classList.add('appointment', 'staff_appointment', 'codone')
+                                appointment.setAttribute('id', 'appointment-'+appt_data[0]._key)
+                                appointment.dataset.start = scope.view.selected_staff+'-'+start.format('HHmm')
+                                appointment.dataset.end = scope.view.selected_staff+'-'+end.format('HHmm')
+                                appointment.dataset.duration = duration
+                                appointment.dataset.slots = duration/15
+                                appointment.dataset.type = 'staff_appointment'
+                                appointment.dataset.staff_appointment = 'available'
+
+                                let appointment_details = document.createElement('div')
+                                appointment_details.classList.add('appointment-details')
+                                appointment.appendChild(appointment_details)
+
+                                let appointment_wrap = document.getElementById('appointment-wrap')
+
+                                appointment_wrap.appendChild(appointment)
+
+                            }
+
+                            contextCloseAll()
+                            positionAppointments()
+
+                        }
+
+                    }).catch((err)=>{
+                        scope.notify(err,'error')
+                    })
+
+                // let start_time, end_time, time_txt
+                //
+                // if (data == 'start'){
+                //     start_time = scope.selected_date.obj.toISOString()
+                //     time_txt = scope.selected_date.obj.format('HH:mm')
+                //     end_time = scope.selected_date.obj.add(15,'minutes').toISOString()
+                // } else if (data == 'end'){
+                //     start_time = scope.selected_date.obj.add(-15,'minutes').toISOString()
+                //     end_time = scope.selected_date.obj.add(15,'minutes').toISOString()
+                //     time_txt = scope.selected_date.obj.format('HH:mm')
+                // }
+                //
+                // scope.post('appointments/find_earliest_latest',{staff_id:scope.view.selected_staff,date:scope.selected_date.obj.toISOString()}).then((appointments)=>{
+                //
+                //     appointments = appointments[0]
+                //
+                //     let payload = {
+                //         appointments:[
+                //             {
+                //                 event_type:"memo",
+                //                 description: data+" "+time_txt,
+                //                 staff_id: scope.view.selected_staff,
+                //                 date: start_time,
+                //                 end_date:end_time
+                //             }
+                //         ],
+                //         customer_id: scope.view.selected_staff,
+                //         paid: false,
+                //         source: "Booked in salon",
+                //         selected_date: start_time
+                //     }
+                //
+                //     if (!appointments.earliest || data == 'start' && appointments.earliest >= start_time || data == 'end' &&  appointments.latest <= end_time){
+                //
+                //         http('post','/api/appointments',payload)
+                //             .then((data)=>{
+                //
+                //                 scope.notify('Saved','success').then(()=>{
+                //                     window.location.href = "/dashboard/calendar"
+                //                 })
+                //
+                //             }).catch((err)=>{
+                //
+                //                 scope.notify(err,'error')
+                //             })
+                //
+                //     } else {
+                //
+                //         if (data == 'start' && appointments.earliest < start_time){
+                //             scope.notify('Shift start time cannot be after the first appointment','error',15,'fa-exclamation-circle')
+                //         } else if (data == 'end' && appointments.latest > end_time){
+                //             scope.notify('Shift end time cannot be before the last appointment','error',15,'fa-exclamation-circle')
+                //         } else {
+                //             scope.notify('Unable to add shift '+data,'error',7,'fa-exclamation-circle')
+                //         }
+                //
+                //     }
+                //
+                //
+                // }).catch((err)=>{
+                //     scope.notify('err','error',7,'fa-exclamation-circle')
+                // })
+
+            } else if (type == 'target'){
+
+                let start_time = scope.selected_date.obj.toISOString(),
+                    time_txt = scope.selected_date.obj.format('HH:mm'),
+                    end_time = scope.selected_date.obj.add(15,'minutes').toISOString()
+
+                let payload = {
+                    appointments:[
+                        {
+                            event_type:"target_bookings",
+                            description: "Target bookings "+time_txt,
+                            staff_id: scope.view.selected_staff,
+                            date: start_time,
+                            end_date:end_time
+                        }
+                    ],
+                    customer_id: scope.view.selected_staff,
+                    paid: false,
+                    source: "Booked in salon",
+                    selected_date: start_time
+                }
+
+                http('post','/api/appointments',payload)
+                    .then((data)=>{
+
+                        scope.notify('Saved','success').then(()=>{
+                            window.location.href = "/dashboard/calendar"
+                        })
+
+                    }).catch((err)=>{
+
+                        scope.notify(err,'error')
+                    })
+
+            } else if (type == 'promo_category'){
+
+                if (!scope.view.slot_promo_categories){
+                    scope.view.slot_promo_categories = []
+                }
+
+                if (scope.view.slot_promo_categories.indexOf(data._id.toString()) >= 0){
+                    scope.view.slot_promo_categories.splice(scope.view.slot_promo_categories.indexOf(data._id.toString()),1)
+                } else {
+                    scope.view.slot_promo_categories.push(data._id.toString())
+                }
+
+
+            } else if (type == 'slot_promotion'){
+
+                if (scope.view.slot_promotion && !scope.view.slot_promotion.match(/^-/)){
+                    scope.view.slot_promotion = '-'+scope.view.slot_promotion
+                }
+
+                if (scope.view.slot_promotion && !scope.view.slot_promotion.match(/^-*£[0-9.]+|-*[0-9.]{1,4}\%|-*[0-9.]+$/)){
+                    scope.notify('Invalid promotion, please enter a price or percentage','error',5)
+                    return false
+                } else if (scope.view.slot_promotion && scope.view.slot_promotion.match(/^-*£[0-9.]+|-*[0-9.]{1,4}\%|-*[0-9.]+$/)){
+                    let matches = scope.view.slot_promotion.match(/^-*£[0-9.]+|-*[0-9.]{1,4}\%|-*[0-9.]+$/)
+                    scope.view.slot_promotion = matches[0]
+                }
+
+                if (scope.view.slot_promotion && scope.view.slot_promotion.match(/%/)){
+                    if (parseFloat(scope.view.slot_promotion) < -90){
+                        scope.notify('Invalid promotion, discount can be no more than 90%','error',5)
+                        return false
+                    }
+                } else if (parseFloat(scope.view.slot_promotion) < -100){
+                    scope.notify('Invalid promotion, discount can be no more than £100','error',5)
+                    return false
+                }
+
+                let start_time = scope.selected_date.obj.toISOString(),
+                    time_txt = scope.selected_date.obj.format('HH:mm'),
+                    payload = {}
+
+                if (scope.view.slot_promotion_key){
+
+                    payload = {
+                        _key: scope.view.slot_promotion_key,
+                        duration: scope.view.slot_duration,
+                        description: scope.view.slot_promo_description,
+                        promotion:scope.view.slot_promotion,
+                        promotion_categories:scope.view.slot_promo_categories
+                    }
+
+                } else {
+
+                    payload = {
+                        appointments:[
+                            {
+                                event_type:"slot_promotion",
+                                description: scope.view.slot_promo_description,
+                                promotion:scope.view.slot_promotion,
+                                promotion_categories:scope.view.slot_promo_categories,
+                                staff_id: scope.view.selected_staff,
+                                date: start_time,
+                                end_date: scope.selected_date.obj.add(scope.view.slot_duration.replace(/[a-zA-Z]/g,''),'minutes').toISOString()
+                            }
+                        ],
+                        customer_id: scope.view.selected_staff,
+                        paid: false,
+                        source: "Booked in salon",
+                        selected_date: start_time
+                    }
+
+                }
+
+                scope.get('services','all').then(()=>{
+                    scope.get('salon','54855602').then((salon_data)=>{
+
+                        scope.filteredServices = scope.services.filter(function(item,i){
+                            return item.duration <= scope.view.slot_duration && item.public == 'true' && scope.view.slot_promo_categories.indexOf(item.category) >= 0
+                        }).map((item)=>{
+                            return {_key: item._key, name: item.name}
+                        })
+
+                        if (scope.filteredServices.length > 0){
+
+                            if (payload.appointments){
+                                payload.appointments[0].filteredServices = scope.filteredServices
+                            } else {
+                                payload.filteredServices = scope.filteredServices
+                            }
+
+                            http('post','/api/appointments',payload)
+                                .then((data)=>{
+
+                                    modalCloseAll()
+
+                                    if (scope.view.slot_promotion){
+                                        scope.notify(scope.filteredServices.length+' services will be promoted at this time with a '+scope.view.slot_promotion+' discount','success').then(()=>{
+                                            window.location.href = "/dashboard/calendar"
+                                        })
+                                    } else {
+                                        scope.notify(scope.filteredServices.length+' services will be promoted at this time','success').then(()=>{
+                                            window.location.href = "/dashboard/calendar"
+                                        })
+                                    }
+
+
+                                    scope.view.slot_promo_description = ''
+                                    scope.view.slot_promotion = ''
+                                    scope.view.slot_duration = ''
+                                    scope.view.slot_promo_categories = ''
+
+
+
+                                }).catch((err)=>{
+                                    scope.notify(err,'error')
+                                })
+
+                        } else {
+                            scope.notify("No services can be applied to this promotion. Please change the duration or the categories selected. Also check you have services that are set as public.","error","20")
+                        }
+
+                    })
+                })
+
+
+
+            } else if (type == 'new_memo'){
+
+                contextCloseAll()
+                scope.view.memo = ''
+                scope.view.modal = 'new_memo'
+
+            } else if (type == 'memo'){
+
+                let staff_obj = scope.staff.find((staff)=>{
+                    return staff._key == scope.view.selected_staff
+                })
+
+                let payload = {
+                    appointments:[
+                            {
+                                event_type:"memo",
+                                description: scope.view.memo,
+                                staff_id: scope.view.selected_staff,
+                                staff_name: staff_obj.name.first+" "+staff_obj.name.last,
+                                date: scope.selected_date.full,
+                                end_date: moment(scope.selected_date.full).utc().add(15, 'minutes').toISOString()
+                            }
+                        ],
+                        customer_id: scope.view.selected_staff,
+                        paid:false,
+                        source:"Booked in salon",
+                        selected_date:scope.selected_date.full
+                    }
+
+                http('post', '/api/appointments', payload)
+                    .then((memo_data)=>{
+
+                        window.location.reload()
+
+                    }).catch((err)=>{
+                        scope.notify(err,'error')
+                    })
+
+            } else {
+
+                let url = '/dashboard/calendar/'
+
+                if (type == 'customer_appointment'){
+                    url = url+'new-appointment'
+                } else if (type == 'staff_appointment'){
+                    url = url+'new-staff-appointment'
+                } else if (type == 'memo'){
+                    url = url+'new-memo'
+                } else {
+                    return false
+                }
+
+                url = url+'?date='+scope.selected_date.full
+
+                if (scope.query.client_id){
+                    data = scope.query.client_id
+                }
+
+                if (data){
+                    if (type == 'customer_appointment'){
+                        url = url+'&&client_id='+data
+                    } else if (type == 'staff_appointment'){
+                        url = url+'&&staff_id='+data
+                    }
+                }
+
+                if (scope.view.selected_staff){
+                    url = url+'&&staff_id='+scope.view.selected_staff
+                }
+
+                window.location.href = url
+
+            }
+
+        }
+
+        scope.updateAppointment = function(type, key, data){
+
+            let appointment = document.getElementById('appointment-'+key),
+                modal = document.querySelector('#appointment-view .modal-body')
+
+            if (type == 'send_confirmation'){
+
+                modal.dataset.status = ""
+
+                scope.get('appointments', key+'/send_confirmation').then((data)=>{
+
+                    data.map((appt_key)=>{
+                        let appt = document.getElementById('appointment-'+appt_key._key)
+                        appt.dataset.status = 'unconfirmed'
+                    })
+
+                    if (scope.view.appointment && scope.view.appointment.status){
+                        modal.dataset.status = 'unconfirmed'
+                        scope.view.appointment.status = 'unconfirmed'
+                        scope.view.appointment.confirmation_sent = moment().toISOString()
+                    }
+                    appointmentCloseAll()
+
+                    scope.notify('Confirmation sent to the client')
+
+                }).catch((data)=>{
+
+                    data.map((appt_key)=>{
+                        let appt = document.getElementById('appointment-'+appt_key._key)
+                        appt.dataset.status = 'unconfirmed'
+                    })
+
+                    if (scope.view.appointment && scope.view.appointment.status){
+                        modal.dataset.status = 'unconfirmed'
+                        scope.view.appointment.status = 'unconfirmed'
+                    }
+                    appointmentCloseAll()
+
+                    scope.notify('Unable to contact the client - please check their email and/or mobile number','error')
+
+                })
+
+            } else if (type == 'no_show'){
+
+                if (data){
+
+                    scope.view.appointment_key = key
+                    scope.view.modal = 'show_no_show'
+
+                } else {
+
+                    modal.dataset.status = ""
+
+                    scope.get('appointments', scope.view.appointment_key+'/no_show').then((new_data)=>{
+
+                        appointmentCloseAll()
+                        modalCloseAll()
+
+                        new_data.map((appt_data)=>{
+                            console.log(appt_data)
+                            let appt = document.getElementById('appointment-'+appt_data._key)
+                            appt.dataset.status = appt_data.status
+                        })
+
+                        scope.notify('Client marked with No Show and transaction added')
+
+                    }).catch((err)=>{
+
+                        delete scope.view.appointment_key
+                        scope.view.modal = false
+                        scope.notify(err, 'error')
+
+                    })
+
+                }
+
+            } else if (type == 'confirm'){
+
+                modal.dataset.status = ""
+
+                scope.get('appointments', key+'/salon_confirm').then((data)=>{
+
+                    data.map((appt_key)=>{
+                        let appt = document.getElementById('appointment-'+appt_key._key)
+                        appt.dataset.status = 'confirmed'
+                    })
+
+                    if (scope.view.appointment && scope.view.appointment.status){
+                        modal.dataset.status = 'confirmed'
+                        scope.view.appointment.status = 'confirmed'
+                        scope.view.appointment.confirmed = moment().toISOString()
+                    }
+
+                    scope.notify('Appointment confirmed, client notified')
+
+                }).catch((data)=>{
+
+                    if (typeof data == 'string'){
+
+                        scope.notify(data,'error')
+
+                    } else if (data.error){
+
+                        scope.notify(data.error,'error',3).then(()=>{
+                            if (data.cart_id){
+                                window.location.href = '/dashboard/checkout/'+data.cart_id
+                            }
+                        })
+
+                    } else {
+
+                        data.map((appt_key)=>{
+                            let appt = document.getElementById('appointment-'+appt_key._key)
+                            appt.dataset.status = 'confirmed'
+                        })
+
+                        if (scope.view.appointment && scope.view.appointment.status){
+                            modal.dataset.status = 'confirmed'
+                            scope.view.appointment.status = 'confirmed'
+                        }
+
+                        scope.notify('Appointment confirmed, but unable to contact the client - please check their email and/or mobile number','error')
+
+                    }
+
+                })
+
+            } else if (type == 'check_in'){
+
+                let payload = {
+                    _key:key,
+                    status:data
+                }
+
+                if (data.match(/|/)){
+                    payload.status = data.split('|')[0]
+                    payload.prev_status = data.split('|')[1]
+                }
+
+                appointmentCloseAll()
+
+                scope.post('appointments/check_in',payload).then((new_data)=>{
+
+                    let status = '',
+                        click_collect = false,
+                        out_of_stock = []
+
+                    new_data.map((appt_data)=>{
+                        let appt = document.getElementById('appointment-'+appt_data._key)
+                        appt.dataset.status = appt_data.status
+                        status = appt_data.status
+                        if (appt_data.click_collect === true){
+                            click_collect = true
+                        }
+                        if (appt_data.out_of_stock && appt_data.out_of_stock.length > 0){
+                            out_of_stock = appt_data.out_of_stock
+                        }
+                    })
+
+                    if (scope.view.appointment && scope.view.appointment.status){
+                        modal.dataset.status = status
+                        scope.view.appointment.status = status
+                        scope.view.appointment.checked_in = moment().toISOString()
+                    }
+
+                    if (status != 'checked_in'){
+                        scope.notify('Marked as '+status)
+                    } else {
+
+                        if (click_collect === true && out_of_stock.length == 0){
+                            scope.notify('Checked In - client has selected additional products to purchase')
+                        } else if (click_collect === true && out_of_stock.length > 0){
+                            scope.notify('Checked In - client has selected additional products to purchase but '+out_of_stock.length+' item(s) are out of stock. Check in notifications for more details', 'error')
+                        } else {
+                            scope.notify('Checked In')
+                        }
+
+                    }
+
+                }).catch((err)=>{
+                    scope.notify(err,'error')
+                })
+
+
+            } else if (type == 'update_service'){
+
+                if (key._key){ // get service
+                    scope.view.appointment.service_id = key._key
+                } else {
+                    scope.view.appointment.add_log.push("Changed service from "+scope.view.appointment.service_name+" to "+key.name)
+                    scope.view.appointment.add_log.push("Changed duration from "+scope.view.appointment.duration+" to "+key.duration)
+                    scope.view.appointment.service_name = key.name
+                    scope.view.appointment.duration = key.duration
+                    scope.view.search = key.name
+                    scope.view.search_results = false
+
+                    let new_end_time = moment(scope.view.appointment.date).add(key.duration,'minutes').format('h:mma')
+
+                    document.getElementById('view-appointment-end_time').innerHTML = new_end_time
+
+                }
+
+            } else if (type == 'chg_customer'){
+
+                if (data && data._key){
+                    scope.view.appointment.add_log.push("Changed customer from "+scope.parseName(scope.view.appointment.customer.name)+" to "+scope.parseName(data.name))
+                    scope.view.appointment.customer = data
+                    scope.view.appointment.customer_id = data._key
+                    scope.view.client = scope.parseName(data.name)
+                }
+
+            } else if (type == 'add_service_customer'){
+
+                if (data){
+                    scope.view.appointment.service_client = data
+                    scope.view.appointment.service_client_id = data._key
+                } else {
+                    delete scope.view.appointment.service_client
+                    delete scope.view.appointment.service_client_id
+                }
+
+            } else if (type == 'unlink'){
+
+
+                scope.post('appointments/unlink',scope.view.appointment).then((new_link_id)=>{
+
+                    scope.view.appointment.link_id = new_link_id.replace(/\"|\\"/g,'')
+                    scope.changeModalTab('edit')
+                    scope.notify("Succesfully unlinked appointment")
+
+                }).catch(err=>{
+                    scope.notify(err, 'error')
+                })
+
+            } else if (type == 'delete'){
+
+                scope.view.modal = 'show_appointment_delete'
+
+            } else if (type == 'delete_linked'){
+
+                scope.notify('Deleting...','succes',99)
+
+                let appt = document.querySelector('#appointment-'+key),
+                    link_id = appt.dataset.link_id
+
+                scope.post('appointments/deleteLinked', {link_id:link_id}).then((appt_data)=>{
+
+                    let appts = document.querySelectorAll('[data-link_id="'+link_id+'"]')
+
+                    for (let i in appts){
+                        if (appts[i] && appts[i].style){
+                            appts[i].style.display = 'none'
+                        }
+                    }
+
+                    scope.view.modal = ''
+                    scope.notify('Appointments deleted')
+
+                }).catch(err => {
+                    scope.notify(err,'error')
+                })
+
+
+            } else {
+
+                if (scope.view.appointment.customer){
+                    appointment.querySelector('.appointment-details .name').innerHTML = scope.view.appointment.customer.name.first+' '+scope.view.appointment.customer.name.last
+                }
+
+                delete scope.view.appointment.total_items
+                delete scope.view.appointment.totals
+                delete scope.view.appointment.customer
+
+                scope.put('appointments', key, scope.view.appointment).then((appt_data)=>{
+
+                    appointment.dataset.status = appt_data.status
+                    if (appt_data.note){
+                        appointment.dataset.note = true
+                    } else {
+                        appointment.dataset.note = false
+                    }
+
+                    if (appt_data && appt_data.duration && appt_data.duration != appointment.dataset.duration){
+
+                        appointment.dataset.duration = appt_data.duration
+                        appointment.dataset.slots = appt_data.duration/15
+
+                        let new_end_time = moment(appt_data.end_date).utc()
+
+                        if (new_end_time.isDST() && !moment().isDST()){
+                            new_end_time = new_end_time.subtract(1, 'hour')
+                        }
+
+                        new_end_time = new_end_time.subtract(15, 'minutes').format('HHmm')
+
+                        appointment.dataset.end = appointment.dataset.end.split('-')[0]+'-'+new_end_time
+
+                        let appt_details = appointment.querySelector('.appointment-details')
+                        appt_details.classList.remove('single-slot','double-slot','triple-slot')
+
+                        if (parseInt(appt_data.duration) == 15){
+                            appt_details.classList.add('single-slot')
+                        }
+                        if (parseInt(appt_data.duration) == 30){
+                            appt_details.classList.add('double-slot')
+                        }
+                        if (parseInt(appt_data.duration) == 45){
+                            appt_details.classList.add('triple-slot')
+                        }
+
+                        appt_details.querySelector('.description div').innerHTML = appt_data.service_name
+                        appt_details.querySelector('.time').innerHTML = moment(appt_data.date).format('h:mma')+' - '+moment(appt_data.end_date).format('h:mma')
+
+                        setTimeout(function(){
+                            // console.log('ali',appointment.dataset.link_id)
+                        //    scope.showAppointment(appointment.dataset.link_id)
+                            positionAppointments()
+                        },200)
+
+                    }
+
+                    appointmentCloseAll()
+                    scope.notify('Appointment Updated')
+
+                }).catch((err)=>{
+                    scope.notify(err,'error')
+                })
+
+            }
+
+        }
+
+        scope.addSlotPromotion = function(key){
+
+            if (key){
+
+                scope.get('appointments',key+'/find_without_customer').then((data)=>{
+
+                    scope.selectDate(data.date)
+                    scope.view.slot_promotion_key = data._key
+                    scope.filteredServices = data.filteredServices
+                    scope.view.slot_promo_description = data.description
+                    scope.view.slot_promotion = data.promotion
+                    scope.view.slot_duration = moment(data.end_date).diff(moment(data.date),'minutes')
+                    scope.view.slot_promo_categories = data.promotion_categories
+                    scope.view.selected_staff = data.staff_id
+
+                    scope.get('salon','54855602').then((data)=>{
+                        scope.view.modal = 'add_slot_promotion'
+                    })
+                })
+
+            } else {
+
+                delete scope.view.slot_promotion_key
+                scope.view.slot_promo_description = 'Book this time and save!'
+                scope.view.slot_promotion = '-10%'
+                scope.view.slot_duration = '60'
+                scope.view.slot_promo_categories = ''
+                scope.filteredServices = []
+
+                scope.get('salon','54855602').then((data)=>{
+                    scope.view.modal = 'add_slot_promotion'
+                })
+
+            }
+
+        }
+
+        scope.showPromoServices = function(){
+
+            if (scope.view.slot_promo_categories && scope.view.slot_duration){
+
+                scope.get('services','all').then(()=>{
+                    scope.get('salon','54855602').then((salon_data)=>{
+                        scope.filteredServices = scope.services.filter(function(item,i){
+                            return item.duration <= scope.view.slot_duration && item.public == 'true' && scope.view.slot_promo_categories.indexOf(item.category) >= 0
+                        }).map((item)=>{
+                            return {_key: item._key, name: item.name}
+                        })
+                    })
+                })
+
+            }
+
+        }
+
+        scope.selectPromoCategory = function(category){
+
+            scope.addNewEvent('promo_category',category)
+            scope.showPromoServices()
+
+        }
+
+        scope.getPromoLink = function(key){
+
+            scope.view.promo_link = '<%- view.site.url %>/book/promotion/'+key
+            scope.view.modal = 'promo_link'
+
+            setTimeout(function(){
+                var copyText = document.querySelector("#promo-url");
+              copyText.select();
+              document.execCommand("copy")
+              scope.notify('Copied to clipboard')
+            },200)
+
+
+        }
+
+        scope.reschedule = function(key, prev_start_time, duration, chg_day){
+
+            let appointment = document.getElementById('appointment-'+key)
+
+            scope.view.open_appointment = false
+            appointmentCloseAll()
+            contextCloseAll()
+            scope.view.modal = false
+
+            if (scope.view.header == 'new_event'){
+                scope.newEvent('cancel')
+            }
+
+            if (appointment && key){
+
+                scope.view.header = 'reschedule'
+                scope.view.reschedule = {}
+                scope.view.reschedule.enabled = true
+                scope.view.reschedule.key = key
+                scope.view.reschedule.duration = appointment.dataset.duration
+                scope.view.reschedule.prev_start_time = appointment.dataset.start
+
+                if (chg_day === true){
+                    scope.view.reschedule.chg_day = true
+                }
+
+                localStorage.setItem('reschedule',JSON.stringify(scope.view.reschedule))
+
+                setLayer('staff',999)
+
+            } else if (prev_start_time && duration){
+
+                scope.view.header = 'reschedule'
+                scope.view.reschedule = {}
+                scope.view.reschedule.enabled = true
+                scope.view.reschedule.key = key
+                scope.view.reschedule.duration = duration
+                scope.view.reschedule.prev_start_time = prev_start_time
+
+                if (chg_day === true){
+                    scope.view.reschedule.chg_day = true
+                }
+
+            //    localStorage.setItem('reschedule',JSON.stringify(scope.view.reschedule))
+
+                setLayer('staff',999)
+
+            } else {
+
+                appointment = document.getElementById('appointment-'+scope.view.reschedule.key)
+
+                if (appointment && appointment.dataset){
+                    appointment.dataset.start = scope.view.reschedule.prev_start_time
+                }
+
+                scope.view.header = 'calendar'
+                scope.view.reschedule = {}
+                scope.view.reschedule.enabled = false
+                scope.view.reschedule.key = ''
+                scope.view.reschedule.duration = ''
+                scope.view.reschedule.prev_start_time = ''
+
+                localStorage.removeItem('reschedule')
+
+                setLayer('staff',1)
+            }
+
+        }
+
+        scope.toggleAppointment = function(id, event_type, info){
+            if (scope.view.chgLink == true){
+
+                let payload = {
+                    link: scope.view.appointment._key,
+                    link_to: id
+                }
+
+                scope.post('appointments/link', payload).then((new_link_id)=>{
+
+                    delete scope.view.chgLink
+                    scope.view.appointment.link_id = new_link_id.replace(/\"|\\"/g,'')
+                    scope.changeModalTab('edit')
+                    scope.view.modal = "show_edit"
+                    scope.view.header = "calendar"
+
+                    scope.notify('Linked appointment')
+
+                }).catch(err=>{
+                    scope.notify(err,'error')
+                    scope.chgLink('cancel')
+                })
+
+            } else {
+
+                let open_class = 'open'
+
+                if (info){
+                    open_class = 'edit'
+                }
+
+                contextCloseAll()
+
+                let appt = document.getElementById('appointment-'+id)
+                if (appt && !appt.classList.contains('open')){
+
+                    appointmentCloseAll()
+
+                    let height = appt.style.height,
+                        width = appt.style.width,
+                        is_memo = appt.classList.contains('memo')
+
+                    appt.dataset.height = height
+                    appt.dataset.width = width
+                    appt.classList.add(open_class)
+                    appt.style.height = 'auto'
+
+                    if (scope.view.calendar_zoom === true){
+                        appt.style.width = '13rem'
+                    }
+
+                    appt.style.zIndex = 250
+                    scope.view.open_appointment = true
+
+                } else {
+
+                    appt.style.height = appt.dataset.height
+                    appt.style.width = appt.dataset.width
+                    appt.classList.remove(open_class)
+                    appointmentCloseAll()
+                    scope.view.open_appointment = false
+                }
+
+            }
+
+
+
+        }
+
+        scope.toggleAppointmentNote = function(id, is_memo){
+
+            scope.get('appointments',id+'/get_note').then((note)=>{
+
+                if (is_memo){
+                    note.note = note.description
+                    scope.view.note_is_memo = true
+                } else {
+                    scope.view.note_is_memo = false
+                }
+
+                scope.view.note = note
+                scope.view.modal = 'show_appt_note'
+
+            })
+
+        }
+
+        scope.saveAppointmentNote = function(id){
+
+            let url = 'appointments/save_note'
+
+            if (scope.view.note_is_memo === true){
+                url = 'appointments/save_memo'
+                scope.view.note_is_memo = false
+            }
+
+            scope.post(url,scope.view.note).then((note)=>{
+
+                scope.view.modal = false
+                let appointment = document.getElementById('appointment-'+id)
+
+                if (scope.view.note.note != ''){
+                    appointment.dataset.note = true
+                    scope.notify('Note Updated')
+                } else {
+                    appointment.dataset.note = false
+                    scope.notify('Note Removed')
+                }
+
+            }).catch((err)=>{
+                scope.notify(err,'error',10,'fa-exclamation-circle')
+            })
+
+        }
+
+        scope.viewEdit = function(key){
+
+            scope.view.appointment = {
+                note: null,
+                customer: {
+                    avatar: null,
+                    email: null,
+                    tel: null
+                },
+                status: null,
+                add_log:[]
+            }
+
+            let modal = document.querySelector('#appointment-view .modal-body')
+
+            if (modal){
+                modal.dataset.status = ""
+            }
+
+            scope.view.modal_tab = 'one'
+
+            scope.get('appointments',key+'/findWithCustomerNote').then((appt_data)=>{
+
+                scope.view.appointment = appt_data
+                scope.view.appointment.add_log = []
+                scope.view.appointment_logs = appt_data.log.map((log)=>{
+                    return log
+                })
+                console.log(scope.view.appointment_logs)
+                scope.view.modal = 'show_edit'
+
+                scope.get('transactions',key+'/get_total').then((totals)=>{
+
+                    scope.view.appointment.totals = totals
+                    scope.view.appointment.total_items = totals.items.map(item => {
+                        return item
+                    }).sort((a,b)=>{
+                        return a.date.localeCompare(b.date)
+                    })
+
+                }).catch((err)=>{
+                    scope.new = appt_data
+                    scope.new.total = 0.00
+
+                    if (!appt_data.note){
+                        scope.new.note = ''
+                    }
+                })
+
+            }).catch((err)=>{
+                scope.notify(err,'error',10,'fa-exclamation-circle')
+            })
+
+        }
+
+        scope.changeModalTab = function(tab){
+
+            scope.view.modal_tab = tab
+            if (tab == 'edit'){
+
+                scope.post('appointments/get_linked',scope.view.appointment).then((app_data)=>{
+
+                    if (app_data.length > 1){
+                        scope.view.linked_appts_show = true
+                        scope.view.linked_appts = app_data.map((appt)=>{
+                            if (appt._key == scope.view.appointment._key){
+                                appt.viewing = true
+                            }
+                            return appt
+                        })
+                    } else {
+                        scope.view.linked_appts = []
+                        scope.view.linked_appts_show = false
+                    }
+
+                })
+
+            }
+
+        }
+
+        scope.showAppointment = function(id){
+
+            modalCloseAll()
+            appointmentCloseAll()
+
+            scope.post('appointments/get_linked',{link_id:id}).then((app_data)=>{
+
+                app_data.map((id)=>{
+                    appt = document.getElementById('appointment-'+id._key)
+
+                    if (appt){
+                        appt.classList.add('highlight')
+                    }
+                })
+            })
+
+        }
+
+        scope.chgLink = function(cancel){
+
+            if (cancel){
+                delete scope.view.chgLink
+                scope.view.header = 'calendar'
+                scope.view.modal = 'show_edit'
+                return
+            }
+
+            modalCloseAll()
+            appointmentCloseAll()
+            scope.view.chgLink = true
+            scope.view.header = 'chgLink'
+
+        }
+
+        scope.zoomToggle = function(){
+            document.querySelector('.calendar .day').classList.toggle('overview')
+            if (slot_height == 20){
+                slot_height = 10
+                scope.view.calendar_zoom = true
+            } else {
+                slot_height = 20
+                scope.view.calendar_zoom = false
+            }
+            positionAppointments()
+            positionOpenClose()
+            positionTimeline()
+        }
+
+        scope.saveSeats = function(){
+
+            scope.post('seats',scope.new).then((testi_data)=>{
+
+                scope.view.modal = false
+                scope.new = {}
+                scope.notify('Saved')
+
+                setTimeout(()=>{ window.location.reload(); }, 2000)
+
+            }).catch(err => {
+                    scope.notify(err,'error')
+                })
+
+        }
+        scope.deleteSeat = function(key){
+            if(confirm('Are you sure?')){
+                console.log(key)
+                scope.get('seats','delete/'+key).then((appt_data)=>{
+
+                scope.notify('Data removed successfully!')
+                setTimeout(()=>{ window.location.reload(); }, 2000)
+                           
+
+                }).catch((err)=>{
+                    scope.notify(err,'error',10,'fa-exclamation-circle')
+                })
+
+            }
+
+        }
+
+        scope.showmem_popup = async function(date){
+            scope.date = date
+
+            scope.post('members/byPurchasedDate',{'date':date}).then((appt_data)=>{
+
+                scope.members = appt_data
+                scope.view.modal = 'show_mem'
+
+                console.log('seatdata',appt_data)            
+
+            }).catch((err)=>{
+            scope.notify(err,'error',10,'fa-exclamation-circle')
+            })
+
+        }
+
+        scope.viewSeat = function(key){
+
+            scope.view.appointment = {
+                note: null,
+                customer: {
+                    avatar: null,
+                    email: null,
+                    tel: null
+                },
+                status: null,
+                add_log:[]
+            }
+
+            let modal = document.querySelector('#myid .modal-body')
+
+            if (modal){
+                modal.dataset.status = ""
+            }
+
+            scope.view.modal_tab = 'one'
+
+            scope.get('seats',key).then((appt_data)=>{
+
+                scope.new = appt_data
+               
+                console.log('seatdata',appt_data)
+                scope.view.modal = 'show_edit'               
+
+            }).catch((err)=>{
+                scope.notify(err,'error',10,'fa-exclamation-circle')
+            })
+
+        }
+
+        scope.clearIncomplete = function(key){
+            http('post','/api/customers/new_appointment',{_key:key,complete:true})
+            let client = document.getElementById(key)
+            if (client){
+                client.style.display = 'none'
+            }
+        }
+
+        if (localStorage.getItem('reschedule')){
+            let reschedule = JSON.parse(localStorage.getItem('reschedule'))
+            scope.reschedule(reschedule.key, reschedule.prev_start_time,reschedule.duration, true)
+        }
+
+
+    }
+
+</script>

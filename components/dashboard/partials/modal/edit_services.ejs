@@ -1,0 +1,143 @@
+<div class="modal" app-show="view.modal == 'show_edit_service'" anim="{'enter':'fade-in'}">
+
+    <div class="modal-body p-0 w-60 w-m-90" anim="{'enter':'move-up','duration':'0.2'}">
+
+        <div class="modal-header text-primary">
+            <div class="title">
+                <p class="m-0">
+                    Edit Portfolio
+                </p>
+            </div>
+            <div class="close">
+                 <span class="icon close white clickable" onclick="modalCloseAll()"></span> 
+
+                <!--<div class="btn-wrap">
+                    <button class="btn btn-left border mr-1 text-primary" app-click="view.tab = 'one'" app-class="{'active':view.tab == 'one'}">Details<span class="icon edit black right"></span></button>
+                    <button class="btn btn-right border text-primary" app-click="view.tab = 'two'" app-class="{'active':view.tab == 'two'}">Skills and Access<span class="icon stylist black right"></span></button>
+                </div>-->
+            </div>
+        </div>
+
+        <div class="modal-content p-2">
+
+            <div app-show="view.tab == 'one'">
+
+                <div class="">
+
+                    <div class="bg-white border p-2 box-shadow">
+                            <div class="list-item-wrap">
+                                
+    
+                                <div class="grid gap-1 col-9 mb-1 ">
+                                    <div class="text-bold colspan-2">
+                                        <label>Image</label>
+                                    </div>
+                                    <div class="text-bold colspan-3">
+                                        <label>Service Name</label>
+                                    </div>
+                                    <div class="text-bold colspan-3">
+                                        <label>Service description</label>
+    
+                                    </div>
+                                    <!-- <div class="text-bold colspan-3">
+                                    <label>Service Detail</label>
+                                </div> -->
+    
+                                    <div class="divider mb-1 colspan-9"></div>
+                                </div>
+                                <div class="grid gap-1 col-9 mb-1 ">
+                                   
+                                   
+                                   
+                                    <div class="text-bold colspan-2">
+                                        <label for="timeIcon_image2" class="clickable" app-src="item.duration">
+                                            <img src="/images/products/upload.svg" app-src="item.duration" />
+                                           
+                                        </label>
+                                        <input type="file" id="timeIcon_image2"
+                                        app-model="item.duration"  onchange="postServiceImage()">
+                                    </div>
+
+                                    
+
+
+                                    <input type="hidden" app-model="del.key" class="rounded mb-1">
+                                   
+                                    <input type="hidden" id="service_image" app-model="editt.image" />
+
+                                    <div class="text-bold colspan-3">
+                                        <input type="text" app-model="editt.service_name" placeholder="name"
+                                            class="" name="title">
+                                    </div>
+                                    <div class="text-bold colspan-3">
+                                        <input type="text" app-model="editt.service_description" placeholder="description"
+                                            class="" name="title">
+                                    </div>
+    
+                                    <!-- <div class="text-bold colspan-3">
+                                    <textarea app-model="portfolioItem.portfolioDescrip" placeholder="Description"
+                                        class="text-left"></textarea>
+                                </div>
+    
+                                    <div class="text-right flex flex-middle-right">
+                                        <a class="" app-click="microPortfolio('remove',{{index}})"><span
+                                                class="icon close black right"></span></a>
+                                    </div> -->
+    
+    
+                                    <div class="divider mb-1 colspan-9"></div>
+                                </div>
+    
+                            </div>
+                            
+
+
+                </div>
+            </div>
+
+           
+
+        </div>
+
+
+        <div class="modal-appointment-actions flex flex-middle-right">
+            <a class="btn bg-secondary" app-click="saveServices(del.key)">
+                <span >Save<span class="icon tick white right"></span></span>
+                
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+function postServiceImage() {
+                console.log("hello post skill image 77777799999")
+                const x = document.getElementById("timeIcon_image2");
+                const img_3 = document.getElementById("service_image");
+                console.log(x.files[0],"fffff");
+                let data = new FormData()
+                data.append('img', x.files[0])
+                for (let key of data.entries()) {
+                    console.log(key[0] + ', ' + key[1])
+                }
+                console.log(data,"dddaaaaaaaaaadddddada5");
+                fetch('/dashboard/serviceImage', {
+                    method: 'POST',
+                    body: data
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log(data,"ddddddd5555555555555")
+                         console.log(data.filename,"ffff")
+                        scope.editt.image = data.filename
+                        console.log(editt.image,"eeeeeeeeee");
+                        // img_3.value = data.filename
+                        //console.log(img_3.value);
+                    })
+                    .catch(err => console.log(err))
+            }
+
+</script>

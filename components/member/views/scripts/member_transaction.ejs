@@ -1,0 +1,140 @@
+<script>
+  extendedController = function () {
+    scope.get_member_transactions = (id, sort) => {
+      scope.member_transactions_sort = sort || "a._created DESC";
+
+      let url = `/api/member_transactions/member_transactions_page?id=${id}&page=${0}&limit=${10}&sort=a._created DESC`;
+      if (sort) {
+        url = `/api/member_transactions/member_transactions_page?id=${id}&page=${0}&limit=${10}&sort=${sort}`;
+      }
+      let body = {
+        id: id,
+      };
+      http("get", url, body).then((data) => {
+        data = JSON.parse(data);
+
+        scope.member_transactions = data.data;
+        scope.member_transactions_count = data.count;
+        document.addEventListener(
+          "DOMContentLoaded",
+          init(Math.round(parseInt(data.count) / 10)),
+          false
+        );
+      });
+    };
+    scope.drFilter = (id) => {
+      let from = document.getElementById("orderFrom").value;
+      let to = document.getElementById("orderTo").value;
+      scope.member_transactions_dateFilter={
+        from:from,
+        to:to
+      }
+      let body = {
+        id: id,
+        from: from,
+        to: to,
+        page:0,
+        limit:10
+      };
+      if (body.from) {
+        body.from = new Date(body.from).toISOString();
+        body.from=convertToiso(body.from)
+      }
+      if (body.to) {
+        body.to = new Date(body.to).toISOString();
+        body.to=convertToiso(body.to)
+      }
+      console.log(body);
+
+      function convertToiso(date) {
+        let dateString = date;
+        // const unixTimestamp = Math.floor(Date.parse(dateString) / 1000);
+        // const timestampInSeconds = Math.floor(unixTimestamp / 1000);
+        // const timestampInMilliseconds =
+        //   timestampInSeconds * 1000 + parseInt(dateString.substr(20, 3));
+        
+        // return timestampInMilliseconds;
+        const timestamp = new Date(dateString).getTime();
+        return timestamp
+      }
+      console.log(body);
+      scope.member_transactions_dateFilter={
+        from:body.from,
+        to:body.to
+      }
+      let url=`/api/member_transactions/trFilter`
+        http("post",url,body).then((result)=>{
+          result=JSON.parse(result)
+       console.log(result);
+          scope.member_transactions = result.data;
+          document.addEventListener(
+          "DOMContentLoaded",
+          init(Math.round(parseInt(result.count) / 4)),
+          false
+        );
+        })
+    };
+   scope.parseNormalDate=(d)=>{
+let date=new Date(d)
+let mm=date.getMonth()+1
+mm=mm<=9?`0${mm}`:mm
+return `${date.getFullYear()}-${mm}-${date.getDay()}`
+
+   }
+    scope.searchApi = (id, val) => {
+      scope.member_transactions_search = val;
+
+      let url = `/api/member_transactions/member_transactions_search?id=${id}&val=${val}&page=${
+        scope.member_transactions_page || 0
+      }&limit=${10}&sort=${scope.member_transactions_sort}`;
+      http("get", url).then((data) => {
+        data = JSON.parse(data);
+
+        scope.member_transactions = data.data;
+        scope.member_transactions_count = data.count;
+        document.addEventListener(
+          "DOMContentLoaded",
+          init(Math.round(parseInt(data.count) / 10)),
+          false
+        );
+      });
+    };
+    scope.changepage = (key, page) => {
+      scope.member_transactions_page = page || 0;
+      let url = `/api/member_transactions/member_transactions_page?id=${key}&page=${
+        page - 1
+      }&limit=${10}&sort=${scope.member_transactions_sort}`;
+      if (scope.member_transactions_search) {
+        url = `/api/member_transactions/member_transactions_search?id=${key}&val=${
+          scope.member_transactions_search
+        }&page=${page - 1}&limit=${10}&sort=${scope.member_transactions_sort}`;
+      }
+      if(scope.member_transactions_dateFilter?.from&&scope.member_transactions_dateFilter?.to){
+     console.log("filter on");
+     let url=`/api/member_transactions/trFilter`
+     let body={
+      id:key,
+      from:scope.member_transactions_dateFilter.from,
+      to:scope.member_transactions_dateFilter.to,
+      page:page-1,
+      limit:10
+
+     }
+     http("post",url,body).then((data)=>{
+      console.log("recived",JSON.parse(data));
+      data=JSON.parse(data)
+      scope.member_transactions = data.data;
+      scope.member_transactions_count = data.count;
+     })
+      }else{
+        http("get", url).then((data) => {
+        data = JSON.parse(data);
+
+        scope.member_transactions = data.data;
+        scope.member_transactions_count = data.count;
+      });
+      }
+   
+    };
+  };
+</script>

@@ -1,0 +1,20 @@
+
+
+<h4 class="mb-1">New Transaction</h4>
+<div app-hide="view.group_transactions">
+    <%# <a class="dp-btn bg-secondary text-white" href="/dashboard/clients">Customer Transaction <img src="/icons/add.svg" class="icon right"></a><br><br> %>
+    <a class="dp-btn bg-secondary text-white" href="/dashboard/foodcafe/foodCafeCheckout/new">New Transaction <span class="icon add right white"></span></a><br><br>
+    <%# <a class="btn clickable border" app-click="view.group_transactions = !view.group_transactions">Group Transactions <img src="/icons/DR_Icon_GroupItems.svg" class="icon right"></a> %>
+</div>
+<div app-show="view.group_transactions">
+    <a class="btn clickable bg-primary" app-click="groupTransaction('process')">Process Selected Transactions <span class="icon tick right black"></span></a>
+</div>
+
+<h4 class="mt-1 "><strong>Filter Transactions</strong></h4>
+<div class="divider mb-1 p-0"></div>
+<div class="filters client-checkoutFilter">
+    <a class="" app-click="filterTransactions('pending')" app-class="{'active':view.transaction_filter == 'pending'}">Pending</a>
+    <a class="" app-click="filterTransactions('complete')" app-class="{'active':view.transaction_filter == 'complete'}">Being Edited</a>
+    <a class="" app-click="filterTransactions('new')" app-class="{'active':view.transaction_filter == 'new'}">New</a>
+    <a class="" app-click="filterTransactions('all')" app-class="{'active':view.transaction_filter == 'all'}">Show All</a>
+</div>

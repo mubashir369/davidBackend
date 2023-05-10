@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>QR Code Business Card Template</title>
+	<style>
+		.card-container {
+			max-width: 400px;
+			margin: 0 auto;
+			border: 1px solid #ccc;
+			padding: 20px;
+			font-family: Arial, sans-serif;
+			text-align: center;
+		}
+		
+		.card-container h2 {
+			margin-top: 0;
+			font-size: 24px;
+			font-weight: bold;
+			line-height: 1.2;
+			margin-bottom: 10px;
+		}
+		
+		.logo {
+			display: block;
+			margin: 0 auto;
+			margin-bottom: 20px;
+			width: 80px;
+			height: 80px;
+			border-radius: 8px;
+		}
+		
+		.qr-code {
+			display: block;
+			margin: 0 auto;
+			margin-top: 20px;
+			width: 150px;
+			height: 150px;
+      border: 1px solid black;
+		}
+	</style>
+</head>
+<body>
+	<div class="card-container">
+		<img class="logo" src="http://143.244.139.198/static/media/logo.04c980ce365d2880c4f1f640e3ea806a.svg"  background="black" style="max-width: 100%; width: 90px; background-color: black;" alt="Logo">
+		<h4>Table : <%-tableNumber%></h4>
+		<img class="qr-code" src="<%-qrcode%>" alt="QR Code">
+	</div>
+</body>
+</html>

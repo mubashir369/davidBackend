@@ -1,0 +1,192 @@
+
+
+        <% if (typeof result != 'undefined' && result[0] && result[0].meta){ %>
+
+
+            <div class="grid col-3 gap-1 border-bottom pb-1 mb-1">
+                <div><span class="text-bold">From:</span> <span class="text-primary"><%- moment(result[0].meta.start).format('llll') %></span></div>
+                <div><span class="text-bold">To:</span> <span class="text-primary"><%- moment(result[0].meta.end).format('llll') %></span></div>
+                <div class="text-right">
+
+                </div>
+            </div>
+
+            <div class="grid col-3 gap-1">
+
+                <div class="vh-75 overflow-y rowspan-2 mr-1">
+
+
+
+                </div>
+
+                <div class="pr-1">
+                    <div class="table">
+
+                        <div class="row table-header">
+                            <div class="cell middle">Method</div>
+                            <div class="cell middle text-right">Entered</div>
+                            <div class="cell middle text-right">Calc.</div>
+                            <div class="cell middle text-right">Difference</div>
+                        </div>
+
+                        <div class="row table-heading">
+                            <div class="cell middle text-bold">Cash</div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.cash_closing_float).toFixed(2) %></div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.cash_total_calculated).toFixed(2) %></div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.cash_total_difference).toFixed(2) %></div>
+                        </div>
+
+                        <div class="row table-heading">
+                            <div class="cell middle text-bold">Card</div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.card_total_entered).toFixed(2) %></div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.card_total).toFixed(2) %></div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.card_total_difference).toFixed(2) %></div>
+                        </div>
+
+                        <div class="row table-heading">
+                            <div class="cell middle text-bold">Card Tips</div>
+                            <div class="cell middle text-right"></div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.card_tips).toFixed(2) %></div>
+                            <div class="cell middle text-right"></div>
+                        </div>
+                        <div class="row table-heading">
+                            <div class="cell middle text-bold">Stripe</div>
+                            <div class="cell middle text-right"></div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.stripe_total).toFixed(2) %></div>
+                            <div class="cell middle text-right"></div>
+                        </div>
+
+                        <div class="row table-heading">
+                            <div class="cell middle text-bold">Vouchers Spent</div>
+                            <div class="cell middle text-right"></div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.vouchers_spent).toFixed(2) %></div>
+                            <div class="cell middle text-right"></div>
+                        </div>
+
+                        <div class="row table-heading">
+                            <div class="cell middle text-bold">Account Spent</div>
+                            <div class="cell middle text-right"></div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.account_spent).toFixed(2) %></div>
+                            <div class="cell middle text-right"></div>
+                        </div>
+
+                        <div class="row table-heading">
+                            <div class="cell middle text-bold">BACS</div>
+                            <div class="cell middle text-right"></div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.bacs_total).toFixed(2) %></div>
+                            <div class="cell middle text-right"></div>
+                        </div>
+
+                    </div>
+
+
+
+                </div>
+                <div class="pl-1">
+
+                    <div class="table">
+
+                        <div class="row table-header">
+                            <div class="cell middle">Cash Breakdown</div>
+                            <div class="cell middle text-right"></div>
+                        </div>
+                        <div class="row">
+                            <div class="cell middle text-bold">Opening Float</div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.cash_opening_float).toFixed(2) %></div>
+                        </div>
+                        <div class="row">
+                            <div class="cell middle text-bold">Cash Sales</div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.cash_total).toFixed(2) %></div>
+                        </div>
+                        <div class="row">
+                            <div class="cell middle text-bold">Petty Cash Expenses</div>
+                            <div class="cell middle text-right">-£<%= parseFloat(result[0].totals.petty_cash_out_total).toFixed(2) %></div>
+                        </div>
+                        <div class="row">
+                            <div class="cell middle text-bold">Closing Float</div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.cash_closing_float).toFixed(2) %></div>
+                        </div>
+
+                        <div class="row">
+                            <div class="cell middle text-bold">Bank</div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.bank).toFixed(2) %></div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="colspan-2">
+
+                    <div class="table pt-2">
+
+                        <div class="row table-header">
+                            <div class="cell middle">Sales</div>
+                            <div class="cell middle text-center">Qty</div>
+                            <div class="cell middle text-right">Ex. VAT</div>
+                            <div class="cell middle text-right">VAT</div>
+                            <div class="cell middle text-right">Total</div>
+                        </div>
+                        <div class="row">
+                            <div class="cell middle text-bold">Services</div>
+                            <div class="cell middle text-center"><%- result[0].totals.service_count %></div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.service_sub_total).toFixed(2) %></div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.service_tax).toFixed(2) %></div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.service_total).toFixed(2) %></div>
+                        </div>
+                        <div class="row">
+                            <div class="cell middle text-bold">Retail</div>
+                            <div class="cell middle text-center"><%- result[0].totals.products_count %></div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.products_sub_total).toFixed(2) %></div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.products_tax).toFixed(2) %></div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.products_total).toFixed(2) %></div>
+                        </div>
+                        <div class="row text-weight-600">
+                            <div class="cell middle">Total</div>
+                            <div class="cell middle text-center"></div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.transactions_sub_total).toFixed(2) %></div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.transactions_tax).toFixed(2) %></div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.transactions_total).toFixed(2) %></div>
+                        </div>
+
+                    </div>
+
+                    <div class="mt-1"></div>
+
+                    <div class="table pt-2">
+                        <div class="row">
+                            <div class="cell middle text-bold">Voucher Sales</div>
+                            <div class="cell middle text-center"><%- result[0].totals.vouchers_count %></div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.vouchers_sub_total).toFixed(2) %></div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.vouchers_tax).toFixed(2) %></div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.vouchers_total).toFixed(2) %></div>
+                        </div>
+                        <div class="row">
+                            <div class="cell middle text-bold">Account Sales</div>
+                            <div class="cell middle text-center"><%- result[0].totals.account_count %></div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.account_sub_total).toFixed(2) %></div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.account_tax).toFixed(2) %></div>
+                            <div class="cell middle text-right">£<%= parseFloat(result[0].totals.account_total).toFixed(2) %></div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+
+        <% } else if (typeof result != 'undefined'){ %>
+
+            <div class="grid col-5 gap-1">
+
+                <% result.forEach((report,i)=>{ %>
+
+                    <div class="ReportCashOut">
+                        <a href="/dashboard/reports/cash_out_historical?key=<%- report._key %>" class="text-primary"><%- moment(report._created).format('llll') %> <div class="">(<%- report.transactions %>)</div></a>
+                    </div>
+
+                <% }) %>
+
+            </div>
+
+
+        <% } %>

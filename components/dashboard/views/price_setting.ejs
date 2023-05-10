@@ -1,0 +1,208 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+    <div class="page  ">
+        <div id='calendar'></div>  
+    </div>
+
+<script>
+
+function setEdit(groupId){
+
+    /*document.getElementById("myid").style.display = "flex";
+    document.getElementById("myid").className += " in-view";
+    document.getElementById("mbody").style.opacity = 1;*/
+    console.log(groupId.split('~'))
+
+    //document.getElementById("mydate").value = groupId.split('~')[0];
+    document.getElementById("mprice").value = groupId.split('~')[1];
+    document.getElementById("mseats").value = groupId.split('~')[2];
+}
+
+ var events2 = []
+ <% for(var i=0; i<seats.length; i++) { %>
+    events2.push({title: 'Price: £<%-seats[i].price%>/seat, <%-seats[i].seats%> Seats',
+          groupId: '<%-seats[i]._key%>',
+          start: '<%-seats[i].date%>',
+          end: '<%-seats[i].date%>'})
+
+          events2.push({title: 'Show Members',
+          groupId: 'showmem',
+          start: '<%-seats[i].date%>',
+          end: '<%-seats[i].date%>'})
+
+ <% } %>
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      /*height: '100%',
+      expandRows: true,
+      slotMinTime: '08:00',
+      slotMaxTime: '22:00',
+      slotLabelInterval: '00:30:00',
+      headerToolbar: {
+        left: 'prev,next Today',
+        center: 'title',
+        right: ''//dayGridMonth,timeGridWeek,timeGridDay,listWeek
+      },
+      initialView: 'dayGridMonth',
+      initialDate: '2022-07-14',
+      //navLinks: true, // can click day/week names to navigate views
+      //editable: true,
+      //selectable: true,
+      nowIndicator: true,
+      dayMaxEvents: true, // allow "more" link when too many events*/
+
+
+      dateClick: function(info) {
+        //const modal = 'show_edit'
+        //document.getElementById("myid").style.display = "flex";
+        //document.getElementById("myid").className += " in-view";
+
+
+        if(info.dateStr!="") document.getElementById("mydate").value = info.dateStr;
+
+        
+
+const dateToCompare = new Date(info.dateStr);
+const today = new Date();
+
+if (today.getTime() <= dateToCompare.getTime()) {
+ 
+  scope.newObj('seats')
+}
+
+
+
+        //alert('Coordinates: ' + info.jsEvent.pageX + ',' + info.jsEvent.pageY);
+        //alert('Current view: ' + info.view.type);
+        // change the day's background color just for fun
+        //info.dayEl.style.backgroundColor = 'red';
+      },
+
+      events: events2,
+
+
+
+      eventClick: function(info) {
+        console.log(info.event.start)
+        let ndate = moment(info.event.start).format('YYYY-MM-DD')
+
+        if(info.event.groupId == 'showmem'){
+          scope.view.show_mem = true
+          scope.showmem_popup(ndate)
+          return;
+        }
+
+        scope.viewSeat(info.event.groupId)
+        
+        //setEdit(info.event.groupId)
+        //alert('Event: ' + info.event.title);
+        //alert('Coordinates: ' + info.jsEvent.pageX + ',' + info.jsEvent.pageY);
+        //alert('View: ' + info.view.type);
+
+        // change the border color just for fun
+        info.el.style.borderColor = 'red';
+      },
+
+      /*
+      events: [
+        {
+          title: 'All Day Event',
+          start: '2022-07-01',
+        },
+        {
+          title: 'Long Event',
+          start: '2022-07-09',
+          end: '2022-07-10'
+        },
+        {
+          groupId: 999,
+          title: 'Repeating Event',
+          start: '2022-07-09T16:00:00'
+        },
+        {
+          groupId: 999,
+          title: 'Repeating Event',
+          start: '2022-07-16T16:00:00'
+        },
+        {
+          title: 'Conference',
+          start: '2022-07-11',
+          end: '2022-07-13'
+        },
+        {
+          title: 'Meeting',
+          start: '2022-07-12T10:30:00',
+          end: '2022-07-12T12:30:00'
+        },
+        {
+          title: 'Lunch',
+          start: '2022-07-12T12:00:00'
+        },
+        {
+          title: 'Meeting',
+          start: '2022-07-12T14:30:00'
+        },
+        {
+          title: 'Happy Hour',
+          start: '2022-07-12T17:30:00'
+        },
+        {
+          title: 'Dinner',
+          start: '2022-07-12T20:00:00'
+        },
+        {
+          title: 'Birthday Party',
+          start: '2022-07-13T07:00:00'
+        },
+        {
+          title: 'Click for Google',
+          url: 'http://google.com/',
+          start: '2022-07-28'
+        }
+      ]*/
+    });
+
+    calendar.render();
+  });
+
+</script>
+
+
+<link href="/js/calendar-lib/main.css" rel='stylesheet' />
+<style>
+
+  html, body {
+    overflow: hidden; /* don't do scrollbars */
+  }
+
+  #calendar-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  .fc-header-toolbar {
+    /*
+    the calendar will be butting up against the edges,
+    but let's scoot in the header's buttons
+    
+    padding-top: 1em;
+    padding-left: 1em;
+    padding-right: 1em;*/
+
+  }
+
+  .fc .fc-button-primary{
+    text-transform: capitalize;
+  }
+
+</style>
+
+<%- include('../partials/modal/add_slot.ejs') %>
+<%- include('../partials/modal/show-members.ejs') %>

@@ -1,0 +1,112 @@
+<div id="client-profile" class="modal" app-show="view.modal == 'show_edit'" anim="{'enter':'fade-in'}">
+
+    <div class="modal-body p-0 w-60 w-m-90" anim="{'enter':'move-up','duration':'0.2'}">
+
+        <div class="modal-header text-primary">
+            <div class="title">
+                <p class="m-0" app-bind="parseName(new.name)" app-show="new.name"></p>
+                <p class="m-0" app-hide="new.name">Add New Customer</p>
+            </div>
+            <div class="close">
+                <span class="icon close black clickable" onclick="modalCloseAll()"></span>
+
+            </div>
+        </div>
+
+        <div class="modal-content p-2">
+
+            <div class="grid col-9 col-s-1 gap-1">
+
+                <div class="colspan-1" style="width: 5rem">
+                    <label>Customer Image</label>
+                    <label for="image_avatar" class="clickable"><img src="/images/products/upload.svg" app-src="new.avatar" class="@avatar"></label>
+                    <input id="image_avatar" type="file" app-model="new.avatar">
+                </div>
+                <div class="colspan-8">
+                    <div class="@grid @col-4">
+                        <div class="mb-1 grid col-12 col-m-1 gap-1">
+                            <div class="colspan-6 ">
+                                <label>First Name</label>
+                                <input type="text" class="rounded" app-model="new.name.first" autocomplete="given-name">
+                            </div>
+                            <div class="colspan-6 ">
+                                <label>Surname</label>
+                                <input type="text" class="rounded" app-model="new.name.last" autocomplete="family-name">
+                            </div>
+                            <div class="colspan-6 ">
+                                <label>Phone Number</label>
+                                <% if (typeof user != 'undefined' && user.guard == 'admin' || typeof user != 'undefined' && user.role >= 1){ %>
+                                    <input type="text" class="rounded" app-model="new.tel" autocomplete="tel">
+                                <% } else { %>
+                                    <span app-bind="new.tel"></span>
+                                <% } %>
+                            </div>
+                            <div class="colspan-6 ">
+                                <label>Email Address</label>
+                                <% if (typeof user != 'undefined' && user.guard == 'admin' || typeof user != 'undefined' && user.role >= 1){ %>
+                                    <input type="text" class="rounded" app-model="new.email" autocomplete="tel">
+                                <% } else { %>
+                                    <span app-bind="new.email"></span>
+                                <% } %>
+                            </div>
+                            <div class="colspan-6 ">
+                                <label>Gender</label>
+                                <select app-model="new.gender" class="rounded">
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="colspan-6">
+                                <label>Date of birth</label>
+                                <div class="grid col-12 gap-1">
+                                    <input type="number" app-model="new.dob.date" placeholder="DD" class="colspan-4 rounded" autocomplete="bday-day">
+                                    <input type="number" app-model="new.dob.month" placeholder="MM" class="colspan-4 rounded" autocomplete="bday-month">
+                                    <input type="number" app-model="new.dob.year" placeholder="YY" class="colspan-4 rounded" autocomplete="bday-year">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="grid col-12 gap-1">
+                        <div class="colspan-12">
+                            <div class="">
+                                <label>Address</label>
+                                <input type="text" class="rounded mb-1" app-model="new.address.line1" placeholder="Address Line 1" autocomplete="address-line1">
+
+                                <input type="text" class="rounded " app-model="new.address.line2" placeholder="Address Line 2"  autocomplete="address-line2">
+                            </div>
+                        </div>
+                        <div class="colspan-12">
+                            <input type="text" class="rounded" app-model="new.address.town" placeholder="Town / City"  autocomplete="city">
+                        </div>
+                        <div class="colspan-6 ">
+                            <input type="text" class="rounded " app-model="new.address.county" placeholder="County"  autocomplete="address-level1">
+                        </div>
+                        <div class="colspan-6 ">
+                            <input type="text" class="rounded " app-model="new.address.postcode" placeholder="Postcode"  autocomplete="postal-code">                        
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="modal-appointment-actions flex flex-middle-right">
+            <% if (title == 'Client Card'){ %>
+                <a class="dp-btn text-white bg-secondary" app-click="saveClientCard()">
+                    <span app-show="new._key">Save<span class="icon tick right white"></span></span>
+                    <span app-hide="new._key">Add<span class="icon  right white"></span></span>
+
+                </a>
+            <% } else { %>
+                <a class="dp-btn text-white bg-secondary" app-click="saveClient()">
+                    <span app-show="new._key">Save<span class="icon tick right white"></span></span>
+                    <span app-hide="new._key">Add<span class="icon right white"></span></span>
+                </a>
+            <% } %>
+        </div>
+
+    </div>
+
+</div>

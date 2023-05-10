@@ -1,0 +1,302 @@
+<% layout('member.ejs') -%>
+
+    <%- include ../partials/header-member.ejs %>
+
+    <div class="page px-2 p-s-0" app-init="get('appointments','getmemappoints/<%-user._key%>')">
+<div class="grid gap-3 col-12">
+        <div class="colspan-5   pb-0">
+            <input type="text" class="search colspan-2 border" placeholder="Search by servic name, customer name or email"  onkeyup="scope.appoint_sorting(this.value,'<%-user._key%>','search')" spellcheck="false">
+        </div>
+
+        <div class="colspan-7  pb-0">
+            <div class="grid col-12">
+                <div class="colspan-4">
+                    <select
+                        className="ml-lg-10 dp-text-description mt-1 mt-md-0"
+                        onchange="scope.appoint_sorting(this.value,'<%-user._key%>','status')"
+                        style="width: 10rem;
+                        float: right;"
+                        >
+                        <option value="">Filter By Status:</option>
+                        <option value="complete">
+                            Complete
+                        </option>
+                        <option value="Incomplete">
+                            Incomplete
+                        </option>
+                        <option value="pending_refund">
+                        Pending
+                        </option>
+                        <option value="cancelled">
+                            Cancelled
+                        </option>               
+                
+                    </select>
+                </div>
+                <div class="colspan-4">
+                    <select
+                    className="ml-lg-10 dp-text-description mt-1 mt-md-0"
+                    onchange="scope.appoint_sorting(this.value,'<%-user._key%>','sortby')"
+                    style="width: 10rem;
+                    float: right;"
+                    >
+                    <option value="">Sort By:</option>
+                    <option value="service_name-ASC" data-extra="service">
+                        Service Name: A - Z
+                    </option>
+                    <option data-extra="service" value="service_name-DESC">
+                        Service Name: Z - A
+                    </option>
+                    <option data-extra="date" value="_created-DESC">
+                    Created Date: New - Old
+                    </option>
+                    <option data-extra="date" value="_created-ASC">
+                        Created Date: Old - New
+                    </option>
+            
+                    </select>
+                </div>
+                <div class="colspan-4">
+                    <select
+                        className="ml-lg-10 dp-text-description mt-1 mt-md-0"
+                        onchange="scope.appoint_sorting(this.value,'<%-user._key%>','service')"
+                        style="width: 10rem;
+                        float: right;"
+                        >
+                        <option value="">Filter By Service:</option>
+                        <% if(services.length>0){ %>
+                            <% for(var i=0;i < services.length;i++){ %>
+                        <option value="<%-services[i]._key%>" data-extra="service">
+                            <%-services[i].name%>
+                        </option>
+                        <% } %>
+                        <% } %>
+                        
+                        
+                
+                    </select>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+        <div app-hide="loading==true">Loading...</div>
+
+        <div class="p-0" app-show="loading==true">
+
+            <div class="table" >
+
+                <div class="row table-header">
+
+                    <div class="cell middle pl-1" style="width: 10em">Order ID/Date </div>
+                    <div class="cell middle" style="width: 10em">Service Name</div>
+                    <div class="cell middle mobile-cell">Transaction Id</div>
+                    <div class="cell middle mobile-cell" style="width: 10em">Customer Name</div>
+                    <div class="cell middle hidden-s" style="width: 8em">Charges </div>
+                    <div class="cell middle hidden-s">Payment Status</div>
+                    <div class="cell middle hidden-s">Created on</div>
+                    <div class="cell middle hidden-s text-right">Cancel/Refund</div>
+                   
+                    
+
+                </div>
+
+                <!-- <div class="row" app-for="appoint in appointments appointmentsTable"> -->
+                    
+                    <div class="row" app-for="appoint in appointments">
+                    <div class="cell middle" >
+                        <p app-bind="appoint.order_id"></p>
+                        <p class="appointmentsTable-date" app-bind="parseTDate(appoint.date)"></p>
+                    </div>
+                    <div class="cell middle" app-bind="appoint.service_name"></div>
+                    
+                   
+                    <div class="cell middle text-light hidden-s" app-bind="appoint.stripe_transcation_id"></div>
+
+                    <div class="cell middle text-light hidden-s" >
+                        <p class="text-weight-600 mb-0" app-bind="parseName(appoint.customer[0].name)"></p>
+                    <p app-bind="appoint.customer[0].phone"></p>
+                    <p app-bind="appoint.customer[0].email"></p>
+                    </div>
+
+
+                    <div class="cell middle text-light hidden-s text-center" ><span app-bind="parsePrice(appoint.totals.total)" class="ml-01"></span></div>
+                    <div class="cell middle text-light hidden-s" >
+                        <span app-show="appoint.transactions[0].status" app-bind="appoint.transactions[0].status"></span>
+                        <span app-hide="appoint.transactions[0].status"> Incomplete</span>
+                    </div>
+                    <div class="cell middle text-light hidden-s" app-bind="parseISODate(appoint._created,'Do MMMM YYYY')"></div>
+                    <div class="cell middle text-light hidden-s  text-right" >
+
+
+                    <div app-hide="appoint.status=='cancelled'">
+                        <a class="dp-btn bg-primary text-white trans-cancelBtn" app-click="show_pop_del(appoint)" >Cancel</a>
+                    </div>
+
+                    <a app-show="appoint.status=='cancelled'">Cancelled</a>
+
+                    <a app-show="appoint.status=='refuned'">Refund Completed</a>
+                    
+
+
+                    </div>
+                    
+                    
+                    
+
+                </div>
+
+            </div>
+            <div id="paginationID"></div>
+        </div>
+
+
+    </div>
+
+
+
+
+ <div class="modal smallModal" app-show="view.modal == 'show_delete'" anim="{'enter':'fade-in','exit':'fade-out'}">
+
+        <div class="modal-body " anim="{'enter':'move-up','duration':'0.2'}">
+
+            <div class=" text-primary">
+              
+                    <h4 class="text-light">
+                        Are you sure want to cancel <span app-bind="new.name"></span>?
+                    </h4>
+                    <div class="divider mb-1 mt-1 p-0"></div>
+                
+            </div>
+            <div class="pb-1 gap-1 text-right">
+                <div class="text-right pt-1 flex flex-middle-right">
+                    <a class="dp-btn bg-primary text-white mr-1 " onclick="modalCloseAll()">
+                        Cancel
+                    </a>
+                    <a class="dp-btn bg-secondary text-white" app-click="cancel_appointment()">
+                        Yes
+                        <span class="icon delete white right"></span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+   
+    <script>
+        let starting = 1
+    var pagePagination = {
+    code : '',
+    Extend : function(data) {
+    data = data || {};
+    pagePagination.size = data.size || 0;
+    pagePagination.page = data.page || 1;
+    pagePagination.step = data.step || 3;
+    },
+    Add : function(p, q) {
+    for (var l =p;l < q; l++) {
+    pagePagination.code += '<a>' + l + '</a>';
+    }
+    },
+    Last : function() {
+    pagePagination.code += '<i>...</i><a>' + pagePagination.size + '</a>';
+    },
+    First : function() {
+    pagePagination.code += '<a>1</a><i>...</i>';
+    },
+    Click : function() {
+    pagePagination.page = +this.innerHTML;
+    pagePagination.Start();
+    },
+    Prev : function() {
+    pagePagination.page--;
+    //scope.changepage(pagePagination.page)
+    if (pagePagination.page < 1) {
+    pagePagination.page = 1;
+    }
+    pagePagination.Start();
+    },
+    Next : function() {
+    pagePagination.page++;
+    //scope.changepage(pagePagination.page)
+    if (pagePagination.page > pagePagination.size) {
+    pagePagination.page = pagePagination.size;
+    }
+    pagePagination.Start();
+    },
+    Bind : function() {
+    var a = pagePagination.e.getElementsByTagName('a');
+    for (var num = 0; num < a.length; num++) {
+    if (+a[num].innerHTML === pagePagination.page)
+    a[num].className = 'current';
+    a[num].addEventListener('click', pagePagination.Click, false);
+    }
+    console.log(pagePagination.page)
+    //scope.changepage(pagePagination.page)
+    },
+    Finish : function() {
+    pagePagination.e.innerHTML = pagePagination.code;
+    pagePagination.code = '';
+    pagePagination.Bind();
+    },
+    Start : function() {
+    if (pagePagination.size < pagePagination.step * 2 + 6) {
+    pagePagination.Add(1, pagePagination.size + 1);
+    } else if (pagePagination.page < pagePagination.step * 2 + 1) {
+    pagePagination.Add(1, pagePagination.step * 2 + 4);
+    pagePagination.Last();
+    } else if (pagePagination.page > pagePagination.size - pagePagination.step * 2) {
+    pagePagination.First();
+    pagePagination.Add(pagePagination.size - pagePagination.step * 2 - 2,
+    pagePagination.size + 1);
+    } else {
+    pagePagination.First();
+    pagePagination.Add(pagePagination.page - pagePagination.step,
+    pagePagination.page + pagePagination.step + 1);
+    pagePagination.Last();
+    }
+    
+    console.log(pagePagination.page)
+    pagePagination.Finish();
+    
+    if(starting!==pagePagination.page){
+        scope.changepage('<%-user._key%>',pagePagination.page)
+        starting = pagePagination.page
+    }
+    
+    },
+    Buttons : function(e) {
+    var nav = e.getElementsByTagName('a');
+    nav[0].addEventListener('click', pagePagination.Prev, false);
+    nav[1].addEventListener('click', pagePagination.Next, false);
+    },
+    Create : function(e) {
+    var html = [ '<a>◄</a>', // previous button
+    '<span></span>', // paginationID container
+    '<a>►</a>' // next button
+    ];
+    e.innerHTML = html.join('');
+    pagePagination.e = e.getElementsByTagName('span')[0];
+    pagePagination.Buttons(e);
+    },
+    Init : function(e, data) {
+    pagePagination.Extend(data);
+    pagePagination.Create(e);
+    pagePagination.Start();
+    }
+    };
+    
+    var init = function(data) {
+        pagePagination.Init(document.getElementById('paginationID'), {
+            size : data,
+            page : 1,
+            step : 5
+        });
+    };
+
+    document.addEventListener('DOMContentLoaded', init(Math.round(parseInt('<%-total%>')/10)), false);
+    
+    </script>

@@ -1,0 +1,95 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+
+    <div class="page px-2 px-s-0" app-init="get('salon','54855602')">
+
+        <div class="px-2 pt-2 pb-0 hidden hidden-m">
+            <input type="text" class="search colspan-2 border" placeholder="Search..." app-model="view.search" onkeyup="scope.searchApi('services',this.value)" spellcheck="false">
+        </div>
+
+        <%- include('../../dashboard/partials/filters.ejs',{type:'services'}) %>
+
+        <div>
+
+            <div class="table" app-init="get('services','all')">
+
+                <div class="row table-header text-left">
+
+                    <div class="cell middle mobile-cell pl-1" style="width:30%;">Name</div>
+                    <div class="cell middle" style="width:30%;">Category</div>
+                    <div class="cell middle" style="width:15%;">Items</div>
+                    <div class="cell middle" style="width:15%;">Gender</div>
+                    <div class="cell middle text-right" style="width:10%;">Action</div>
+
+                </div>
+
+                <div class="row" app-for="service in services">
+
+                    <div class="cell middle clickable text-bold mobile-cell" app-click="edit('services',service)" app-bind="service.name"></div>
+                    <div class="cell middle text-light capitalise" app-bind="getSalonSetting('categories',service.category)"></div>
+                    <div class="cell middle text-light"><span app-bind="service.service_items.length"></span> Items</div>
+                    <div class="cell middle text-light capitalise"><span app-show="service.gender" app-bind="service.gender"></span><span app-hide="service.gender">Both</span></div>
+                    <div class="cell middle action-icons" app-attr="{id:'cell-'+service._key}">
+
+                        <div class="context-link btn border" app-click="toggleContext(service._key)">
+                            <span class="icon black arrowdown sm"></span>
+                        </div>
+                        <div class="context dropdown text-left" style="display: none" app-attr="{id:'context-'+service._key}">
+                            <div class="link" app-click="edit('services',service)">
+                                <span class="icon black edit left"></span>
+                                Edit
+                            </div>
+                            <div class="link" app-click="edit('services',service,'delete')">
+                                <span class="icon black delete left"></span>
+                                Delete
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+<%- include('../../dashboard/partials/modal/new_service.ejs') %>
+
+    <div class="modal" app-show="view.modal == 'show_delete'" anim="{'enter':'fade-in'}" >
+
+        <div class="modal-body p-0" anim="{'enter':'move-up','duration':'0.2'}">
+
+            <div class="modal-header text-primary">
+                <div class="title">
+                    <h4 class="text-light">
+                        Delete <span app-bind="new.name"></span>?
+                    </h4>
+                </div>
+                <div class="text-right">
+                    <h4 class="close-icon clickable" onclick="modalCloseAll()">&times;</h4>
+                </div>
+            </div>
+        
+            <div class="modal-content px-1 py-01" >
+                <div class="grid col-4 mx-auto pb-1 gap-1 text-left">
+                    <div class="colspan-1"></div>
+                    <div class="colspan-1 text-right pt-1">
+                        <a class="btn border w-100" app-click="modalCloseAll()" onclick="modalCloseAll()">
+                            Cancel
+                        </a>
+                    </div>
+
+                    <div class="colspan-1 text-right pt-1">
+                        <a class="btn bg-secondary w-100" app-click="delete('services',new._key)">
+                            Delete
+                            <span class="icon delete white right"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>

@@ -1,0 +1,214 @@
+.nav {
+
+    font-weight: 300;
+    background-color: black;
+    width: 100vw;
+    height: 3.5rem;
+    position: fixed;
+    top:0;
+    left:0;
+    z-index: 500;
+    transition: none;
+    letter-spacing: .031rem;
+
+    @media small {
+
+        transition: 0.5s height ease;
+
+        &-items {
+            height: 0
+        }
+
+        &.open {
+            height: 100vh;
+
+            .nav-items {
+                height: 100vh;
+                padding-top: 5rem;
+            }
+        }
+
+    }
+
+    .burger {
+
+        display: none;
+        text-align: right;
+        height:3.5rem;
+
+        @media small {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex:1;
+        }
+
+        img {
+            width: 1.5rem;
+        }
+    }
+
+    &-logo {
+        flex: 0 0 16.25rem;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        height:3.5rem;
+
+        @media small {
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .logo {
+            position: absolute;
+            width: 100%;
+            background-color: #fff;
+            border-bottom-right-radius: .375rem;
+            border-bottom-left-radius: .375rem;
+            height: 5rem;
+            margin-top: -.5rem;
+            padding: 2rem;
+            box-shadow: 0 5px 10px rgba(0,0,0,.102);
+
+            a {
+                line-height: 1rem;
+            }
+        }
+
+    }
+
+    &-items {
+        flex: 1;
+        text-align: right;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: none;
+
+
+        @media small {
+            transition: 0.5s all ease;
+            height:0;
+            flex: 0 0 calc(100% - 4rem);
+            overflow-y: auto;
+            text-align: left;
+            font-size: 1rem;
+            display: block;
+            position: absolute;
+
+            width: calc(100% - 4rem);
+
+            .btn {
+                width: 100%;
+                margin-top: 1rem;
+                text-align: center;
+                font-size: 1rem;
+            }
+        }
+
+        a:not(.btn), div.context-link {
+            display: inline-block;
+            padding: 1rem 0.75rem;
+            position: relative;
+            color: $text-light;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+            font-weight: 500;
+
+            &.active, &:hover {
+                color: #D7BEE0
+            }
+
+            @media small {
+                display: block;
+
+                &.tel {
+                    font-size: 2rem;
+                    font-weight: 500;
+                    margin-top: 1rem;
+                    text-align: center;
+                }
+            }
+        }
+
+
+        .context-link {
+
+            position: relative;
+
+            &::after {
+                position: relative;
+                display: inline-block;
+                content: '';
+                width: 0.4rem;
+                height: 0.4rem;
+                top: -0.25rem;
+                margin-left: 0.25rem;
+                border: 1px solid $text-light;
+                border-width: 0 1px 1px 0;
+                transform: rotate(45deg);
+            }
+        }
+
+        .context {
+
+            position: absolute;
+            padding: 1.25rem;
+            margin-left: -1.25rem;
+            background-color: $brand-dark;
+            text-align: left;
+            width: 12.7rem;
+
+            @media small {
+                position: relative;
+                padding-left: 3rem;
+                width: 100%;
+            }
+
+            a {
+                display: block;
+                padding: 0;
+                position: relative;
+                color: $text-light;
+                margin-bottom: 1.1875rem;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+
+            }
+
+        }
+
+    }
+
+    .btn {
+        background: white;
+        color: $text-dark;
+
+        @media small {
+            margin-left: 0;
+            margin-bottom: 1rem;
+        }
+
+
+        &:hover {
+            background: white;
+            color: $text-dark !important;
+        }
+
+        &-outline {
+            background: none;
+            border: 1px solid white;
+            color: white;
+
+            &:hover {
+                color: $text-dark !important;
+            }
+        }
+
+    }
+
+}

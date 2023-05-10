@@ -1,0 +1,538 @@
+<% layout('dashboard.ejs') -%> <%- include ../../dashboard/partials/header.ejs
+%>
+
+<div class="page px-2 px-s-0 bg-white common-form common-form-border">
+  <div class="mt-50 p-0">
+    <h4 class="text-weight-700 mb-1">Top Panel</h4>
+    <div class="divider mb-2 p-0"></div>
+  </div>
+  <div>
+    <div class="grid col-6 gap-2">
+      <div class="colspan-6">
+        <div class="p-0 mt-2 bg-white box-shadow">
+          <div class="list-item-wrap">
+            <div class="grid gap-1 col-12 mb-1">
+              <div class="text-bold colspan-6">
+                <label>Background Image (1920 x 1080)</label>
+              </div>
+              <div class="text-bold colspan-6">
+                <label>Logo Image (879 x 740)</label>
+              </div>
+            </div>
+            <div id="timelineDiv">
+              <div class="grid gap-1 col-12 mb-1" id="timelineRow">
+                <div class="text-bold colspan-6">
+                  <label for="file0" class="clickable">
+                    <% if(topPanel.backgroundImage){%>
+                    <img
+                      id="img0"
+                      src="<%- topPanel.backgroundImage%>"
+                      alt="upload now"
+                      class="object-fit"
+                    />
+                    <%} else{%>
+                    <img
+                      id="img0"
+                      src="https://icon-library.com/images/upload-icon-png/upload-icon-png-16.jpg"
+                      alt="upload now"
+                      class="object-fit"
+                    />
+                    <%}%>
+                  </label>
+                  <input type="file" value="" id="file0" class="" />
+                </div>
+                <div class="text-bold colspan-6">
+                  <label for="file1" class="clickable">
+                    <% if(topPanel.iconImage){%>
+                    <img
+                      id="img1"
+                      src="<%- topPanel.iconImage%>"
+                      alt="upload now"
+                      class="object-fit"
+                    />
+                    <%} else{%>
+                    <img
+                      id="img1"
+                      src="https://icon-library.com/images/upload-icon-png/upload-icon-png-16.jpg"
+                      alt="upload now"
+                      class="object-fit"
+                    />
+                    <%}%>
+                  </label>
+                  <input type="file" value="" id="file1" class="" />
+                </div>
+
+                <div class="text-right flex flex-middle-right">
+                  <!-- <a class="" id="close0"  ><span class="icon close black right"></span></a> -->
+                </div>
+
+                <div class="divider mb-1 colspan-12"></div>
+              </div>
+            </div>
+          </div>
+          <div class="text-left my-1 flex">
+            <!-- <button class="dp-btn bg-primary" onclick="addNewRow()">Add More<span class="icon add white right"></span></button> -->
+
+            <button
+              type="submit"
+              app-click="submitHomeTopPanel()"
+              class="dp-btn bg-secondary"
+            >
+              Submit
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-50 p-0">
+      <h4 class="text-weight-700 mb-1">Section 1</h4>
+      <div class="divider mb-2 p-0"></div>
+    </div>
+    <div class="grid col-6 gap-2">
+      <div class="colspan-6">
+        <div class="bg-white box-shadow p-2 radius-10 border">
+          <label>Heading</label>
+          <input
+            type="text"
+            class="rounded mb-1"
+            id="section1Head"
+            placeholder="Heading"
+            name="heading"
+            value="<%- section1.heading%>"
+          />
+          <label>Description</label>
+          <script src="https://cdn.ckeditor.com/4.20.1/standard/ckeditor.js"></script>
+          <textarea
+            id="section1Desc"
+            name="section1Desc"
+            type="text"
+            rows="8"
+            class="rounded mb-1"
+            placeholder="Description"
+            name="description"
+          >
+<%-section1.desc%></textarea
+          >
+          <label>Button Text</label>
+          <input
+            type="text"
+            id="section1Button"
+            class="rounded mb-1"
+            placeholder="Button text"
+            name="heading"
+            value="<%- section1.button_text%>"
+          />
+          <label>Button Url</label>
+          <input
+            type="text"
+            id="section1ButtonUrl"
+            class="rounded mb-1"
+            placeholder="Button Url"
+            name="heading"
+            value="<%- section1.button_url%>"
+          />
+          <div class="link">
+            <div class="mt-1 colspan-6">
+              <button
+                type="submit"
+                app-click="submitSection1()"
+                class="dp-btn bg-secondary"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- section 2 -->
+
+    <div class="mt-50 p-0">
+      <h4 class="text-weight-700 mb-1">Section 2</h4>
+      <div class="divider mb-2 p-0"></div>
+    </div>
+
+    <div class="grid col-6 gap-2">
+      <div class="colspan-6">
+        <div class="bg-white box-shadow p-2 radius-10 border">
+          <label>Image (955 x 802)</label>
+          <div class="text-bold colspan-6">
+            <label for="section2Img" class="clickable">
+              <img
+                id="imgs2"
+                src="<%- section2.image%>"
+                alt="upload now"
+                class="object-fit"
+              />
+            </label>
+            <input type="file" value="" id="section2Img" class="" />
+          </div>
+          <label>Heading</label>
+          <input
+            type="text"
+            id="section2Head"
+            class="rounded mb-1"
+            placeholder="Heading"
+            name="heading"
+            value="<%- section2.heading%>"
+          />
+          <label>Description</label>
+          <script src="https://cdn.ckeditor.com/4.20.1/standard/ckeditor.js"></script>
+          <textarea
+            type="text"
+            id="section2Desc"
+            name="section2Desc"
+            rows="8"
+            class="rounded mb-1"
+            placeholder="Description"
+            name="description"
+          >
+<%- section2.desc%></textarea
+          >
+
+          <label>Button Text</label>
+          <input
+            type="text"
+            id="section2Button"
+            class="rounded mb-1"
+            placeholder="Heading"
+            name="heading"
+            value="<%- section2.button_text%>"
+          />
+          <label>Button Url</label>
+          <input
+            type="text"
+            id="section2ButtonUrl"
+            class="rounded mb-1"
+            placeholder="Heading"
+            name="heading"
+            value="<%- section2.button_url%>"
+          />
+          <div class="link">
+            <div class="mt-1 colspan-6">
+              <button
+                type="submit"
+                app-click="submitSection2()"
+                class="dp-btn bg-secondary"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- section 3 -->
+
+    <div class="mt-50 p-0">
+      <h4 class="text-weight-700 mb-1">Section 3</h4>
+      <div class="divider mb-2 p-0"></div>
+    </div>
+
+    <div class="grid col-6 gap-2">
+      <div class="colspan-6">
+        <div class="bg-white box-shadow p-2 radius-10 border">
+          <label>Image (955 x 802)</label>
+          <div class="text-bold colspan-6">
+            <label for="section3Img" class="clickable">
+              <img
+                id="imgs3"
+                src="<%- section3.image%>"
+                alt="upload now"
+                class="object-fit"
+              />
+            </label>
+            <input type="file" value="" id="section3Img" class="" />
+          </div>
+          <label>Heading</label>
+          <input
+            type="text"
+            id="section3Head"
+            class="rounded mb-1"
+            placeholder="Heading"
+            name="heading"
+            value="<%- section3.heading%>"
+          />
+          <label>Description</label>
+          <script src="https://cdn.ckeditor.com/4.20.1/standard/ckeditor.js"></script>
+          <textarea
+            type="text"
+            id="section3Desc"
+            name="section3Desc"
+            rows="8"
+            class="rounded mb-1"
+            placeholder="Description"
+            name="description"
+          >
+<%- section3.desc%></textarea
+          >
+
+          <label>Button Text</label>
+          <input
+            type="text"
+            id="section3Button"
+            class="rounded mb-1"
+            placeholder="Heading"
+            name="heading"
+            value="<%- section3.button_text%>"
+          />
+          <label>Button Url</label>
+          <input
+            type="text"
+            id="section3ButtonUrl"
+            class="rounded mb-1"
+            placeholder="Heading"
+            name="heading"
+            value="<%- section3.button_url%>"
+          />
+          <div class="link">
+            <div class="mt-1 colspan-6">
+              <button
+                type="submit"
+                app-click="submitSection3()"
+                class="dp-btn bg-secondary"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- section-4 -->
+
+    <div class="mt-50 p-0">
+      <h4 class="text-weight-700 mb-1">Section 4</h4>
+      <div class="divider mb-2 p-0"></div>
+    </div>
+    <div class="grid col-6 gap-2">
+      <div class="colspan-6">
+        <div class="bg-white box-shadow p-2 radius-10 border">
+          <label>Heading</label>
+          <input
+            type="text"
+            class="rounded mb-1"
+            id="section4Head"
+            placeholder="Heading"
+            name="heading"
+            value="<%- section4.heading%>"
+          />
+          <label>Description</label>
+          <script src="https://cdn.ckeditor.com/4.20.1/standard/ckeditor.js"></script>
+          <textarea
+            id="section4Desc"
+            type="text"
+            name="section4Desc"
+            rows="8"
+            class="rounded mb-1"
+            placeholder="Description"
+            name="description"
+          >
+<%- section4.desc%></textarea
+          >
+          <label>Button Text</label>
+          <input
+            type="text"
+            id="section4Button"
+            class="rounded mb-1"
+            placeholder="Heading"
+            name="heading"
+            value="<%- section4.button_text%>"
+          />
+          <label>Button Url</label>
+          <input
+            type="text"
+            id="section4ButtonUrl"
+            class="rounded mb-1"
+            placeholder="Heading"
+            name="heading"
+            value="<%- section4.button_url%>"
+          />
+          <div class="link">
+            <div class="mt-1 colspan-6">
+              <button
+                type="submit"
+                app-click="submitSection4()"
+                class="dp-btn bg-secondary"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- section-5 -->
+
+    <div class="mt-50 p-0">
+      <h4 class="text-weight-700 mb-1">Section 5</h4>
+      <div class="divider mb-2 p-0"></div>
+    </div>
+
+    <div class="grid col-6 gap-2">
+      <div class="colspan-6">
+        <div class="bg-white box-shadow p-2 radius-10 border">
+          <label>Image (955 x 802)</label>
+          <div class="text-bold colspan-6">
+            <label for="section5Img" class="clickable">
+              <img
+                id="imgs5"
+                src="<%- section5.image%>"
+                alt="upload now"
+                class="object-fit"
+              />
+            </label>
+            <input type="file" value="" id="section5Img" class="" />
+          </div>
+          <label>Heading</label>
+          <input
+            type="text"
+            id="section5Head"
+            class="rounded mb-1"
+            placeholder="Heading"
+            name="heading"
+            value="<%-section5.heading%>"
+          />
+          <label>Description</label>
+          <script src="https://cdn.ckeditor.com/4.20.1/standard/ckeditor.js"></script>
+          <textarea
+            type="text"
+            id="section5Desc"
+            name="section5Desc"
+            rows="8"
+            class="rounded mb-1"
+            placeholder="Description"
+            name="description"
+          >
+<%- section5.desc%></textarea
+          >
+
+          <label>Button Text</label>
+          <input
+            type="text"
+            id="section5Button"
+            class="rounded mb-1"
+            placeholder="Heading"
+            name="heading"
+            value="<%- section5.button_text%>"
+          />
+          <label>Button Url</label>
+          <input
+            type="text"
+            id="section5ButtonUrl"
+            class="rounded mb-1"
+            placeholder="Heading"
+            name="heading"
+            value="<%- section5.button_url%>"
+          />
+          <div class="link">
+            <div class="mt-1 colspan-6">
+              <button
+                type="submit"
+                app-click="submitSection5()"
+                class="dp-btn bg-secondary"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- section-6 -->
+
+    <div class="mt-50 p-0">
+      <h4 class="text-weight-700 mb-1">Section 6</h4>
+      <div class="divider mb-2 p-0"></div>
+    </div>
+
+    <div class="grid col-6 gap-2">
+      <div class="colspan-6">
+        <div class="bg-white box-shadow p-2 radius-10 border">
+          <label>Image (955 x 802)</label>
+          <div class="text-bold colspan-6">
+            <label for="section6Img" class="clickable">
+              <img
+                id="imgs6"
+                src="<%- section6.image%>"
+                alt="upload now"
+                class="object-fit"
+              />
+            </label>
+            <input type="file" value="" id="section6Img" class="" />
+          </div>
+          <label>Heading</label>
+          <input
+            type="text"
+            id="section6Head"
+            class="rounded mb-1"
+            placeholder="Heading"
+            name="heading"
+            value="<%- section6.heading%>"
+          />
+          <label>Description</label>
+          <script src="https://cdn.ckeditor.com/4.20.1/standard/ckeditor.js"></script>
+          <textarea
+            type="text"
+            id="section6Desc"
+            name="section6Desc"
+            rows="8"
+            class="rounded mb-1"
+            placeholder="Description"
+            name="description"
+          >
+<%- section6.desc%></textarea
+          >
+
+          <label>Button Text</label>
+          <input
+            type="text"
+            id="section6Button"
+            class="rounded mb-1"
+            placeholder="Heading"
+            name="heading"
+            value="<%- section6.button_text%>"
+          />
+          <label>Button Url</label>
+          <input
+            type="text"
+            id="section6ButtonUrl"
+            class="rounded mb-1"
+            placeholder="Heading"
+            name="heading"
+            value="<%- section6.button_url%>"
+          />
+          <div class="link">
+            <div class="mt-1 colspan-6">
+              <button
+                type="submit"
+                app-click="submitSection6()"
+                class="dp-btn bg-secondary"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-50"></div>
+  </div>
+
+  <script>
+    CKEDITOR.replace("section1Desc");
+    CKEDITOR.replace("section2Desc");
+    CKEDITOR.replace("section3Desc");
+    CKEDITOR.replace("section4Desc");
+    CKEDITOR.replace("section5Desc");
+    CKEDITOR.replace("section6Desc");
+  </script>
+  <script></script>
+</div>

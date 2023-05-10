@@ -1,0 +1,36 @@
+<% layout('customer-page.ejs') -%>
+
+<div class="vh-80 flex flex-middle">
+    <div class="vw-30 vw-s-100 px-s-2 text-center">
+
+        <% if (confirmation == true){ %>
+            <h2 class="mb-2"><span class="icon reminder secondary left"></span>Booking Request Sent!</h2>
+            <p>To provide you with the very best service, the salon needs to quickly review your appointment before booking. We will review and confirm with you shortly.</p>
+        <% } else { %>
+            <h2 class="mb-2"><span class="icon reminder secondary left"></span>Thank You!</h2>
+            <% if (typeof user != 'undefined'){ %>
+                <% if (user.email){ %>
+                    <p>We've sent you a confirmation email to <%- user.email %>. Please click on the link in the email to confirm your appointment.</p>
+                <% } else if (user.tel){ %>
+                    <p>We've sent you a confirmation text to <%- user.tel %>. Please tap the link in the message to confirm your appointment.</p>
+                <% } else { %>
+                    <p>We've sent you a confirmation email. Please click on the link in the email to confirm your appointment.</p>
+                <% } %>
+            <% } else { %>
+                <p>We've sent you a confirmation email. Please click on the link in the email to confirm your appointment.</p>
+            <% } %>
+        <% } %>
+
+        <% if (typeof user != 'undefined' && user.email && user.tel && user.address){ %>
+            <div class="text-center mt-2">
+                <a class="btn border" href="/account">Your Account<span class="icon black client right"></span></a>
+            </div>
+        <% } else { %>
+            <div class="text-center mt-2 bg-white p-2 rounded">
+                <h4 class="mb-2 text-weight-600">Whilst you're here...</h4><div>We've noticed that your account is missing some information. If you have a minute, please click the link below to complete your account details.</div>
+                <a class="btn bg-secondary mt-2 thick" href="/account/details">Update your details<span class="icon white arrowright right"></span></a>
+            </div>
+        <% } %>
+
+    </div>
+</div>

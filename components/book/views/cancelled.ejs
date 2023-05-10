@@ -1,0 +1,24 @@
+<% layout('customer-page.ejs') -%>
+
+<div class="vh-80 flex flex-middle">
+    <div class="vw-30 vw-s-100 px-s-2 text-center">
+
+    <% if (typeof appt != 'undefined' && appt.status && appt.status == 'cancelled'){ %>
+
+        <h2 class="mb-2"><span class="icon reminder secondary left"></span>The salon has been notified</h2>
+        <p>The salon has been notified of your cancellation. If you have done this in error, please contact the salon directly.</p>
+
+    <% } else if (typeof appt != 'undefined' && appt.status && appt.status == 'reschedule'){ %>
+
+        <h2 class="mb-2"><span class="icon reminder secondary left"></span>The salon has been notified</h2>
+        <p>The salon has been notified of your reschedule request. If you have done this in error, please contact the salon directly.</p>
+
+    <% } else { %>
+        <h2 class="mb-2"><span class="icon noshow secondary left"></span>Hmm, something went wrong</h2>
+        <p>We've had a little trouble ammending your appointment. You can check your appointments by clicking the account link in the top menu.</p>
+    <% } %>
+
+    <a class="btn bg-secondary mt-2" href="/account">Your Account<span class="icon client white right"></span></a>
+
+    </div>
+</div>

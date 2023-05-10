@@ -1,0 +1,63 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+    
+    <div class="page px-2 px-s-0">
+
+        <% if (typeof user != 'undefined' && user.guard == 'admin' || typeof user != 'undefined' && user.role >= 2){ %>
+
+        <!-- <div app-init="get('staff','all')"> -->
+            <div app-init="get('staff','getStaff')">
+            <div class="table overflow-y sortable" app-sort="sortStaff()">
+
+                <div class="row table-header sortable-disabled">
+
+                    <div class="cell middle" style="width: 3%"></div>
+                    <div class="cell middle mobile-cell" style="width: 27%;">Name</div>
+                    <div class="cell middle" style="width: 20%;">Mobile No </div>
+                    <div class="cell middle" style="width: 20%;">Email</div>
+                    
+                    <div class="cell middle"  style="width: 10%;">Access</div>
+                    <div class="cell middle text-right"  style="width: 10%;">Action</div>
+
+                </div>
+
+                <div class="row" app-for="stylist in staff">
+
+                    <div class="cell middle"><img src="/images/avatars/Profile_Placeholder.svg" app-src="stylist.avatar" class="icon avatar lg"></div>
+                    <div class="cell middle clickable text-bold capitalise mobile-cell"  app-click="edit('staff',stylist)" app-bind="parseName(stylist.name)"></div>
+                    <div class="cell middle text-light" app-bind="stylist.tel"></div>
+                    <div class="cell middle text-light" app-bind="stylist.email"></div>
+                   
+                    <div class="cell middle text-light capitalise" app-bind="stylist.role"></div>
+                    <div class="cell middle action-icons" app-attr="{id:'cell-'+stylist._key}">
+
+                        <div class="context-link btn border" app-click="toggleContext(stylist._key)">
+                            <span class="icon black arrowdown sm"></span>
+                        </div>
+                        <div class="context dropdown text-left" style="display: none" app-attr="{id:'context-'+stylist._key}">
+                            
+                                <div class="link" app-click="edit('staff',stylist)">
+                                    <span class="icon black edit left"></span>
+                                    Edit
+                                </div>
+                                <div class="link" app-click="edit('staff',stylist,'delete')">
+                                    <span class="icon black delete left"></span>
+                                    Delete
+                                </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <% } %>
+
+    </div>
+
+    <%- include ../../dashboard/partials/modal/staff_profile2.ejs %>

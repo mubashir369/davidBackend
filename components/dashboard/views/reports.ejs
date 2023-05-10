@@ -1,0 +1,106 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+
+    <div class="page allReport" style="white-space: normal">
+
+        <div class="grid col-4 col-m-3 col-s-1 gap-1 allReport-cards">
+
+            <div class="bg-grey rounded p-1 allReport-card-box">
+                <h4 class="text-bold">Cash Up</h4>
+                <p>Run this report at the end of everyday to balance the register</p>
+                <button class="dp-btn text-white bg-secondary" app-click="runReport('cash_out','true')">Run Report</button>
+            </div>
+
+            <% if (typeof user != 'undefined' && user.guard == 'admin' || typeof user != 'undefined' && user.role >= 2){ %>
+
+                <div class="bg-grey rounded p-1  allReport-card-box">
+                    <h4 class="text-bold">List Cash Out Reports</h4>
+                    <p>Show all previous Cash Out Reports</p>
+                    <button class="dp-btn text-white bg-secondary" app-click="runReport('cash_out_historical',false,true)">View</button>
+                </div>
+
+                <div class="bg-grey rounded p-1  allReport-card-box">
+                    <h4 class="text-bold">Historical Cash Out</h4>
+                    <p>Download cash out reports between certain dates</p>
+                    <button class="dp-btn text-white bg-secondary" app-click="runReport('cash_out_historical_range','true')">Run Report</button>
+                </div>
+
+                <div class="bg-grey rounded p-1  allReport-card-box">
+                    <h4 class="text-bold">Service and Retail</h4>
+                    <p>Breakdown of staff and salon earnings</p>
+                    <button class="dp-btn text-white bg-secondary" app-click="runReport('month_end','true')">Run Report</button>
+                </div>
+
+                <div class="bg-grey rounded p-1  allReport-card-box">
+                    <h4 class="text-bold">Staff Product Sales</h4>
+                    <p>Breakdown of staff product sales</p>
+                    <button class="dp-btn text-white bg-secondary" app-click="runReport('product_staff','true')">Run Report</button>
+                </div>
+
+                <div class="bg-grey rounded p-1  allReport-card-box">
+                    <h4 class="text-bold">Stock Check</h4>
+                    <p>Generate a CSV of all products that are below their re-order threshold</p>
+                    <button class="dp-btn text-white bg-secondary" app-click="runReport('order_products',false, true)">View</button>
+                </div>
+                <div class="bg-grey rounded p-1  allReport-card-box">
+                    <h4 class="text-bold">Export Client email list</h4>
+                    <p>Generate a CSV of all client email addresses</p>
+                    <button class="dp-btn text-white bg-secondary" app-click="runReport('client_email',false, true)">Run Report</button>
+                </div>
+
+            <% } %>
+
+        </div>
+
+    </div>
+
+    <div class="modal" app-show="view.modal == 'show_modal'" anim="{'enter':'fade-in'}">
+
+        <div class="modal-body p-0" anim="{'enter':'move-up','duration':'0.2'}">
+            <div class="modal-header" >
+            <div class="title">
+                    <h4 class="text-black">
+                        <span>Run Report</span>
+                    </h4>
+                </div>
+                <div class="text-right">
+                    <h4 class="close-icon clickable" onclick="modalCloseAll()">&times;</h4>
+                </div>
+            </div>
+            <div class="modal-content p-2">
+            <div class="grid col-2 gap-1">
+
+                <div class="layer-5 w-100 relative" app-show="report_meta.from">
+                    <div class="mb-1">From: <span class="text-primary" app-bind="parseISODate(report_meta.from,'Do MMMM YYYY')"></span></div>
+                    <%- include(view.basedir+'/components/dashboard/partials/date-picker-simple.ejs',{open:true, type:'select',obj:'report_meta.from'}) %>
+                </div>
+                <div class="layer-5 w-100 relative" app-show="report_meta.to">
+                    <div class="mb-1">To: <span class="text-primary" app-bind="parseISODate(report_meta.to,'Do MMMM YYYY')"></span></div>
+                    <%- include(view.basedir+'/components/dashboard/partials/date-picker-simple.ejs',{open:true, type:'select_end',obj:'report_meta.to'}) %>
+                </div>
+
+                <div class="" app-for="input in report_inputs">
+                    <div app-hide="match(input.field,'date')">
+                        <label class="block text-small" app-bind="input.description"></label>
+                        <input type="text" app-model="input.value">
+                    </div>
+                </div>
+            </div>
+            </div>
+
+            <div class="modal-appointment-actions flex flex-middle-right p-1 text-right">
+               
+                <a class="dp-btn text-white bg-secondary m-0" app-click="runReport(view.report.slug,view.report.value,true)">
+                    Run Report<span class="icon tick right white"></span>
+                </a>
+            
+        </div>
+
+        </div>
+
+    </div>
+
+    <div id="results">
+
+        </div>

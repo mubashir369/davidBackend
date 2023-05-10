@@ -1,0 +1,67 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+
+    <div class="hidden" app-init="get('staff','all')"></div>
+    <div class="hidden" app-init="get('salon','54855602')"></div>
+    <div class="hidden" app-init="newAppointment('set_event_type','memo')"></div>
+
+    <% if (typeof appointment_key != 'undefined'){ %>
+        <div class="hidden" app-init="newAppointment('get','<%- appointment_key %>')"></div>
+    <% } %>
+
+    <div class="page grid col-12 col-s-1 h-100 overflow-hidden new-appointment">
+
+        <div class="colspan-6 pr-2 appointment-build overflow-y">
+
+            <div app-hide="new_appointment.staff_id">
+
+                <div class="table">
+                    <div class="row" app-for="member in staff">
+
+                        <div class="cell middle clickable" style="width: 4em" app-click="newAppointment('add_stylist',member)">
+                            <img app-src="member.avatar" src="/images/avatars/Profile_Placeholder.svg" class="icon avatar lg">
+                        </div>
+                        <div class="cell middle clickable text-bold" app-click="newAppointment('add_stylist',member)" app-bind="parseName(member.name)"></div>
+                        <div class="cell middle action-icons" app-attr="{id:'cell-'+member._key}" style="width: 5em">
+                            <div class="context-link btn border" app-click="toggleContext(member._key)">
+                                <img src="/icons/down-arrow.svg" class="icon">
+                            </div>
+                            <div class="context dropdown text-left" style="display: none" app-attr="{id:'context-'+client._key}">
+                                <div class="link" app-click="newAppointment('add_stylist',member)">
+                                    <img src="/icons/add.svg" class="icon">
+                                    Select
+                                </div>
+                                <div class="link" app-click="goto('/dashboard/salon/staff/',v._key)">
+                                    <img src="/icons/Client_Icon.svg" class="icon">
+                                    Staff Card
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div app-show="new_appointment.staff_id" class="relative ">
+
+                <div class="relative">
+
+                    <h4 class="text-primary mb-1">New Memo</h4>
+
+                    <textarea class="border" app-model="new_appointment.description" placeholder="Memo details"></textarea>
+
+                    <div class="mt-1 mb-2 text-right" app-show="new_appointment.start_time">
+                        <button class="btn thick bg-secondary" app-click="newAppointment('push')">Add <i class="fa fa-chevron-right ml-1"></i></button>
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    <%- include('../../dashboard/partials/event-details.ejs',{type:'memo'}) %>

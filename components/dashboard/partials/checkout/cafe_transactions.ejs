@@ -1,0 +1,60 @@
+
+<div class="page  checkout-transaction">
+    <div class="p-0">
+        <h4 class="text-weight-700 mb-1">Current Transactions </h4>
+        <div class="divider mb-1 p-0"></div>
+    
+    
+    </div>
+    
+        <h4 app-show="view.group_transactions" class="text-primary mb-2">Select transactions to group</h4>
+        <% if (typeof carts != 'undefined'){ %>
+            <% for (var i in carts){ %>
+                <div class="grid bg-grey rounded col-5 p-1 mb-1 clickable capitalise transaction <% if (typeof carts[i].status != 'undefined'){ %>cart-<%- carts[i].status %><% } %>" app-click="cafeGroupTransaction('<%- carts[i].id.replace(/cart\_/,'') %>',<% if (typeof carts[i].customer != 'undefined'){ %>'<%- carts[i].customer.name %>'<% } %>)" app-class="view.grouped_<%- carts[i].id.replace(/cart\_/,'') %>">
+                    <div class="text-weight-500 colspan-2 colspan-s-5">
+    
+                        <% if (typeof carts[i].customer != 'undefined'){ %>
+                            <% if (typeof carts[i].customer.avatar != 'undefined' && carts[i].customer.avatar){ %>
+                                <img src="<%- carts[i].customer.avatar %>" class="icon avatar lg">
+                            <% } else { %>
+                                <img src="/images/avatars/Profile_Placeholder.svg" class="icon avatar lg">
+                            <% } %>
+                            <%- carts[i].customer.name %>
+                            <% if (carts[i].status == 'complete'){ %>
+                                <small class="text-33-red"> Being edited</small>
+                            <% } %>
+    
+                        <% } else if (carts[i].method == 'petty_cash' && carts[i].items && carts[i].items[0]){ %>
+                            Petty Cash: <%- carts[i].items[0].name %>
+                            <br>
+                            <%- carts[i].staff_name %>
+                        <% } else { %>
+                            <%- carts[i].id %>
+                        <% } %>
+                    </div>
+                    <div class="flex flex-middle-right colspan-s-3">
+                        <%- carts[i].items.length %> Item<% if (carts[i].items.length != 1){ %>s<% } %>
+                    </div>
+                    <div class="flex flex-middle-right text-right">
+                        £<%- carts[i].total %>
+                        <% if (typeof carts[i].status != 'undefined' && carts[i].status == 'pending'){ %>
+                            <%- carts[i].status %>
+                        <% } %>
+    
+                        <% if (typeof carts[i].link_sent != 'undefined'){ %>
+                            <br>Sent: <%- functions.parseDate(carts[i].link_sent) %>
+                        <% } %>
+                    </div>
+                    <div class="flex flex-middle-right text-right">
+    
+                        <% if (carts[i].method == 'petty_cash' && user.role >= 2 || carts[i].method == 'petty_cash' && user.guard == 'admin' || carts[i].method != 'petty_cash'){ %>
+                            <a app-click="deleteCafeTransaction('<%- carts[i].id %>','','<%- carts[i].status %>')"><span class="icon close right black"></span></a>
+                        <% } %>
+    
+                    </div>
+                </div>
+            <% } %>
+        <% } %>
+    
+    </div>
+    

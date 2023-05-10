@@ -1,0 +1,539 @@
+<% layout('customer-page.ejs') -%>
+
+    <div class="py-4 py-s-2 page grid col-12 col-s-1 client text-left" app-init="get('customers','<%- client_data._key %>/recommended_products','client_recommended_products')">
+
+        <div class="colspan-4 pr-2 pr-s-0 mb-s-2">
+
+            <div class="hidden-m hidden grid col-2">
+                <div>
+                    <button class="btn border" app-click="view.modal = 'show_topup'">Credit: £<% if (client_data.balance){ %><%- client_data.balance.total.toFixed(2) %><% } else { %>0<% } %><span class="icon cardpayment secondary right"></span></button>
+                </div>
+                <div class="text-right">
+                    <a class="btn bg-secondary" href="/book">New Appointment<span class="icon calendar white right"></span></a>
+
+                </div>
+            </div>
+
+            <div class="bg-white rounded p-2 hidden-s">
+
+                <% if (client_data.avatar){ %>
+                    <img src="<%- client_data.avatar %>" class="avatar lg">
+                <% } else { %>
+                    <img src="/images/avatars/Profile_Placeholder.svg" class="avatar lg">
+                <% } %>
+
+                <div class="capitalise text-weight-600"><%- client_data.name.first %> <%- client_data.name.last %></div>
+                <div><%- client_data.tel %></div>
+                <div><%- client_data.email %></div>
+
+                <div>
+                    <a class="btn bg-secondary my-1" href="/book">New Appointment<span class="icon calendar white right"></span></a><br>
+                </div>
+
+                <div class="text-weight-500 mt-1">
+                    <div class="flex flex-middle-left">Credit: £<% if (client_data.balance){ %><%- client_data.balance.total.toFixed(2) %><% } else { %>0<% } %></div>
+                    <div class="mt-1"><a class="btn outline" app-click="view.modal = 'show_topup'">Top up<span class="icon cardpayment secondary right"></span></a></div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="colspan-8 mb-s-5">
+
+            <div class="tabs overflow-s-x mb-2">
+                <a class="clickable<% if (type == 'appointments'){ %> active<% } %>" href="/account">Appointments</a>
+                <!--<a class="clickable<% if (type == 'consultations'){ %> active<% } %>" href="/account/consultations">Consultations</a> -->
+                <a class="clickable<% if (type == 'receipts'){ %> active<% } %>" href="/account/receipts">Receipts</a>
+                <a class="clickable<% if (type == 'details'){ %> active<% } %>" href="/account/details">Your Details</a>
+                <a class="clickable<% if (type == 'hair_profile'){ %> active<% } %>" href="/account/hair-profile">Hair Profile</a>
+                <!--<a class="clickable<% if (type == 'documents'){ %> active<% } %>" href="/account/documents">Documents</a> -->
+            </div>
+
+            <% if (type == 'appointments'){ %>
+
+                <div class="overflow-y">
+
+                <!-- <div class="grid col-2 col-s-1 mb-2 mt-2">
+                    <div class="flex flex-middle-left">
+                        <h4 class="text-primary">Upcoming Appointments</h4>
+                    </div>
+                    <div></div>
+                </div> -->
+
+                    <div class="appointment-wrap">
+
+                        <% var month_curr, month_prev, cart_link = false %>
+
+                        <% client_data.appointments.forEach((appointment) => { %>
+
+                            <% if (appointment.date >= new Date().toISOString()) { %>
+
+                                <% month_curr = functions.getMonth(appointment.date) %>
+
+                                <% if (month_curr != month_prev){ %>
+                                    <h4><%- month_curr %></h4>
+                                <% } %>
+
+                                <div class="appointment <%- appointment.status %>">
+                                    <div class="date">
+                                        <div class="day"><%- functions.getDay(appointment.date) %></div>
+                                        <div class="date"><%- functions.getDate(appointment.date) %></div>
+                                    </div>
+                                    <div class="info">
+                                        <div class="text-weight-700"><%- functions.getStart(appointment.date) %></div>
+                                        <div class="">
+                                            <% if (appointment.linked_appointments && appointment.linked_appointments.length && appointment.linked_appointments.length == 1){ %>
+                                                <span class="capitalise"><%- appointment.service_name %></span> with <span class="capitalise"><%- appointment.staff.name.first %></span>
+                                            <% } else if (appointment.linked_appointments){ %>
+                                                <span><%- appointment.linked_appointments %></span> services, starting with <span class="capitalise"><%- appointment.staff.name.first %></span>
+                                            <% } else { %>
+                                                <span>1</span> service, starting with <span class="capitalise"><%- appointment.staff.name.first %></span>
+                                            <% } %>
+                                        </div>
+                                        <% /* if (appointment.status == 'confirmed' && !cart_link){ %>
+                                            <% if (typeof client_data.click_collect_cart == 'object' && client_data.click_collect_cart.items && client_data.click_collect_cart.items.length > 0){ %>
+                                                <div><a href="/shop/cart" class="text-small text-secondary">You've added <%- client_data.click_collect_cart.items.length %> item<% if (client_data.click_collect_cart.items.length > 1){ %>s<% } %> to this appointment</a></div>
+                                            <% } else { %>
+                                                <div><a href="/shop" class="text-small text-secondary">Add products to your appointment</a></div>
+                                            <% } %>
+                                            <% cart_link = true %>
+                                        <% } */ %>
+                                        <% if (appointment.status == 'reschedule'){ %><div class="italic text-small text-grey">Reschedule request open. The salon will be in touch asap</div><% } %>
+                                        <% if (appointment.status == 'cancelled'){ %><div class="italic text-small text-grey">Cancellation request pending</div><% } %>
+                                        <% if (appointment.status == 'salon_confirmation'){ %><div class="italic text-small text-grey">The salon is currently confirming your appointment</div><% } %>
+                                    </div>
+                                    <div class="action">
+                                        <% if (appointment.confirm_id && appointment.status == 'unconfirmed') { %>
+                                            <a href="/book/confirm/<%- appointment.confirm_id %>" class="btn bg-secondary">Confirm Appointment<span class="icon calendar white right"></span></a>
+                                        <% } %>
+                                        <% if (appointment.status == 'confirmed') { %>
+                                            <a href="/book/amend/<%- appointment._key %>" class="btn border">Amend<span class="icon edit black right"></span></a>
+                                        <% } %>
+                                        <% if (appointment.status.match(/cancelled|reschedule/)) { %>
+                                            <a href="tel:<%- view.site.tel %>" class="btn border">Call the Salon<span class="icon salon black right"></span></a>
+                                        <% } %>
+                                    </div>
+                                </div>
+
+                                <% month_prev = month_curr %>
+
+                            <% } %>
+
+                        <% }) %>
+
+                    </div>
+
+                    <a href="/account/terms-and-conditions" class="block text-right text-small text-secondary my-2">Our appointment terms and conditions</a>
+
+                    <button class="btn bg-light-grey  mt-2 mb-2" app-click="view.prev_appointments = !view.prev_appointments">Previous Appointments <span class="icon arrowdown black right"></span></button>
+
+                    <div class="appointment-wrap" app-show="view.prev_appointments">
+
+                        <% var month_curr, month_prev %>
+
+                        <% client_data.appointments.forEach((appointment) => { %>
+
+                            <% if (appointment.date < new Date().toISOString() && appointment.status == 'paid') { %>
+
+                                <% month_curr = functions.getMonth(appointment.date) %>
+
+                                <% if (month_curr != month_prev){ %>
+                                    <h4><%- month_curr %></h4>
+                                <% } %>
+
+
+                                <div class="appointment <%- appointment.status %>">
+                                    <div class="date">
+                                        <div class="day"><%- functions.getDay(appointment.date) %></div>
+                                        <div class="date"><%- functions.getDate(appointment.date) %></div>
+                                    </div>
+                                    <div class="info">
+                                        <div class="text-weight-700"><%- functions.getStart(appointment.date) %></div>
+                                        <div><span class="capitalise"><%- appointment.service_name %></span> with <span class="capitalise"><%- appointment.staff.name.first %></span></div>
+                                        <% if (appointment.status.match(/deleted|cancelled/)){ %><div class="italic">Cancelled</div><% } %>
+                                    </div>
+
+                                </div>
+
+
+                                <% month_prev = month_curr %>
+
+                            <% } %>
+
+                        <% }) %>
+
+                    </div>
+
+                </div>
+
+            <% } else if (type == 'hair_profile'){ %>
+
+                <div class="bg-white rounded mb-2 flex">
+                    <div class="flex-1 flex flex-middle"><span class="icon stylist secondary lg"></span></div>
+                    <div class="flex-8 pr-1 py-1">Setting you hair profile will help us to achieve your perfect look. This information will be availble to your stylist when you next visit</div>
+                </div>
+
+                <div class="grid col-2 col-s-1 gap-2">
+
+                    <div class="question">
+                        <div class="text-weight-700">How would you describe your hair?</div>
+                        <div>
+
+                            <select app-model="consultation.hair_description" class="rounded my-1">
+                                <option>fine</option>
+                                <option>normal</option>
+                                <option>thick</option>
+                                <option>thinning</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <div class="text-weight-700">Is your hair length</div>
+                        <div>
+
+                            <select app-model="consultation.hair_length" class="rounded my-1">
+                                <option>short</option>
+                                <option>shoulder length</option>
+                                <option>below shoulder length</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <div class="text-weight-700">Is your natural hair texture</div>
+                        <div>
+
+                            <select app-model="consultation.hair_texture" class="rounded my-1">
+                                <option>straight</option>
+                                <option>wavy</option>
+                                <option>curly</option>
+                                <option>afro caribbean</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <div class="text-weight-700">How do you generally style your hair?</div>
+                        <div>
+
+                            <select app-model="consultation.hair_styling" class="rounded my-1">
+                                <option>dry naturally</option>
+                                <option>blow dry smooth</option>
+                                <option>blow dry with volume</option>
+                                <option>diffuse dry</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <div class="text-weight-700">What styling tools do you use?</div>
+                        <div>
+
+                            <select app-model="consultation.tools_used" class="rounded my-1">
+                                <option>none</option>
+                                <option>hair dryer</option>
+                                <option>straighteners</option>
+                                <option>wand/tongs</option>
+                                <option>rollers non heated</option>
+                                <option>heated rollers</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <div class="text-weight-700">What best describes any chemical services that have been applied to your hair and are still present?</div>
+                        <div>
+
+                            <select app-model="consultation.chemical_services" class="rounded my-1">
+                                <option>none</option>
+                                <option>full hair colour</option>
+                                <option>bleach</option>
+                                <option>highlights</option>
+                                <option>permanent wave/straightening</option>
+                                <option>keratin smoothing</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <div class="text-weight-700">What best describes the feeling of your hair when wet?</div>
+                        <div>
+
+                            <select app-model="consultation.wet_hair_feeling" class="rounded my-1">
+                                <option>smooth and healthy</option>
+                                <option>a little bit dry</option>
+                                <option>very dry, damaged</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <div class="text-weight-700">How many times per week on average do you wash your hair?</div>
+                        <div>
+
+                            <select app-model="consultation.wash_frequency" class="rounded my-1">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                                <option>6</option>
+                                <option>7</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="question">
+                        <div class="text-weight-700">What would you like to achieve with your hair?</div>
+                        <div>
+
+                            <select app-model="consultation.hair_achieve" class="rounded my-1">
+                                <option>leave it as it is</option>
+                                <option>improve it's condition</option>
+                                <option>achieve smoother hair</option>
+                                <option>achieve more volume</option>
+                                <option>grow it longer</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="flex flex-middle-right">
+                    <button app-click="saveConsultation()" app-hide="consultation._key" class="btn bg-secondary">Save<span class="icon tick white right"></span></button>
+                    <button app-click="saveConsultation()" app-show="consultation._key" class="btn bg-secondary">Update<span class="icon tick white right"></span></button>
+                </div>
+
+            <% } else if (type == 'consultations'){ %>
+
+                <!-- <div class="grid col-2 col-s-1 mb-2 mt-2">
+                    <div class="flex flex-middle-left">
+                        <h4 class="text-primary">Consultations</h4>
+                    </div>
+                    <div></div>
+                </div> -->
+
+                <div class="appointment-wrap">
+                <% if (typeof client_data.consultations != 'undefined'){ %>
+                    <% client_data.consultations.forEach((consultation) => { %>
+
+                            <div class="appointment">
+                                <div class="date">
+                                    <div class="day"><%- functions.getDay(consultation._created) %></div>
+                                    <div class="date"><%- functions.getDate(consultation._created) %></div>
+                                </div>
+                                <div class="info">
+                                    <div class="text-weight-700"><%- functions.getStart(consultation._created) %></div>
+                                    <div class=""><span class="capitalise"><%- consultation.name %></span></div>
+                                </div>
+                                <div class="action">
+                                        <a  class="btn border">View</a>
+
+                                </div>
+                            </div>
+
+                        <% }) %>
+                    <% } %>
+
+                </div>
+
+                <div class="overflow-y overflow-visible">
+                    <h4 class="text-primary mt-2 mb-2">Your Recommended Products</h4>
+
+                    <div class="bg-white p-1 mt-1 rounded">
+                        <% client_data.recommended_products.forEach((rp) => { %>
+                            <div class="flex p-1">
+                                <div class="flex-2 text-weight-500"><%- rp.name %></div>
+                                <div class="flex-2"><%- rp.description %></div>
+                                <div class="flex-1 text-right">£<%- rp.price %></div>
+                                <!-- <div class="flex-1 text-right"><button class="btn border">Buy</button></div> -->
+                            </div>
+                        <% }) %>
+                    </div>
+
+                </div>
+
+            <% } else if (type == 'documents'){ %>
+
+                <div class="overflow-y overflow-visible">
+
+                    <div class="grid col-2 col-s-1 mb-2 mt-2">
+                        <div class="flex flex-middle-left">
+                            <!-- <h4 class="text-primary">Uploaded Documents</h4> -->
+                        </div>
+                        <div class="text-right">
+
+                            <form method="post" action="/account/upload" enctype="multipart/form-data">
+                                <input type="file" id="upload" name="upload" class="hidden hidden-m hidden-s" onchange="uploadForm()">
+                                <label for="upload" class="btn bg-secondary w-s-100 mt-s-2" id="upload_label">Add a new document <img src="/icons/DR_Icon_Add_White.svg" class="icon right"></label>
+                                <input type="submit" value="Upload" class="btn bg-secondary" id="upload_submit" style="display:none">
+                            </form>
+
+                        </div>
+                    </div>
+
+                    <p>If you have any medical documentation you would like to provide for your appointments, please upload it here</p>
+
+                    <script>
+                        function uploadForm(){
+                            document.getElementById('upload_submit').style.display = 'inline-block'
+                            var label = document.getElementById('upload_label')
+                            label.classList.remove('bg-primary')
+                            var fullPath = document.getElementById('upload').value;
+                            if (fullPath) {
+                                var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+                                var filename = fullPath.substring(startIndex);
+                                if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+                                    filename = filename.substring(1);
+                                }
+                                label.innerHTML = filename;
+                            }
+                        }
+                    </script>
+
+                    <div class="mt-2 appointment-wrap">
+                    <% if (typeof client_data.documents != 'undefined'){ %>
+                        <% client_data.documents.forEach((document) => { %>
+
+                            <div class="appointment">
+                                <div class="date">
+                                    <div class="day"><%- functions.getMonth(document._created) %></div>
+                                    <div class="date text-small"><%- functions.getYear(document._created) %></div>
+                                </div>
+                                <div class="info">
+                                    <div class="text-weight-700"><%- document.name %></div>
+                                </div>
+                            </div>
+
+                        <% }) %>
+                    <% } %>
+                    </div>
+
+                </div>
+
+            <% } else if (type == 'receipts'){ %>
+
+                <div class="overflow-y">
+
+                    <!-- <h4 class="text-primary mt-2 mb-2">Receipts</h4> -->
+
+                    <div class="appointment-wrap">
+                    <% var month_curr, month_prev %>
+                        <% receipts.forEach((receipt) => { %>
+
+                            <% month_curr = functions.getMonth(receipt._created) %>
+
+                            <% if (month_curr != month_prev){ %>
+                                <% year_curr = functions.getYear(receipt._created) %>
+                                <h4 app-click="view.<%- month_curr %> = !view.<%- month_curr %>" class="flex">
+                                    <div class="flex-1">
+                                        <%- month_curr %> <%- year_curr %>
+                                    </div>
+                                    <div class="flex-1 text-right">
+                                        <span class="icon arrowdown secondary"></span>
+                                    </div>
+                                </h4>
+                            <% } %>
+
+                            <div class="appointment paid flex" app-show="view.<%- month_curr %>">
+                                <div class="date">
+                                    <div class="day"><%- functions.getDay(receipt._created) %></div>
+                                    <div class="date"><%- functions.getDate(receipt._created) %></div>
+                                </div>
+                                <div class="info">
+                                    <div class="text-weight-700"><%- receipt.items.length %> Item<% if (receipt.items.length > 1){%>s<%}%></div>
+                                    <div><span class="capitalise">Total: £<%- receipt.total %></div>
+                                </div>
+                                <div class="action">
+                                    <a href="/account/receipt/<%- receipt._key %>" target="receipt" class="btn border">View<span class="icon checkout black right"></span></a>
+                                </div>
+                            </div>
+                            <% month_prev = month_curr %>
+
+                        <% }) %>
+                    </div>
+                </div>
+
+            <% } else if (type == 'details'){ %>
+
+                <div class="overflow-y">
+
+                    <!-- <h4 class="text-primary mt-2 mb-2">Your Details</h4> -->
+
+                    <div class="grid col-2 col-m-2 col-s-1 gap-1">
+
+                        <div>
+                            <label>Your Name</label>
+                            <input type="text" app-model="client_data.name.first" placeholder="First Nmae" class="rounded mb-1">
+                            <input type="text" app-model="client_data.name.last" placeholder="Last Nmae" class="rounded">
+                        </div>
+
+                        <div class="">
+                            <label>Mobile Number</label>
+                            <input type="text" app-model="client_data.tel" placeholder="Mobile Number" class="rounded">
+                        </div>
+
+                        <div class="">
+                            <label>Email Address</label>
+                            <input type="text" app-model="client_data.email" placeholder="Email Address" class="rounded">
+                        </div>
+
+                        <div class="">
+                            <label>Gender</label>
+                            <select app-model="client_data.gender" class="rounded">
+                                <option value="" disabled>Please select...</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label>Your Address</label>
+                            <input type="text" app-model="client_data.address.line1" placeholder="Address Line 1" class="rounded mb-1" autocomplete="address-line1">
+                            <input type="text" app-model="client_data.address.line2" placeholder="Address Line 2" class="rounded mb-1" autocomplete="address-line2">
+                            <input type="text" app-model="client_data.address.town" placeholder="Town / City" class="rounded mb-1" autocomplete="city">
+                            <input type="text" app-model="client_data.address.county" placeholder="County" class="rounded mb-1" autocomplete="address-level1">
+                            <input type="text"  app-model="client_data.address.postcode" placeholder="Postcode" class="rounded mb-1" autocomplete="postal-code">
+                        </div>
+
+                        <div>
+                            <label>Date of Birth</label>
+                            <div class="grid col-3 gap-1">
+                                <input type="number" app-model="client_data.dob.date" placeholder="DD" class="rounded" autocomplete="bday-day">
+                                <input type="number" app-model="client_data.dob.month" placeholder="MM" class="rounded" autocomplete="bday-month">
+                                <input type="number" app-model="client_data.dob.year" placeholder="YY" class="rounded" autocomplete="bday-year">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="text-right mt-2">
+                        <button class="btn bg-secondary" app-click="saveDetails()">Update<span class="icon tick white right"></span></button>
+                    </div>
+
+                </div>
+
+            <% } %>
+
+        </div>
+
+    </div>
+
+    <div class="modal" app-show="view.modal == 'show_topup'" anim="{'enter':'fade-in'}">
+
+        <div class="modal-body text-left" anim="{'enter':'move-up','duration':'0.2'}">
+
+            <div class="grid col-4 pb-1">
+
+                <h4 class="colspan-3">
+                    Add credit to your account
+                </h4>
+                <div class="text-right">
+                    <h4 class="close-icon clickable" onclick="modalCloseAll()">&times;</h4>
+                </div>
+            </div>
+            <form method="post" action="/checkout/topup" class="text-center">
+                <div class="grid col-2 col-s-1 px-5 mt-1 px-s-0">
+                    <div class="flex flex-middle mr-1 mr-s-0 text-weight-700">£&nbsp;<input type="text" name="amount" placeholder="Enter amount eg. 50"></div>
+                    <input type="submit" value="Proceed to Payment" class="ml-2 ml-s-0 mt-s-2 w-s-100 btn bg-secondary">
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>

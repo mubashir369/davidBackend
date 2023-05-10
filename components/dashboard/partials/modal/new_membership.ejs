@@ -1,0 +1,332 @@
+<div class="modal" app-show="view.modal == 'new_membership'" anim="{'enter':'fade-in'}">
+
+    <div class="modal-body p-0 w-75 w-m-90" anim="{'enter':'slide-up','duration':'0.2'}">
+
+        <div class="modal-header bg-white text-primary">
+            <div class="title">
+                <p class="m-0" app-bind="new_membership.name" app-show="new_membership.name"></p>
+                <p class="m-0" app-hide="new_membership.name">Add New Membership</p>
+            </div>
+            <div class="close">
+                <!-- <span class="icon close white clickable" onclick="modalCloseAll()"></span> -->
+
+                <div class="btn-wrap">
+                    <button class="btn btn-left border mr-1 text-primary" app-click="view.modal_tab = 'one'">Payments <span class="icon cardpayment black right black"></span></button>
+                    <button class="btn btn-right border text-primary" app-click="view.modal_tab = 'two'">Benefits <span class="icon tick black right"></span></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-content p-2">
+
+            <div app-show="view.modal_tab == 'one'">
+
+                <!--p class="mb-2 text-small italic text-grey w-75" app-show="new_membership.id">Some options are unavailable once a membership has been created, but may be editable via the <a class="text-secondary" href="https://stripe.com/dashboard" target="stripe">Stripe dashboard</a>.</p-->
+
+                <div class="grid col-4 gap-2">
+
+                    <div class="colspan-2">
+                        <label>Membership Name</label>
+                        <input type="text" app-model="new_membership.name" placeholder="Name">
+                    </div>
+
+                    <div app-show="new_membership.id">
+
+                        <label class="">Active</label>
+                        <select app-model="new_membership.active">
+                            <option value="true">Active</option>
+                            <option value="false">Not Active</option>
+                        </select>
+
+                    </div>
+                    <div app-hide="new_membership.id">
+
+                        <label class="">Active</label>
+                        <select disabled>
+                            <option value="true" selected>Active</option>
+                            <option value="false">Not Active</option>
+                        </select>
+
+                    </div>
+                    <div>
+
+                        <label>Type1</label>
+                        <select app-model="new_membership.type">
+                            <option value="reoccuring">Reoccuring Payment</option>
+                            <option value="membership">Membership with Benefits</option>
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <div class="mt-1">
+                    <label>Description</label>
+                    <textarea app-model="new_membership.description" placeholder="Enter a brief description to sell this membership to clients"></textarea>
+                </div>
+
+                <div class="grid col-3 gap-2" app-show="new_membership._key">
+                    <div>
+                        <label class="mt-1">Amount</label>
+                        <!--div app-bind="parseDecimalPrice(new_membership.price)"></div-->
+                        <input type="number" app-model="new_membership.price" placeholder="Amount charged per interval, eg 10">
+                        <!-- <input type="number" app-model="new_membership.deposit_amount" placeholder="Amount to add to account balance"> -->
+                      
+                    </div>
+                    <div>
+                        <label class="mt-1">Interval</label>
+                        <div class="capitalise" app-bind="parseInterval(new_membership.interval)"></div>
+                    </div>
+                    <div>
+                        <label class="mt-1">Add to Account Balance</label>
+                        <div class="flex">
+                            <div class="flex-none flex flex-middle-left">
+                                <div class="pr-05">£</div>
+                            </div>
+                            <input type="number" app-model="new_membership.deposit_amount" placeholder="Amount to add to account balance">
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="grid col-3 gap-2" app-hide="new_membership._key">
+                    <div>
+                        <label class="mt-1">Amount</label>
+                        <div class="flex">
+                            <div class="flex-none flex flex-middle-left">
+                                <div class="pr-05">£</div>
+                            </div>
+                            <input type="number" app-model="new_membership.price" placeholder="Amount charged per interval, eg 10">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="mt-1">Interval</label>
+                        <select app-model="new_membership.interval">
+                            <option value="day">Daily</option>
+                            <option value="week">Weekly</option>
+                            <option value="month">Monthly</option>
+                            <option value="year">Yearly</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="mt-1">Add to Account Balance</label>
+                        <div class="flex">
+                            <div class="flex-none flex flex-middle-left">
+                                <div class="pr-05">£</div>
+                            </div>
+                            <input type="number" app-model="new_membership.deposit_amount" placeholder="Amount to add to account balance">
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+
+
+            <div app-show="view.modal_tab == 'two'">
+
+                <div class="grid col-4 gap-1">
+
+                    <!-- <div class="pr-2 colspan-m-3 text-small">
+                        <div class="text-weight-700">Checkout Discount</div>
+                        Apply a discount at the checkout. Choose what type of items to discount and set a discount value.<br><br>Setting a value of '10%' will discount 10% from any applicable items in the checkout. Setting a value of '£10' will deduct £10 from any applicable items.
+                    </div> -->
+
+                    <!-- <div class="colspan-m-2">
+                        <label>Item(s) to Discount</label>
+                        <select app-model="new_membership.benefits.discount.type" app-change="toggleCats(new_membership.benefits.discount.type, true)">
+                            <option value="">None</option>
+                            <option value="products">Products</option>
+                            <option value="services">Services</option>
+                            <option value="cafe">cafe</option>
+                            <option value="all">All</option>
+                        </select>
+
+                        <div id="select-services_categories" class="grid col-2 mt-1">
+                            <% if (salon.categories){ %>
+                                <% salon.categories.forEach((item,i)=>{ %>
+                                    <label class="text-black"><input type="checkbox" app-click="push(new_membership.benefits.discount.services_categories,'<%-i %>')" app-checked="inArray(new_membership.benefits.discount.services_categories,'<%-i %>')" class="mr-1"><%-item.name %></label>
+                                <% }) %>
+                            <% } %>
+                        </div>
+
+                        <div id="select-products_categories" class="grid col-2 mt-1">
+                            <% if (salon.product_categories){ %>
+                                <% salon.product_categories.forEach((item,i)=>{ %>
+                                    <label class="text-black"><input type="checkbox" app-click="push(new_membership.benefits.discount.products_categories,'<%- i %>')" app-checked="inArray(new_membership.benefits.discount.products_categories,'<%- i %>')" class="mr-1"><%-item.name %></label>
+                                <% }) %>
+                            <% } %>
+                        </div>
+
+                        <div id="select-cafe_categories" class="grid col-2 mt-1">
+                            <% if (typeof cafe_categories !== 'undefined' && cafe_categories.length>0){ %>
+                                <% cafe_categories.forEach((item,i)=>{ %>
+                                    <label class="text-black"><input type="checkbox" app-click="push(new_membership.benefits.discount.cafe_categories,'<%- i %>')" app-checked="inArray(new_membership.benefits.discount.cafe_categories,'<%- i %>')" class="mr-1"><%-item.name %></label>
+                                <% }) %>
+                            <% } %>
+                        </div>
+                    </div> -->
+
+                    <div class="colspan-2">
+                        <label>Discount Amount for products (£ / %)</label>
+                        <input type="text" app-model="new_membership.benefits.discount.amount" placeholder="Value of discount, eg £10 or 10%">
+
+                        <label>Discount Amount for services(£ / %)</label>
+                        <input type="text" app-model="new_membership.benefits.discount.service_amount" placeholder="Value of discount, eg £10 or 10%">
+
+                        <label>Discount Amount for cafe products (£ / %)</label>
+                        <input type="text" app-model="new_membership.benefits.discount.cafe_amount" placeholder="Value of discount, eg £10 or 10%">
+                    </div>
+                    <div class="colspan-1">
+                        <label>Select week days for discount</label>
+                        <% if (weekdays){ %>
+                            <% weekdays.forEach((item,i)=>{ %>
+                                <label class="text-black text-capitalize"><input type="checkbox" app-click="push(new_membership.weekdays,'<%- item %>')" app-checked="inArray(new_membership.weekdays,'<%- item %>')" class="mr-1"><%-item %></label>
+                            <% }) %>
+                        <% } %>
+                    </div>
+
+                   
+
+                </div>
+
+                <!-- <div class="grid col-3 gap-1 mt-2 mt-m-3">
+
+                    <div class="pr-2 colspan-m-3 text-small">
+                        <div class="text-weight-700">Advanced Booking Discount</div>
+                        Apply a discount if the client books so many weeks in advance.
+                        <br><br>A check will be made when the appointment is checked in. If the time difference between the date the appointment was created is greater or equal to the value in the dropdown, the discount will be applied.
+                        <br><br>Setting a value of '10%' will discount 10% from any applicable appointments in the checkout. Setting a value of '£10' will deduct £10 from any applicable appointments.
+                    </div>
+
+                    <div class="colspan-m-2">
+                        <label>Advanced Booking Discount</label>
+                        <select app-model="new_membership.benefits.booking_discount.length">
+                            <option value="">None</option>
+                            <option value="4">4 weeks in advance</option>
+                            <option value="6">6 weeks in advance</option>
+                            <option value="8">8 weeks in advance</option>
+                            <option value="10">10 weeks in advance</option>
+                        </select>
+
+                        <div class="grid col-2 mt-1">
+                            <% if (salon.categories){ %>
+                                <% salon.categories.forEach((item,i)=>{ %>
+                                    <label class="text-black"><input type="checkbox" app-click="push(new_membership.benefits.booking_discount.services_categories,'<%-i %>')" app-checked="inArray(new_membership.benefits.booking_discount.services_categories,'<%-i %>')" class="mr-1"><%-item.name %></label>
+                                <% }) %>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label>Discount Amount (£ / %)</label>
+                        <input type="text" app-model="new_membership.benefits.booking_discount.amount" placeholder="Value of discount, eg £10 or 10%">
+                    </div>
+
+                </div> -->
+
+                <!-- <div class="grid col-3 gap-1 mt-2">
+
+                    <div class="">
+                        <div class="text-weight-700">Reward Points</div>
+                        Give reward points for purchases
+                    </div>
+
+                    <div>
+                        <label>Item(s) to Reward</label>
+                        <select app-model="new_membership.benefits.rewards.type" app-change="toggleRewardsCats(new_membership.benefits.rewards.type, true)">
+                            <option value="">None</option>
+                            <option value="products">Products</option>
+                            <option value="services">Services</option>
+                            <option value="all">All</option>
+                        </select>
+
+                        <div id="rewards-services_categories" class="grid col-2 mt-1">
+                            <% if (salon.categories){ %>
+                                <% salon.categories.forEach((item,i)=>{ %>
+                                    <label class="text-black"><input type="checkbox" app-click="push(new_membership.benefits.rewards.services_categories,'<%-i %>')" app-checked="inArray(new_membership.benefits.rewards.services_categories,'<%-i %>')" class="mr-1"><%-item.name %></label>
+                                <% }) %>
+                            <% } %>
+                        </div>
+
+                        <div id="rewards-products_categories" class="grid col-2 mt-1">
+                            <% if (salon.product_categories){ %>
+                                <% salon.product_categories.forEach((item,i)=>{ %>
+                                    <label class="text-black"><input type="checkbox" app-click="push(new_membership.benefits.rewards.products_categories,'<%- i %>')" app-checked="inArray(new_membership.benefits.rewards.products_categories,'<%- i %>')" class="mr-1"><%-item.name %></label>
+                                <% }) %>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label>Points to award (use a percentage to calculate points from price)</label>
+                        <input type="text" app-model="new_membership.benefits.rewards.amount" placeholder="Points to award, eg 10 or 10%">
+                    </div>
+
+                </div> -->
+
+            </div>
+
+        </div>
+        <div class="modal-appointment-actions flex flex-middle-right">
+            <div>
+                <a class="dp-btn text-white bg-primary" onclick="modalCloseAll()">
+                    Close
+                    <span class="icon close right white"></span>
+                </a>
+            </div>
+
+            <div app-show="new_membership.id">
+                <a class="dp-btn text-white bg-secondary" app-click="newMembership('update')">
+                    Update
+                    <span class="icon tick right white"></span>
+                </a>
+            </div>
+            <div app-hide="new_membership.id">
+                <a class="dp-btn text-white bg-secondary" app-click="newMembership('create')">
+                    Create
+                    <span class="icon add right white"></span>
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="modal" app-show="view.modal == 'del_action'" anim="{'enter':'fade-in'}">
+
+    <div class="modal-body" anim="{'enter':'move-up','duration':'0.2'}">
+
+        <div class="grid col-12 pb-1">
+            <div class="colspan-11">
+                <h4 class="text-light">
+                    Are you sure want to delete this subscription?
+                </h4>
+            </div>
+            <div class="text-right">
+                <h4 class="close-icon text-light clickable" onclick="modalCloseAll()">&times;</h4>
+            </div>
+        </div>
+
+        <div class="grid col-2 gap-1">
+            <div class="text-right pt-1">
+                <a class="btn border w-100" onclick="modalCloseAll()">
+                    Cancel
+                </a>
+            </div>
+
+            <div class="text-right pt-1">
+                <a class="btn bg-secondary w-100" app-click="newMembership('full_delete',price_id)">
+                    Remove<span class="icon delete white right"></span>
+                </a>
+            </div>
+        </div>
+
+
+    </div>
+
+</div>

@@ -1,0 +1,212 @@
+<!-- ======= modal =========== -->
+
+    <div class="modal " app-show="view.modal == 'show_edit'" anim="{'enter':'fade-in'}">
+
+        <div class="modal-body p-0 w-80 w-m-90" anim="{'enter':'move-up','duration':'0.2'}">
+
+            <div class="modal-header text-primary">
+                <div class="title">
+                    <p class="m-0">Order Detail </p>
+                </div>
+                <div class="close">
+                    <span class="icon close white clickable" onclick="modalCloseAll()"></span>
+                </div>
+            </div>
+
+            <div class="modal-content p-2 cafeOrderDetail">
+               
+                <div class="grid col-1 gap-2">
+                 
+                    <div class="">
+                       
+                        <div class="grid col-3 gap-1 pb-1">
+
+
+                           
+
+
+                            <div class="colspan-2">
+
+
+                           
+                                
+                               
+
+
+
+
+                                <div class="">
+                                    <label style="font-size: 16px;"> <strong> Customer Detail </strong></label>
+                                    <div class="divider mb-1"></div>
+                                    <div class="grid col-3 gap-1 pb-1">
+                                     
+                                        <div class="">
+                                            <label> <strong> Name </strong></label>
+                                            <label><span app-bind="new.customer[0].name.first"></span><span app-bind="new.customer[0].name.last"></span></label>
+                                        </div>
+                                        <div class="">
+                                            <label><strong>Phone Number</strong></label>
+                                            <label app-bind="new.customer[0].phone">--</label>
+                                        </div>
+                                        <div class="">
+                                            <label><strong>Email Address</strong></label>
+                                            <label app-bind="new.customer[0].email">--</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-2 salonOrder-cartDetail"  >
+                                    <label style="font-size: 16px;"> <strong> Cart Detail </strong></label>
+                                    <div class="divider mb-1"></div>
+                                    <div class="dp-scroll overflow-y" style="max-height: 300px;">
+                                        <div class="grid col-3 gap-1 pb-1" app-for="item in new.items">
+                                            <div class="">
+                                                <label> <strong> Name </strong></label>
+                                                <label app-bind="item.name"></label>
+                                            </div>
+                                        
+                                            <div class="">
+                                                <label><strong>Price</strong></label>
+                                                &#163; <span app-bind="item.price"></span> X <span app-bind="item.quantity"></span>
+                                            </div>
+                                            
+                                            
+                                            
+                                            <div class="salonOrder-cartDetail-img">
+                                                <label><strong>Product Image</strong></label>
+                                                <a app-click="gotoImg(item.img)" target="_blank"><img app-src="item.img" src="/images/products/Product_placeholder.svg"></a>
+
+                                            
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="colspan-1">
+                                 <div class="bg-grey p-1">
+                                    <label style="font-size: 16px;"> <strong> Payment Detail </strong></label>
+                                    <div class="divider mb-1"></div>
+                                    <div class="grid col-2 pb-1">
+                                        <!--div class="">
+                                            <label> <strong> Card Type </strong></label>
+                                            <label>Debit</label>
+                                        </div>
+                                        <div class="">
+                                            <label><strong>Card Number</strong></label>
+                                            <label>4242 4242 4242 4242</label>
+                                        </div>
+                                        <div class="">
+                                            <label><strong>CVV</strong></label>
+                                            <label>123</label>
+                                        </div>
+                                        <div class="">
+                                            <label><strong>Holder Name</strong></label>
+                                            <label>AJay Thakur</label>
+                                        </div-->
+                                        <div class="">
+                                            <label><strong>Order ID</strong></label>
+                                            <label app-bind="new.transaction_id"></label>
+                                        </div>
+
+
+                                        <div class="">
+                                            <label><strong>Transaction ID</strong></label>
+                                            <label app-bind="new.stripe_transcation_id"></label>
+                                        </div>
+                                        <div class="">
+                                            <label><strong>Total</strong></label>
+                                            <label >&#163; <span app-bind="new.total"></span></label>
+                                        </div>
+
+                                        <div class="" app-show="new.discount_data.amount">
+                                            <label><strong>Discount</strong></label>
+                                            <label >&#163; <span app-bind="new.discount_data.amount"></span></label>
+                                        </div>
+
+                                        <div class="">
+                                            <label><strong>Payment Method</strong></label>
+                                            <label>Stripe</label>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+
+
+                                <div class="mt-2 bg-grey p-1" app-show="new.liquor_img">
+                                    <label style="font-size: 16px;"> <strong> ID Proof </strong></label>
+                                    <div class="divider mb-1"></div>
+                                    <div class="grid col-1 pb-1">
+                                        <div class="">
+                                            <label><strong>Document</strong></label>
+                                            <a app-click="gotoImg(new.liquor_img)" target="_blank"><img app-src="new.liquor_img" src="/images/products/Product_placeholder.svg"></a>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                                <div class="mt-2 bg-grey p-1">
+                                    <label style="font-size: 16px;"> <strong> Change Status </strong></label>
+                                    <div class="divider mb-1"></div>
+                                    <div class="grid col-1 pb-1">
+                                        <div class="">
+                                            <label><strong>Status</strong></label>
+                                            <select app-model="new.order_status">
+                                                <!-- <option value="Pending">Pending</option>
+                                                <option value="Processing">Processing</option>
+                                                <option value="Cancel">Cancel</option>
+                                                <option value="In the way">In the way</option>
+                                                <option value="Shipped">Shipped</option>
+                                                <option value="Completed">Completed </option>
+                                                <option value="Refund">Refund </option> -->
+                                                <option value="Pending">Pending</option>
+                                                <option value="Processing">Processing</option>
+                                                <!-- <option value="Pick your order">Pick your order</option> -->
+                                                <option value="Shipped">Shipped</option>
+                                                <option value="Delivered">Delivered</option>
+                                                <option value="Cancelled">Cancelled</option>
+                                                <option value="Cancel Requested">Cancel Requested</option>
+                                            </select>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div  id="cancelDiv" app-hide="new.reason != 'Cancel Requested'" >
+                                    <div class="grid col-1 pb-1">
+                                        <div class="">
+                                            <label><strong>Reason </strong></label>
+                                            <!-- <input type="text" app-model="new.reason"  id="reason"/> -->
+                                            <textarea  class="border bg-none" app-model="new.reason" id="reason" placeholder="Reason..."></textarea>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                  
+                                
+
+
+                            </div>
+                        </div>
+                       
+                    </div>
+                  
+                </div>
+            </div>
+
+            <div class="modal-appointment-actions flex flex-middle-right">
+                <a class="dp-btn bg-primary text-white " onclick="modalCloseAll()">
+                    <span>Cancel</span>
+                </a>
+                <a class="dp-btn bg-secondary text-white" app-click="saveProductOrder(new)">
+                    <span>Update</span>
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+    <script>
+        console.log("ffffffffffffffffff");
+    </script>

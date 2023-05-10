@@ -1,0 +1,25 @@
+<div class="datepicker relative mb-1">
+
+    <div class="dates">
+        <div class="grid col-2">
+
+            <div>
+                <h4 app-bind="selected_date.month_name"></h4>
+            </div>
+
+            <div class="text-right">
+                <div class="btn left-arrow" app-click="chgMonth('prev')">
+                     <img src="/icons/left-arrow.svg" class="icon">
+                </div>
+                <div class="btn right-arrow" app-click="chgMonth('next')">
+                     <img src="/icons/right-arrow.svg" class="icon">
+                </div>
+            </div>
+        </div>
+        <div class="overflow-x mt-1">
+            <button app-for="date in dates_short" class="btn mr-05" app-bind="date.date" app-click="selectDate(date.iso)"></button>
+        </div>
+
+    </div>
+
+</div>

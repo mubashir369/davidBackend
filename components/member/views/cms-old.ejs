@@ -1,0 +1,253 @@
+<% layout('member.ejs') -%>
+
+<%- include ../partials/header-member.ejs %>
+
+<div class="page px-2 px-s-0 bg-white common-form common-form-border aboutPageAdmin mt-50">
+    <div class="mt-50 p-0">
+        <h4 class="text-weight-700 mb-1">Slider</h4>
+        <div class="divider mb-2 p-0"></div>
+    </div>
+    <div class="list-item-wrap bg-white border p-2 box-shadow">
+        <div class="text-small">
+            <div class="grid col-7  py-1">
+                <div class="cell middle colspan-1 pl-1">
+                    <div>Banner Image</div>
+                </div>
+                <div class="cell middle colspan-2 text-center"><div>Banner Heading</div></div>
+                <div class="cell middle colspan-3 text-center colspan-4"><div>Banner Description</div></div>
+                <div class="colspan-6"></div>
+            </div>
+            <div class="divider mb-1"></div>
+            <div class="list-item-wrap">
+                <div app-for="microSlideritem in new.microSlider_items" class="grid gap-1 col-7 mb-1 addPlusCard">
+                    <div class="text-bold colspan-1">
+                        <label for="new_image" class="clickable">   
+                            <img src="/images/products/upload.svg" app-src="microSlideritem.img" class="object-fit">
+                        </label>
+                        <input type="file" app-model="microSlideritem.img" id="new_image" class="app-hidden">
+                        <!-- <input type="text" app-model="item.duration" placeholder="mins" class="text-left "> -->
+                    </div>
+                    <div class="text-bold colspan-2">
+                        <input type="text" app-model="microSlideritem.name" placeholder="Banner Heading" class="">
+                    </div>
+                    <div class="text-bold colspan-3">
+                        <textarea  app-model="microSlideritem.split_percent" placeholder="Banner Description" class="text-left"></textarea>
+                    </div>
+                    <div class="text-right flex flex-middle-right">
+                        <a class="" app-click="microSlider('remove',{{index}})"><span class="icon close black right"></span></a>
+                    </div>
+                    <div class="divider mb-1 colspan-7"></div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="text-left my-1">
+            <button class="dp-btn bg-primary" app-click="microSlider()">Add Slider<span class="icon add white right"></span></button>
+        </div>
+
+    </div>
+
+
+       <!-- ----------- About -->
+
+    <div  class="about p-0 mt-50">
+        <div class="mt-50 p-0">
+            <h4 class="text-weight-700 mb-1">About</h4>
+            <div class="divider mb-2 p-0"></div>
+        </div>
+        <div  class="grid col-6 gap-3 bg-white box-shadow p-2 radius-10 border">
+            <div class="colspan-1">
+                <div class="">
+                    <label>Image 1</label>
+                    <label for="aboutImg1" class="clickable">   
+                        <img src="/images/products/upload.svg" app-src="item.aboutImg1" class="object-fit">
+                    </label>
+                    <input type="file" app-model="item.aboutImg1" id="aboutImg1" class="app-hidden">
+                </div>
+
+                <div class="">
+                    <label>Image 2</label>
+                    <label for="aboutImg2" class="clickable">   
+                        <img src="/images/products/upload.svg" app-src="item.aboutImg2" class="object-fit">
+                    </label>
+                    <input type="file" app-model="item.aboutImg2" id="aboutImg2" class="app-hidden">
+                </div>
+            
+            </div>
+
+            <div class="colspan-3">
+                <label>Heading</label>
+                <input type="text" class="rounded mb-1"  placeholder="Heading">
+                <label>Sub Heading</label>
+                <input type="text" class="rounded mb-1"  placeholder="Sub Heading">
+                <label>Description </label>
+                <textarea type="text" class="rounded mb-1"  placeholder="Description"></textarea>
+                
+            </div>
+
+        </div>
+     
+    </div>
+       
+
+    <!-- ----------- Portfolio -->
+    <div class="portfolio">
+        <div class="mt-50 p-0">
+            <h4 class="text-weight-700 mb-1">Portfolio</h4>
+            <div class="divider mb-2 p-0"></div>
+        </div>
+        <div class="bg-white border p-2 box-shadow">
+            <div class="list-item-wrap">
+
+                <div  class="grid gap-1 col-9 mb-1 ">
+                    <div class="text-bold colspan-1">
+                        <label>Image</label>   
+                    </div>
+                    <div class="text-bold colspan-2">
+                        <label>Service</label>   
+                    </div>
+                    <div class="text-bold colspan-2">
+                        <label>Skill</label>   
+                    </div>
+                    <div class="text-bold colspan-3">
+                        <label>Service Detail</label>   
+                    </div>
+
+                    <div class="divider mb-1 colspan-9"></div>
+                </div>
+                <div app-for="portfolioItem in new.microPortfolio_items" class="grid gap-1 col-9 mb-1 ">
+                    <div class="text-bold colspan-1">
+                        <label for="timeIcon_image" class="clickable">   
+                            <img src="/images/products/upload.svg" app-src="portfolioItem.img" class="object-fit">
+                        </label>
+                        <input type="file" app-model="portfolioItem.img" id="timeIcon_image" class="app-hidden">
+                    </div>
+                    <div class="text-bold colspan-2">
+                        <input type="text" app-model="portfolioItem.portfolioTitle" placeholder="Title" class="">
+                    </div>
+                    <div class="text-bold colspan-2">
+                        <input type="text" app-model="portfolioItem.portfolioTitle" placeholder="Skill" class="">
+                    </div>
+
+                    <div class="text-bold colspan-3">
+                        <textarea  app-model="portfolioItem.portfolioDescrip" placeholder="Description" class="text-left"></textarea>
+                    </div>
+
+                    <div class="text-right flex flex-middle-right">
+                        <a class="" app-click="microPortfolio('remove',{{index}})"><span class="icon close black right"></span></a>
+                    </div>
+
+
+                    <div class="divider mb-1 colspan-9"></div>
+                </div>
+
+            </div>
+            <div class="text-left my-1">
+                <button class="dp-btn bg-primary" app-click="microPortfolio()">Add Portfolio<span class="icon add white right"></span></button>
+            </div>
+        </div>
+    </div>
+    
+    
+    <!-- ----------- Pricing -->
+    <div class="pricing">
+        <div class="mt-50 p-0">
+            <h4 class="text-weight-700 mb-1">Pricing</h4>
+            <div class="divider mb-2 p-0"></div>
+        </div>
+        <div class="bg-white border p-2 box-shadow">
+            <div class="list-item-wrap">
+                <label>Heading</label>
+                <input type="text" class="rounded mb-1"  placeholder="Heading   ">
+                <label>Description</label>
+                <input type="text" class="rounded mb-1"  placeholder="Description">
+                
+                <div  class="grid gap-1 col-7 mb-1 mt-2 ">
+                    <div class="text-bold colspan-2">
+                        <label>Service Name</label>   
+                    </div>
+                    <div class="text-bold colspan-1">
+                        <label>Service Price</label>   
+                    </div>
+                    <div class="text-bold colspan-3">
+                        <label>Service Detail</label>   
+                    </div>
+
+                    <div class="divider mb-1 colspan-7"></div>
+                </div>
+                <div app-for="item in new.timeline_items" class="grid gap-1 col-7 mb-1 ">
+                   
+                    <div class="text-bold colspan-2">
+                        <input type="text" app-model="item.timeTitle" placeholder="title" class="">
+                    </div>
+                    <div class="text-bold colspan-1">
+                        <input type="text" app-model="item.timeTitle" placeholder="title" class="">
+                    </div>
+
+                    <div class="text-bold colspan-3">
+                        <textarea  app-model="item.timeDescrip" placeholder="Description" class="text-left"></textarea>
+                    </div>
+
+                    <div class="text-right flex flex-middle-right">
+                        <a class="" app-click="newTimelineItem('remove',{{index}})"><span class="icon close black right"></span></a>
+                    </div>
+
+
+                    <div class="divider mb-1 colspan-7"></div>
+                </div>
+
+            </div>
+            <div class="text-left my-1">
+                <button class="dp-btn bg-primary" app-click="newTimelineItem()">Add More<span class="icon add white right"></span></button>
+            </div>
+        </div>
+    </div>
+    
+
+    <!-- ----------- micro Tagline -->
+    <div class="microTagline">
+        <div class="mt-50 p-0">
+            <h4 class="text-weight-700 mb-1">Tagline</h4>
+            <div class="divider mb-2 p-0"></div>
+        </div>
+        <div class="bg-white border p-2 box-shadow">
+            <div class="colspan-3">
+                <label>Heading</label>
+                <input type="text" class="rounded mb-1"  placeholder="Heading">
+                <label>Sub Heading</label>
+                <input type="text" class="rounded mb-1"  placeholder="Sub Heading">
+                <label>Description </label>
+                <textarea type="text" class="rounded mb-1"  placeholder="Description"></textarea>
+                
+            </div>
+            <div class="text-left my-1">
+                <button class="dp-btn bg-primary" app-click="newTimelineItem()">Submit</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="newsletter grid col-6">
+        <div class="mt-50 p-0 colspan-6">
+            <h4 class="text-weight-700 mb-1">NEWS LETTER</h4>
+            <div class="divider mb-2 p-0"></div>
+        </div>
+        <div class="colspan-2">
+            <div class="bg-white  border p-2 box-shadow">
+                <div>
+                    <label>Enter Your Email</label>
+                    <input type="text" class="rounded mb-1"  placeholder="Enter Your Email">
+                    
+                </div>
+                <div class="text-left my-1">
+                    <button class="dp-btn bg-primary" app-click="newTimelineItem()">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="mb-50"> </div>
+    
+</div>

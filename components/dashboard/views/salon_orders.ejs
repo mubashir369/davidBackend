@@ -1,0 +1,120 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <div class="page salonOrder-page px-2 p-s-0" app-init="get('customers','getproorders')">
+
+        <div class="px-1 pt-2 pb-0 hidden hidden-m">
+            <input type="text" class="search colspan-2 border" placeholder="Search by name, number or email" app-model="view.search" onkeyup="scope.searchApi('customers',this.value)" spellcheck="false">
+        </div>
+        <div class="px-2 pt-2 pb-0">
+            <select
+            className="ml-lg-10 dp-text-description mt-1 mt-md-0"
+            onchange="scope.salon_order_sorting(this.value)"
+            style="width: 10rem;
+            float: right;"
+
+            >  <option value="">Filter</option>
+            <option value="success">success</option>
+                                                <option value="Pending">Pending</option>
+                                                <option value="Processing">Processing</option>
+                                                <option value="Shipped">Shipped</option>
+                                                <option value="Delivered">Delivered</option>
+                                                <option value="Cancelled">Cancelled</option>
+                                                <option value="Cancel Requested">Cancel Requested</option>
+    
+          </select>
+        </div>
+        <div>
+
+            <div class="table">
+
+                <div class="row table-header">
+
+                    
+                    <div class="cell middle mobile-cell pl-1" style="width: 10%;">Order Id</div>
+                    <div class="cell middle mobile-cell"  style="width: 20%;">Transaction Id</div>
+                    <div class="cell middle hidden-s" style="width: 10%;">Total Price </div>
+                   
+                    <div class="cell middle hidden-s" style="width: 10%;">Payment Status</div>
+                    <div class="cell middle hidden-s" style="width: 10%;">Order Status</div>
+                    <div class="cell middle hidden-s" style="width: 15%;">Created on</div>
+                    <div class="cell middle hidden-s pr-1"  style="width: 15%;">Products</div>
+                    <div class="cell middle text-center" style="width: 10%;">Invoice</div>
+                   
+                     <!-- <div class="cell middle" style="width: 4em"></div> -->
+ 
+                </div>
+
+                <div class="row" app-for="order in customers">
+
+                    <div class="cell middle text-light capitalise clickable" app-bind="order.transaction_id"></div>
+                    <div class="cell middle text-light capitalise clickable" app-bind="order.stripe_transcation_id"></div>
+                    <div class="cell middle text-light hidden-s clickable"  ><span app-bind="parsePrice(order.item_total)" class="ml-01"></span></div>
+                    <div class="cell middle text-light hidden-s" app-bind="order.status"></div>
+                    <div class="cell middle text-light hidden-s" app-bind="order.order_status"></div>
+                   
+                    <div class="cell middle text-light hidden-s" app-bind="parseISODate(order._created,'Do MMMM YYYY')"></div>
+                    <div class="cell middle pr-1" >                   
+
+                             <button class="dp-btn sm-btn bg-secondary" app-click="edit('transactions',order)">View Products</button>                
+                            <!-- <div class="row salonOrder-page-qty dp-scrollbar">
+                                <div  class="salonOrder-page-qtyName" app-bind="order.items[0].name"></div>
+                                <div app-show="order.items[0].quantity"><span class="d-flex align-items-center ">Qty:<p app-bind="order.items[0].quantity"></p> X <p app-bind="parsePrice(order.items[0].price)"></p></span></div>
+
+                                <div class="salonOrder-page-qtyName"  app-bind="order.items[1].name"></div>
+                                <div app-show="order.items[1].quantity"><span class="d-flex align-items-center ">Qty:<p app-bind="order.items[1].quantity"></p> X <p app-bind="parsePrice(order.items[1].price)"></p></span></div>
+
+                                <div  class="salonOrder-page-qtyName" app-bind="order.items[2].name"></div>
+                                <div app-show="order.items[2].quantity"><span class="d-flex align-items-center ">Qty:<p app-bind="order.items[2].quantity"></p> X <p app-bind="parsePrice(order.items[2].price)"></p></span></div>
+
+                                <div class="salonOrder-page-qtyName" app-bind="order.items[3].name"></div>
+                                <div app-show="order.items[3].quantity"><span class="d-flex align-items-center ">Qty:<p app-bind="order.items[3].quantity"></p> X <p app-bind="parsePrice(order.items[3].price)"></p></span></div>
+
+                                <div class="salonOrder-page-qtyName" app-bind="order.items[4].name"></div>
+                                <div app-show="order.items[4].quantity"><span class="d-flex align-items-center ">Qty:<p app-bind="order.items[4].quantity"></p> X <p app-bind="parsePrice(order.items[4].price)"></p></span></div>
+
+                                <div class="salonOrder-page-qtyName" app-bind="order.items[5].name"></div>
+                                <div app-show="order.items[5].quantity"><span class="d-flex align-items-center ">Qty:<p app-bind="order.items[5].quantity"></p> X <p app-bind="parsePrice(order.items[5].price)"></p></span></div>
+
+                                <div class="salonOrder-page-qtyName" app-bind="order.items[6].name"></div>
+                                <div app-show="order.items[6].quantity"><span class="d-flex align-items-center ">Qty:<p app-bind="order.items[6].quantity"></p> X <p app-bind="parsePrice(order.items[6].price)"></p></span></div>
+
+                                <div class="salonOrder-page-qtyName" app-bind="order.items[7].name"></div>
+                                <div app-show="order.items[7].quantity"><span class="d-flex align-items-center ">Qty:<p app-bind="order.items[7].quantity"></p> X <p app-bind="parsePrice(order.items[7].price)"></p></span></div>
+
+                                <div class="salonOrder-page-qtyName" app-bind="order.items[8].name"></div>
+                                <div app-show="order.items[8].quantity"><span class="d-flex align-items-center ">Qty:<p app-bind="order.items[8].quantity"></p> X <p app-bind="parsePrice(order.items[8].price)"></p></span></div>
+
+                                <div class="salonOrder-page-qtyName" app-bind="order.items[9].name"></div>
+                                <div app-show="order.items[9].quantity"><span class="d-flex align-items-center ">Qty:<p app-bind="order.items[9].quantity"></p> X <p app-bind="parsePrice(order.items[9].price)"></p></span></div>
+
+                                <div class="salonOrder-page-qtyName" app-bind="order.items[10].name"></div>
+                                <div app-show="order.items[10].quantity"><span class="d-flex align-items-center ">Qty:<p app-bind="order.items[10].quantity"></p> X <p app-bind="parsePrice(order.items[10].price)"></p></span></div>
+                            </div>                         -->
+                       
+      
+                    </div>
+                    <div class="cell middle text-light text-center capitalise clickable" app-click="downloadInvoice(order.transaction_id,order.customer[0].name.first,order.customer[0].name.last,order.customer[0].email,'Salon Product Invoice')"><i class="fa fa-download" style="font-size:24px"></i></div>
+
+                    
+                    
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+   
+
+    <%- include('../../dashboard/partials/modal/new_proorder.ejs') %>
+
+
+
+    
+    
+
+    

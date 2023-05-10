@@ -1,0 +1,68 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+
+
+    <div class="page px-2 p-s-0" app-init="get('/dashboard/clients/subscriptions','prices','prices')">
+
+        <div class=" bg-white p-2">
+
+            <div class="table">
+                <div class="row table-header">
+                    <div class="cell middle">Name</div>
+                    <div class="cell middle text-center">Active</div>
+                    <!--div class="cell middle text-center">Subscribers</div-->
+                    <div class="cell middle">Amount</div>
+                    <div class="cell middle">Interval</div>
+                    <div class="cell middle" style="width: 5%"></div>
+                </div>
+                <div class="row" app-for="price in prices">
+                    <div class="cell middle text-weight-600 clickable" app-click="goto('/dashboard/clients/subscriptions/members/',price._key)" app-bind="price.name"></div>
+                    <div class="cell middle">
+                        <div class="text-center" app-show="price.active =='false'"><span class="icon close red"></div>
+                        <div class="text-center" app-show="price.active !='false'"><span class="icon tick green"></div>
+                        
+  
+                   </div>
+                   
+                    <!-- <div class="cell middle"><div class="text-center" app-show="!price.active"><span class="icon tick green"></span></div></div> -->
+                    <!--div class="cell middle text-center" app-bind="price.subscribers"></div-->
+                    <div class="cell middle" app-bind="parseDecimalPrice(price.unit_amount)"></div>
+                    <div class="cell middle capitalise" app-bind="parseInterval(price.recurring.interval)"></div>
+                    <div class="cell middle action-icons" app-attr="{id:'cell-'+price._key}">
+                        <div class="context-link btn border" app-click="toggleContext(price._key)">
+                            <span class="icon black arrowdown sm"></span>
+                        </div>
+                        <div class="context dropdown text-left" style="display: none" app-attr="{id:'context-'+price._key}">
+                            <div class="link" app-click="newMembership('edit',price)">
+                                <span class="icon left black edit"></span>
+                                Edit
+                            </div>
+                            <div class="link" app-click="goto('/dashboard/clients/subscriptions/members/',price._key)">
+                                <span class="icon left black client"></span>
+                                View Members
+                            </div>
+                            <div class="link" app-click="newMembership('delete',price)">
+                                <span class="icon left black delete"></span>
+                               Delete
+                            </div>
+                            <!--div class="link" app-click="newMembership('delete',price._key)" app-show="price.active">
+                                <span class="icon left black delete"></span>
+                                Deactivate
+                            </div>
+                            <div class="link" app-click="newMembership('activate',price._key)" app-hide="price.active">
+                                <span class="icon left black delete"></span>
+                                Activate
+                            </div-->
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <%- include('../partials/modal/new_membership_sub.ejs') %>

@@ -1,0 +1,168 @@
+.book {
+
+    h1.h2 {
+        font-size: 2rem;
+        font-weight: 500
+    }
+
+    position: relative;
+    text-align: left;
+    // background-image: url('https://davidrozman.co.uk/media/1900/80/assets/Womens-Price-List-min.jpg');
+    // overflow: hidden;
+    //
+    // &:after {
+    //     content:'';
+    //     position: absolute;
+    //     top: 0;
+    //     left: 0;
+    //     width: 100vw;
+    //     height: 100%;
+    //     background-color: rgba(246, 246, 246, 0.9)
+    // }
+
+    a#cat-0 {
+        display: none;
+    }
+
+    a.add-cut-service {
+        padding: 2rem;
+        border: 2px solid $brand-secondary;
+        border-radius: 6px;
+        text-align: right;
+        font-size: 1.25rem;
+        font-weight: 400;
+        margin-bottom: 2rem;
+    }
+
+    h3:not(.text-normal) {
+        font-weight: 600;
+    }
+
+    label.italic {
+        font-size: 1rem;
+        color: $brand-black;
+        font-weight: 300
+    }
+
+    .contain {
+        max-width: 48rem;
+        margin-bottom: 10rem;
+    }
+
+    @media small {
+        padding: 0;
+    }
+
+    .back-link {
+        padding: 2.5rem 0 0 0;
+        text-align: left;
+        font-size: 0.875rem;
+
+        .icon.left {
+            margin: -2px 0.5rem 0 0;
+        }
+
+        @media small {
+            padding-top: 2rem;
+        }
+    }
+
+    .title {
+        position: relative;
+        padding: 2.5rem 0 1.43rem 0;
+        text-align: center;
+        @media small {
+            padding-top: 2rem;
+        }
+
+        .back-link {
+            position: absolute;
+            padding: 0.3rem 0 0 0
+            @media small {
+                .text {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    .login {
+        background: $bg-light-grey;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        margin: 0 0 15rem 0;
+        box-shadow: $shadow-medium;
+
+        .new-client {
+            padding: 2rem;
+        }
+
+        .existing-client {
+            background-color: white;
+            padding: 2rem;
+        }
+
+        @media small {
+            grid-template-columns: 1fr;
+            margin-top: 2rem;
+        }
+    }
+
+    .tabs {
+        margin-bottom: 1.25rem;
+    }
+
+    .service {
+        display: grid;
+        padding: 2rem;
+        margin-bottom: 1.25rem;
+        background-color: white;
+        border-radius: 6px;
+    }
+
+    .datepicker.relative {
+
+        padding: 0;
+        background: none;
+
+        .btn-wrap {
+
+            border: none;
+            background-color: white;
+            padding: 0.5rem;
+            height: auto;
+            border-radius: 6px;
+
+            .btn {
+                border: none;
+
+                &.month {
+                    font-size: 1rem;
+                    font-weight: 600
+                }
+            }
+        }
+
+        .grid {
+            margin-top: 1.25rem;
+            background-color: white;
+            border-radius: 6px;
+            padding: 1.5rem 1.5rem;
+        }
+    }
+
+    .stylist-select {
+
+        background-color: white;
+        border-radius: 6px;
+        margin-bottom: 1.25rem;
+        padding: 0.6rem 1.5rem;
+
+        &.selected {
+            box-shadow: 1px 4px 15px #00000026;
+            border: 1px solid $brand-secondary;
+        }
+
+    }
+
+}

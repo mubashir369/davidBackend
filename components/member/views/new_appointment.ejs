@@ -1,0 +1,171 @@
+<% layout('member.ejs') -%>
+
+    <%- include ../partials/header-member.ejs %>
+
+    <div class="hidden" app-init="get('staff','all')"></div>
+    <div class="hidden" app-init="get('salon','54855602')"></div>
+    <div class="hidden" app-init="get('memberServices','all')"></div>
+    <div class="hidden" app-init="get('members','<%-user._key%>')"></div>
+    <div class="hidden" app-init="newAppointment('set_event_type','customer_appointment')"></div>
+
+
+
+
+    <% if (typeof appointment_key != 'undefined'){ %>
+        <div class="hidden" app-init="newAppointment('get','<%- appointment_key %>')"></div>
+    <% } %>
+
+    <div class="page grid col-12 col-s-1 h-100 overflow-hidden new-appointment">
+
+        <div class="colspan-6 appointment-build overflow-y p-2 pb-6">
+
+            <div app-hide="view.selected_customer._key">
+
+                <%- include ../partials/client_select.ejs %>
+
+            </div>
+
+            <div app-show="view.selected_customer._key" class="relative  pb-6">
+
+                <div app-hide="view.previous_appointments">
+
+                    <div class="grid col-3">
+                        <p class="mb-1 colspan-1">Service</p>
+                        <div class="text-right colspan-2">
+                            <button class="dp-btn bg-secondary text-white" app-click="view.previous_appointments = !view.previous_appointments">Rebook a past service</button>
+                        </div>
+                    </div>
+
+                     <div class="relative layer-5">
+
+                         <div class="mt-1 flex flex-middle-left search-dropdown-wrap layer-4">
+                             <span class="icon services black right"></span>
+                             <input type="text" class="search-dropdown rounded context-link cursor-pointer border-0" placeholder="Search services by name or category..." readonly app-model="view.search" app-click="getMemberServices('services','<%-mem_services%>','<%-member._key%>')" >
+                         </div>
+
+                         <input type="hidden" app-model="scope.staff_id" value="members._key">
+
+                         <div class="table search-select absolute context" id="context-service_search" app-show="view.search_results">
+                             <div app-for="service in services" app-click="newAppointment('add_service',service)">
+
+                                 <div class="row clickable flex">
+                                     <div class="flex-2 py-05">
+                                         <div><span class="text-weight-600" app-bind="service.name"></span> (<span app-bind="service.duration"></span>mins)</div>
+                                         <div><span class="text-light" app-bind="getSalonSetting('categories',service.category)"></span></div>
+                                     </div>
+                                     <div class="text-light text-right flex-1">From £<span app-bind="service.service_price"></span></div>
+                                 </div>
+
+                             </div>
+                         </div>
+
+                    </div>
+
+                    <div class="grid col-10 col-s-1 gap-2 mt-2 relative layer-4">
+                        <!--div class="colspan-7">
+
+                            <div class="relative">
+                                <div class="search-dropdown rounded border context-link" app-click="toggleContext('stylist')"><span class="icon stylist secondary left"></span><span app-bind="new_appointment.staff_name"> Select a stylist...<%-user._key%></span></div>
+                                <div class="table search-select absolute context" id="context-stylist" app-show="view.select_stylist">
+                                    <div class="row clickable" app-for="member in staff" app-click="newAppointment('add_stylist',member)" >
+                                        <div class="flex-4 text-weight-600" app-bind="parseName(member.name)"></div>
+                                        <div class="flex-1 text-right">£<span app-bind="newAppointment('get_price',member.level)"></span></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div-->
+
+                        <div class="colspan-10">
+
+                            <div class="relative">
+                                <div class="search-dropdown rounded border context-link cursor-pointer" app-click="toggleContext('slot')"><span class="icon time black left"></span><span app-bind="new_appointment.start_time"> Select start time...</span></div>
+                                <div class="table search-select absolute context" id="context-slot" app-show="view.select_start_time">
+                                    <div class="row clickable" app-for="hr in getHrs()" app-click="newAppointment('set_start',hr)" app-bind="hr">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative layer-2 mt-2">
+
+                    </div>
+                    <div class="mt-1 flex flex-top-left search-dropdown-wrap">
+                        <span class="icon note secondary ml-1 mt-1"></span>
+                        <textarea class="rounded border-0" app-model="new_appointment.note" placeholder="Add a note"></textarea>
+                    </div>
+
+                    <div class="mt-2 text-right" app-show="new_appointment.service_id">
+                        <button class="dp-btn text-white bg-secondary layer-1" app-click="newAppointment('push')">Add to appointment<i class="fa fa-chevron-right ml-1"></i></button>
+                    </div>
+
+                    <div class="mt-2 text-right" app-hide="new_appointment.service_id">
+                        <button class="dp-btn text-white bg-secondary layer-1">Add to appointment<i class="fa fa-chevron-right ml-1"></i></button>
+                    </div>
+
+                </div>
+
+                <div app-show="view.previous_appointments" class="relative pb-6 overflow-visible">
+
+                    <div class="client">
+                        <div class="grid col-3">
+                            <p class="mb-1 colspan-1">Past Services</p>
+                            <div class="text-right colspan-2">
+                                <button class="dp-btn bg-secondary text-white" app-click="view.previous_appointments = !view.previous_appointments">Back to new service<span class="icon arrowup right secondary"></span></button>
+                            </div>
+                        </div>
+
+                        <div class="appointment-wrap p-0 overflow-visible">
+
+                            <div class="appointment checked_in mt-1 overflow-visible" app-for="prev in prev_appointments">
+                                <div class="date">
+                                    <div class="day" app-bind="parseISODate(prev.date,'MMM')"></div>
+                                    <div class="date" app-bind="parseISODate(prev.date,'D')"></div>
+                                </div>
+                                <div class="info">
+                                    <span class="text-weight-600" app-bind="prev.service.name"></span>
+                                    <div class="">with <span class="capitalise" app-bind="parseName(prev.stylist.name)"></span></div>
+                                </div>
+                                <div class="action">
+
+                                    <a class="btn bg-secondary" app-click="newAppointment('rebook',prev)">
+                                        Rebook this service
+                                        <!-- <span class="icon services right white"></span> -->
+                                    </a>
+
+                                    <!-- <div class="context-link btn border" app-click="toggleContext(appointment.service._key)">
+                                        <span class="icon arrowdown secondary"></span>
+                                    </div>
+                                    <div class="context dropdown text-left" style="display: none" app-attr="{id:'context-'+appointment.service._key}">
+
+                                        <div class="link" app-click="newAppointment('rebook_stylist',appointment)">
+                                            <span class="icon stylist left black"></span>
+                                            Rebook this service with&nbsp;<span class="capitalise" app-bind="parseName(appointment.stylist.name)"></span>
+                                        </div>
+                                        <div class="link" app-click="newAppointment('rebook',appointment)">
+                                            <span class="icon services left black"></span>
+                                            Rebook this service
+                                        </div>
+
+                                    </div> -->
+
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+        </div>
+
+    <%- include('../partials/event-details.ejs') %>
+
+    <%- include('../partials/modal/client_profile.ejs') %>

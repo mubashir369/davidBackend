@@ -1,0 +1,59 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+
+    
+    <div class="page px-2 p-s-0" app-init="get('memberships','getCancelationRequests)">
+         
+        <div class=" mt-1 p-0 d-flex justify-content-between align-items-center">
+            <div class=" pb-0 @hidden hidden-m w-50">
+                <input type="text" class="search colspan-2 border" placeholder="Search..." app-model="view.search" onkeyup="scope.searchApi('cafeproducts',this.value)" spellcheck="false">
+            </div>
+            <select
+            className="ml-lg-10 dp-text-description  mt-md-0"
+            onchange="scope.cancel_order_sorting(this.value)"
+            style="width: 10rem;
+            float: right;"
+            >
+                <option value="">All</option>
+                <option value="member">Member</option>
+                <option value="customer">Customer</option>
+                                                
+    
+          </select>
+        </div>
+        <div class=" bg-white p-0 py-1">
+
+            <div class="table">
+                <div class="row table-header">
+                    <div class="cell middle " style="width: 15%">Name</div>
+                    <div class="cell middle" style="width: 20%">email</div>
+                    <!-- <div class="cell middle " style="width: 10%">Member Id</div> -->
+                    <div class="cell middle " style="width: 25%">Membership Id</div>
+                    <div class="cell middle" style="width: 10%">Applied At</div>
+                    <div class="cell middle" style="width: 10%">Status</div>
+                    <div class="cell middle pl-1 text-right" style="width: 10%">Action</div>
+                    <!-- <div class="cell middle  text-right"></div> -->
+                </div>
+                <div class="row" app-for="price in memberships">
+                    <div class="cell middle text-weight-600 clickable"  app-bind="price.name"></div>
+                    <div class="cell middle text-weight-600 clickable"  app-bind="price.email"></div>
+                    <!-- <div class="cell middle text-weight-600 clickable"  app-bind="price.memberId"></div> -->
+                    <div class="cell middle text-weight-600 clickable"  app-bind="price.membership_id"></div>
+                    <div class="cell middle text-weight-600 clickable"  app-bind="price.created_at"> </div>
+                    <div class="cell middle text-weight-600 clickable"  app-bind="price.status"></div>
+                    <div class="cell middle capitalise clickable mt-1  float-right" >
+                        <button class="dp-btn sm-btn round bg-secondary hidden-s" app-show="price.status=='pending'" app-click="updateMemStatus(price.memberId,price.membership_id,price._key)" >Approve</button>
+                        <button class="dp-btn sm-btn round bg-primary hidden-s" app-show="price.status=='cancelled'" >Approved</button>
+                    </div>
+                    
+                    
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    

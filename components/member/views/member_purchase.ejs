@@ -1,0 +1,110 @@
+<% layout('member.ejs') -%>
+
+<%- include ../partials/header-member.ejs %>
+
+    <div class="page m-3">
+
+    <div class="bg-secondary d-inline-block radius-5  px-2 py-1">
+        <h2 class="text-white"><%=subscription.name%></h2> 
+        <div class="divider my-1" style="background-color: #987c44 ;"></div>
+        <p class="text-white"><%=subscription.description%></p>
+        <!--table class="table app-parent-price puchaseSeat-addCart-table" >
+        <tr>
+            <th>Date</th>
+            <th>Price</th>
+            <th>Action</th>
+        </tr>
+
+    
+        </table-->
+
+    <h2 class="text-white">£<%=subscription.unit_amount/100%></h2>
+        <p></p>
+        <p></p>
+
+        <button class="dp-btn bg-primary dp-btn-glow-black"  app-click="paySubPopup('<%-user._key%>','<%=subscription.unit_amount/100%>','<%=subscription.seats%>')">Pay Now</button>
+
+    </div>
+
+    <div class=""></div>
+
+
+    <!-- ===== Membership Plan page ===== -->
+
+    <!--div class="p-0">
+        <div class="membership_buy grid col-5">
+               <div class="membership_buy_box dp-scrollbar colspan-3">
+                   <div class="membership-card">
+                       <div class="d-flex align-items-center justfy-content-between">
+                           <div class="text dp-text-subTitle2 text-left "><span class="title-caption">Level 1</span><span class="undefined"></span></div>
+                           <div class="membership-card-price bg-primary text-white px-1 radius-5"> <span> £</span> 90</div>
+                       </div>
+                       <p class="">
+                           Buy now and have benefits of 3 seats free
+                       </p>
+                       <div class="text-left ">
+                            <a class="bg-secondary text-white dp-btn" href="/member/membership_purchase/price_1M2b7lHfeWtaNgKZb17B1Cd7">Buy Now</a>
+                       </div>
+                       <div class="divider mb-1 mt-1"></div>
+                  </div>
+                   <div class="membership-card">
+                       <div class="d-flex align-items-center justfy-content-between">
+                           <div class="text dp-text-subTitle2 text-left "><span class="title-caption">Level 2</span><span class="undefined"></span></div>
+                           <div class="membership-card-price bg-primary text-white px-1 radius-5"> <span> £</span> 150</div>
+                       </div>
+                       <p class="">
+                        Description for testing
+                       </p>
+                       <div class="text-left ">
+                            <a class="bg-secondary text-white dp-btn" href="/member/membership_purchase/price_1M2b7lHfeWtaNgKZb17B1Cd7">Buy Now</a>
+                       </div>
+                       <div class="divider mb-1 mt-1"></div>
+                  </div>
+                   <div class="membership-card">
+                       <div class="d-flex align-items-center justfy-content-between">
+                           <div class="text dp-text-subTitle2 text-left "><span class="title-caption">Level 3</span><span class="undefined"></span></div>
+                           <div class="membership-card-price bg-primary text-white px-1 radius-5"> <span> £</span> 40</div>
+                       </div>
+                       <p class="">
+                            Buy 3 seats and on free
+                       </p>
+                       <div class="text-left ">
+                            <a class="bg-secondary text-white dp-btn" href="/member/membership_purchase/price_1M2b7lHfeWtaNgKZb17B1Cd7">Buy Now</a>
+                       </div>
+                       <div class="divider mb-1 mt-1"></div>
+                  </div>
+                   <div class="membership-card">
+                       <div class="d-flex align-items-center justfy-content-between">
+                           <div class="text dp-text-subTitle2 text-left "><span class="title-caption">Level 4</span><span class="undefined"></span></div>
+                           <div class="membership-card-price bg-primary text-white px-1 radius-5"> <span> £</span> 135</div>
+                       </div>
+                       <p class="">
+                           Buy now and have benefits of 3 seats free
+                       </p>
+                       <div class="text-left ">
+                            <a class="bg-secondary text-white dp-btn" href="/member/membership_purchase/price_1M2b7lHfeWtaNgKZb17B1Cd7">Buy Now</a>
+                       </div>
+                       <div class="divider mb-1 mt-1"></div>
+                  </div>
+                  
+               </div>
+         </div>
+    </div-->
+
+     <!-- ===== Membership Plan page ===== -->
+
+
+        <div id='calendar'></div>  
+    </div>
+
+    
+
+<script>
+
+console.log('User','<%-user._key%>')
+
+
+</script>
+<link href="/js/calendar-lib/main.css" rel='stylesheet' />
+
+<%- include('../partials/modal/pay_subscription.ejs') %>

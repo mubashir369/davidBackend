@@ -1,0 +1,9 @@
+<% if (typeof result != 'undefined' && typeof error == 'undefined'){ %>
+    <h4 class="text-light mb-1">Report Complete</h4>
+    <p class="mb-1">Please click the button below to download the report</p>
+    <a href="<%- result %>" class="btn bg-secondary thick" download>Download CSV</a>
+<% } else if (typeof error != 'undefined'){ %>
+    <h4 class="text-light mb-1"><%- error %></h4>
+<% } else { %>
+    No file generated: <%- error %>
+<% } %>

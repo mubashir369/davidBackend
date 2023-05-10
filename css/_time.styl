@@ -1,0 +1,34 @@
+.time-list {
+
+    overflow-x: auto;
+    white-space: nowrap;
+    display: flex;
+    flex-direction: row;
+    margin: 1rem 0 0 0;
+    -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    div.time {
+        flex: 0 0 138px;
+        height: 70px;
+        margin-right: 1rem;
+        color: $text-black;
+        font-weight: 600;
+        background: white;
+        border-radius: 6px;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+
+        span.icon {
+            height: 23px;
+            width: 23px;
+        }
+    }
+}

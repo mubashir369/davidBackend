@@ -1,0 +1,214 @@
+<!-- ======= modal =========== -->
+
+    <div class="modal cafeProd-modal " app-show="view.modal == 'show_edit'" anim="{'enter':'fade-in'}">
+
+        <div class="modal-body p-0 w-80 w-m-90" anim="{'enter':'move-up','duration':'0.2'}">
+
+            <div class="modal-header text-primary">
+                <div class="title">
+                    <p class="m-0">Order Detail </p>
+                </div>
+                <div class="close">
+                    <span class="icon close white clickable" onclick="modalCloseAll()"></span>
+                </div>
+            </div>
+
+            <div class="modal-content p-2 cafeOrderDetail">
+               
+                <div class="grid col-1 gap-2">
+                 
+                    <div class="">
+                       
+                        <div class="grid col-3 gap-1 pb-1">
+
+                            <div class="colspan-2">
+
+                                <div class="">
+                                    <label class=""> <strong> Customer Detail</strong></label>
+                                    <div class="divider mb-1"></div>
+                                    <div class="grid col-3 gap-1 pb-1">
+                                        <div class="">
+                                            <label> <strong> Name </strong></label>
+                                            <label><span app-bind="new.customer.name.first"></span><span app-bind="new.customer.name.last"></span></label>
+                                        </div>
+                                        <div class="">
+                                            <label><strong>Phone Number</strong></label>
+                                            <label app-bind="new.customer.phone">--</label>
+                                        </div>
+                                        <div class="">
+                                            <label><strong>Email Address</strong></label>
+                                            <label app-bind="new.customer.email">--</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class=""  >
+                                    <label class=""> <strong> Cart Detail </strong></label>
+                                    <div class="divider mb-1"></div>
+                                    <div class="grid col-3 gap-1" app-for="item in new.items">
+                                        <div class="">
+                                            <label><strong>Product Image</strong></label>
+                                            <a app-click="gotoImg(item.img)" target="_blank"><img app-src="item.img" src="/images/products/Product_placeholder.svg"></a>
+                                        </div>
+                                        <div class="">
+                                            <label> <strong> Name </strong></label>
+                                            <label app-bind="item.name"></label>
+                                        </div>
+                                       
+                                        <div class="">
+                                            <label><strong>Price</strong></label>
+                                            &#163; <span app-bind="item.price"></span> X <span app-bind="item.quantity"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="colspan-1">
+                                <div class="">
+                                    <label class=""> <strong> Payment Detail </strong></label>
+                                    <div class="divider mb-1"></div>
+                                    <div class="grid col-2 pb-1">
+                                        <!--div class="">
+                                            <label> <strong> Card Type </strong></label>
+                                            <label>Debit</label>
+                                        </div>
+                                        <div class="">
+                                            <label><strong>Card Number</strong></label>
+                                            <label>4242 4242 4242 4242</label>
+                                        </div>
+                                        <div class="">
+                                            <label><strong>CVV</strong></label>
+                                            <label>123</label>
+                                        </div>
+                                        <div class="">
+                                            <label><strong>Holder Name</strong></label>
+                                            <label>AJay Thakur</label>
+                                        </div-->
+                                        <div class="">
+                                            <label><strong>Order ID</strong></label>
+                                            <label app-bind="new.transaction_id"></label>
+                                        </div>
+
+
+                                        <div class="">
+                                            <label><strong>Transaction ID</strong></label>
+                                            <label app-bind="new.stripe_transcation_id"></label>
+                                        </div>
+                                        <div class="">
+                                            <label><strong>Total</strong></label>
+                                            <label >&#163; <span app-bind="new.total"></span></label>
+                                        </div>
+
+                                        <div class="" app-show="new.transactions.discount_data.amount">
+                                            <label><strong>Discount</strong></label>
+                                            <label >&#163; <span app-bind="new.transactions.discount_data.amount"></span></label>
+                                        </div>
+
+
+                                        <div class="">
+                                            <label><strong>Payment Method</strong></label>
+                                            <label>Stripe</label>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+
+
+                                <div class="mt-2" app-show="new.liquor_img">
+                                    <label class=""> <strong> ID Proof </strong></label>
+                                    <div class="divider mb-1"></div>
+                                    <div class="grid col-1 pb-1">
+                                        <div class="">
+                                            <label><strong>Document</strong></label>
+                                            <a app-click="gotoImg(new.liquor_img)" target="_blank"><img app-src="new.liquor_img" src="/images/products/Product_placeholder.svg"></a>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                                <div class="mt-1">
+                                    <label class=""> <strong> Change Status </strong></label>
+                                    <div class="divider mb-1"></div>
+                                    <div class="grid col-1 pb-1">
+                                        <div class="">
+                                            <label><strong>Status</strong></label>
+                                            <select app-model="new.order_status" id="sample"  onchange="showpProcessingTime(this.value)">
+                                                <option value="Pending">Pending</option>
+                                                <option value="Processing">Processing</option>
+                                                <option value="Pick your order">Pick your order</option>
+                                                <option value="Cancelled">Cancelled</option>
+                                                <option value="Delivering">Delivering</option>
+                                                <option value="Delivered">Delivered</option>
+                                                <option value="Completed">Completed </option>
+                                                <option value="Cancel Requested">Cancel Requested</option>
+                                            </select>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div  id="processingDiv" app-hide="new.order_status != 'Processing'" style="display:none">
+                                    <div class="grid col-1 pb-1">
+                                        <div class="">
+                                            <label><strong>Processing Time (in minutes)</strong></label>
+                                            <input type="text" app-model="new.processingTime"  id="status" onkeyup="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');"/>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                               
+                                <div  id="cancelDiv" app-hide="new.reason != 'Cancel Requested'" >
+                                    <div class="grid col-1 pb-1">
+                                        <div class="">
+                                            <label><strong>Reason </strong></label>
+                                            <!-- <input type="text" app-model="new.reason"  id="reason"/> -->
+                                            <textarea  class="border bg-none" app-model="new.reason" id="reason" placeholder="Reason..."></textarea>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                
+
+                                  
+                                
+
+
+                            </div>
+                        </div>
+                       
+                    </div>
+                  
+                </div>
+            </div>
+
+            <div class="modal-appointment-actions flex flex-middle-right">
+                <a class="dp-btn bg-primary text-white " onclick="modalCloseAll()">
+                    <span>Cancel</span>
+                </a>
+                <a class="dp-btn bg-secondary text-white" app-click="saveFoodOrder(new)">
+                    <span>Update</span>
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+    
+    <script>
+        // console.log(document.getElementById("sample").value)
+            // if(document.getElementById("sample").value=='Processing'){
+            //     console.log(document.getElementById("sample").value)
+            //     document.getElementById("processingDiv").classList.remove("hidden");
+            // }
+
+        const showpProcessingTime=function(status){
+            console.log(status)
+            if(status==="Processing"){
+            document.getElementById("processingDiv").classList.remove("hidden");
+            }
+            else{
+            document.getElementById("processingDiv").classList.add("hidden");
+            // document.getElementById("status").value='';
+            }
+            
+        }
+    </script>

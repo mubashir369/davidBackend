@@ -1,0 +1,336 @@
+<div id="appointment-view" class="modal" app-show="view.modal == 'show_edit'" anim="{'enter':'fade-in'}">
+
+    <div class="modal-body p-0 w-75 w-m-90" anim="{'enter':'move-up','duration':'0.2'}" app-attr="{'data-status':view.appointment.status}" >
+
+        <div class="modal-header">
+            <div class="title">
+                <p class="m-0">
+                    <span class="text-light" app-bind="parseISODate(view.appointment.date,'h:mma')"></span> - <span id="view-appointment-end_time" class="text-light" app-bind="parseISODate(view.appointment.end_date,'h:mma')"></span>
+                    <span class="ml-05" app-bind="view.appointment.service_name"></span>
+                </p>
+            </div>
+            <div class="close">
+                <!-- <span class="icon close white clickable" onclick="modalCloseAll()"></span> -->
+
+                <div class="btn-wrap hidden-s">
+                    <button class="btn btn-left border mr-1" app-click="changeModalTab('one')">View <span class="icon services white right"></span></button>
+                    <button class="btn btn-right border" app-click="changeModalTab('edit')">Edit <span class="icon edit white right"></span></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-content">
+
+            <div class="grid col-5" app-show="view.modal_tab == 'one'" style="height: 30rem; max-height: 60vh">
+
+                <div class="relative colspan-3 bg-white pt-2 px-2">
+
+                    <div class="flex flex-middle-left border-bottom pb-1 mb-1">
+                        <span class="icon note secondary mr-05"></span>
+                        <span class="text-weight-500">Appointment Notes</span>
+                    </div>
+
+                    <div class="pl-15">
+                        <textarea class="no-style flex-1" placeholder="No note added" app-model="view.appointment.note"></textarea>
+                    </div>
+
+                </div>
+
+                <div class="colspan-2 pt-2 px-2 pb-s-2">
+
+                    <div class="flex flex-middle-left border-bottom pb-1 mb-1">
+                        <span class="icon client secondary mr-05"></span>
+                        <span class="text-weight-500">Client</span>
+                    </div>
+
+                    <div class="flex flex-top-right mt-1 clickable px-15" app-click="goto('/dashboard/clients/',view.appointment.customer._key)">
+
+                        <div class="text-left flex-1">
+                            <div class="clickable" app-click="goto('/dashboard/clients/',view.appointment.customer._key)">
+                                <span app-bind="parseName(view.appointment.customer.name)" class="text-weight-600 truncate"></span>
+                            </div>
+                            <div class="text-small" app-bind="view.appointment.customer.tel"></div>
+                            <div class="text-small" app-bind="view.appointment.customer.email" app-class="{'text-red':view.appointment.customer.email_bounce == 'true'}"></div>
+                        </div>
+                        <div class="text-right hidden-s">
+                            <img app-src="view.appointment.customer.avatar" src="/images/avatars/Profile_Placeholder.svg" class="flex-none avatar lg">
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="relative colspan-3 bg-white p-2">
+
+
+                    <div class="flex flex-middle-left border-bottom pb-1 mb-1">
+                        <span class="icon services secondary mr-05"></span>
+                        <span class="text-weight-500">Overview</span>
+                    </div>
+
+                    <div class="pl-15">
+
+                        <div class="my-1 text-small">
+                            <div class="italic text-grey" app-show="!view.appointment.total_items">Getting prices...</div>
+                            <div class="grid col-12 gap-1" app-for="total_item in view.appointment.total_items">
+                                <div class="colspan-2"  app-bind="parseISODate(total_item.date,'h:mma')"></div>
+                                <div class="colspan-8"><span app-bind="total_item.service_name"></span> with <span app-bind="total_item.staff_name"></span></div>
+                                <div class="colspan-2 text-right">£<span app-bind="total_item.price"></span></div>
+                            </div>
+                        </div>
+                        <div class="w-100 grid col-12 gap-1">
+                            <div class="text-left text-weight-600">Total</div>
+                            <div class="colspan-10"></div>
+                            <div class="text-right text-weight-600">£<span app-bind="view.appointment.totals.total"></span></div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="colspan-2 p-2">
+
+                    <div class="grid col-2 gap-1 border-bottom pb-1 mb-1">
+
+                        <div class="flex flex-middle-left">
+                            <span class="icon status secondary mr-05"></span>
+                            <span class="text-weight-500">Status History</span>
+                        </div>
+
+                        <div class="status text-weight-600">
+                            <div class="salon_confirmation">
+                                Unconfirmed by Salon<span class="icon nudge-up black unconfirmed right"></span>
+                            </div>
+                            <div class="unconfirmed">
+                                Unconfirmed by Client<span class="icon nudge-up black unconfirmed right"></span>
+                            </div>
+                            <div class="confirmed">
+                                Confirmed<span class="icon nudge-up black confirm right"></span>
+                            </div>
+                            <div class="checked_in">
+                                Checked In<span class="icon nudge-up black checkin right"></span>
+                            </div>
+                            <div class="paid">
+                                Paid<span class="icon nudge-up black paid right"></span>
+                            </div>
+                            <div class="cancelled">
+                                Cancelled by Client<span class="icon nudge-up red noshow right"></span>
+                            </div>
+                            <div class="reschedule">
+                                Client Reschedule Request<span class="icon nudge-up red rebook right"></span>
+                            </div>
+                            <div class="no_show">
+                                Client No Show<span class="icon nudge-up red noshow right"></span>
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+                    <div class="text-small mt-1">
+                        <div class="grid col-2 mb-05" app-show="view.appointment.termsandconditions_accepted"><div><span class="icon nudge-up tick left black"></span>T&Cs Accepted</div><span class="text-right" app-bind="parseISODate(view.appointment.termsandconditions_accepted,'ddd Do MMM h:mma', true)"></span></div>
+                        <div class="grid col-2 mb-05" app-hide="view.appointment.termsandconditions_accepted"><div><span class="icon nudge-up close left black"></span>T&Cs Not Accepted</div></div>
+                        <div class="grid col-2 gap-1 mb-05"><div><span class="icon nudge-up calendar left black"></span><span class="text-right" app-bind="view.appointment.source"></span></div><span class="text-right" app-bind="parseISODate(view.appointment._created,'ddd Do MMM h:mma', true)"></span></div>
+                        <div app-hide="view.appointment.confirmation_sent" class="grid col-2 text-light-grey mb-05"><div><span class="icon nudge-up reminder left light-grey"></span>Confirmation Sent</div></div>
+                        <div app-show="view.appointment.confirmation_sent" class="grid col-2 mb-05"><div><span class="icon nudge-up reminder left black"></span>Confirmation Sent</div><span class="text-right" app-bind="parseISODate(view.appointment.confirmation_sent,'ddd Do MMM h:mma', true)"></span></div>
+                        <div app-hide="view.appointment.confirmed" class="grid col-2 text-light-grey mb-05"><div><span class="icon nudge-up confirm left light-grey"></span>Confirmed</div></div>
+                        <div app-show="view.appointment.confirmed" class="grid col-2 mb-05"><div><span class="icon nudge-up confirm left black"></span>Confirmed <span app-show="view.appointment.deposit_taken">by Client</span> <span app-hide="view.appointment.deposit_taken">in Salon</span></div><span class="text-right" app-bind="parseISODate(view.appointment.confirmed,'ddd Do MMM h:mma', true)"></span></div>
+                        <div app-hide="view.appointment.checked_in" class="grid col-2 text-light-grey mb-05"><div><span class="icon nudge-up checkin left light-grey"></span>Checked in</div></div>
+                        <div app-show="view.appointment.checked_in" class="grid col-2 mb-05"><div><span class="icon nudge-up checkin left black"></span>Checked in</div><span class="text-right" app-bind="parseISODate(view.appointment.checked_in,'ddd Do MMM h:mma', true)"></span></div>
+                        <div app-hide="view.appointment.paid" class="grid col-2 text-light-grey mb-05"><div><span class="icon nudge-up paid left light-grey"></span>Paid</div></div>
+                        <div app-show="view.appointment.paid" class="grid col-2 mb-05"><div><span class="icon nudge-up paid left black"></span>Paid</div><span class="text-right" app-bind="parseISODate(view.appointment.paid,'ddd Do MMM h:mma', true)"></span></div>
+                    </div>
+
+
+
+                </div>
+
+            </div>
+
+            <div class="grid col-5" app-show="view.modal_tab == 'edit'" style="height: 40rem; max-height: 80vh">
+
+                <div class="relative colspan-3 bg-white p-2 overflow-y pb-5">
+
+                    <div class="relative layer-5 mb-5 hide-if-paid">
+
+                        <div class="flex flex-middle-left mb-1">
+                            <span class="icon services secondary mr-05"></span>
+                            <span class="text-weight-500">Change Service</span>
+                        </div>
+
+                        <div class="relative">
+
+                            <input type="text" class="search-dropdown rounded border context-link" placeholder="Search services by name or category..." app-model="view.search" app-click="toggleContext('service_search','services')" onkeyup="scope.searchApi('services',this.value)">
+
+                            <div class="table search-select absolute context" id="context-service_search" app-show="view.search_results">
+                                <div app-for="service in services" app-click="updateAppointment('update_service',service)">
+
+                                    <div class="text-small px-1">
+                                        <span class="text-grey" app-bind="service.name"></span>
+                                    </div>
+
+                                    <div class="row clickable flex" app-for-sub="task in service.service_items" app-click="updateAppointment('update_service',task)">
+                                        <div class="flex-2 py-05 pl-2">
+                                            <div><span class="text-weight-600" app-bind="task.name"></span> (<span app-bind="task.duration"></span>mins)</div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="relative mb-5">
+
+                        <div class="flex flex-middle-left border-bottom pb-1 mb-1">
+                            <span class="icon linkappt secondary mr-05"></span>
+                            <span class="text-weight-500">Linked Appointments</span>
+                        </div>
+
+                        <div class="appt-wrap my-2 grid" app-show="view.linked_appts_show">
+
+                            <div app-for="appt in view.linked_appts" class="mb-05 mr-05 clickable">
+                                <div class="appt" app-class="appt.status">
+                                    <div app-show="appt.viewing" class="flex viewing"><span class="icon overview white block"></span></div>
+                                    <div app-hide="appt.viewing" class="flex viewing" app-click="edit('appointments',appt._key,'delete')">
+                                        <span class="icon delete white"></span>
+                                    </div>
+                                    <div class="text-weight-600"><span app-bind="parseName(appt.customer_name)"></span></div>
+                                    <div><span app-bind="parseISODate(appt.date,'h:mma')"></span> - <span app-bind="parseISODate(appt.end_date,'h:mma')"></span></div>
+                                    <div><span app-bind="appt.service_name"></span> with <span app-bind="appt.staff_name"></span></div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="flex mb-2 hide-if-paid">
+
+                            <a class="btn border mr-1" app-click="chgLink()">
+                                Link to another appointment
+                                <span class="icon right black linkappt"></span>
+                            </a>
+
+                            <a class="btn border flex" app-click="updateAppointment('unlink')" app-show="view.linked_appts_show">
+                                Unlink this appointment
+                                <span class="icon right black unlinkappt"></span>
+                            </a>
+
+
+                        </div>
+
+                    </div>
+
+                    <div class="relative">
+
+                        <div class="flex flex-middle-left border-bottom pb-1 mb-1">
+                            <span class="icon time secondary mr-05"></span>
+                            <span class="text-weight-500">Edit History</span>
+                        </div>
+
+                        <div>
+                            <div app-for="appt_log in view.appointment_logs" class="grid col-6 text-small mb-s-05">
+                                <div class="colspan-1 colspan-s-6 mr-05" app-bind="parseISODate(appt_log.date,'DD/MM/YY HH:mm', true)"></div>
+                                <div class="colspan-1 colspan-s-2 mr-05"  app-bind="appt_log.user.name"></div>
+                                <div class="colspan-4" app-bind="appt_log.log"></div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="colspan-2 p-2 relative">
+
+                    <div class="hide-if-paid">
+                        <div class="flex flex-middle-left mb-1">
+                            <span class="icon client secondary mr-05"></span>
+                            <span class="text-weight-500">Change Client</span>
+                        </div>
+
+                        <div class="relative layer-5">
+
+                            <input type="text" class="search-dropdown rounded border context-link" placeholder="Search clients by name, number or email" app-model="view.client" app-click="toggleContext('client_search')" onkeyup="scope.searchApi('customers',this.value)">
+
+                            <div class="table search-select absolute context" id="context-client_search" style="width: calc(100% - 4rem)">
+                                <div app-for="client in customers" class="py-05 px-1">
+                                    <div class="clickable text-small" app-click="updateAppointment('chg_customer',view.appointment._key,client)">
+                                        <div app-bind="parseName(client.name)" class="capitalise"></div>
+                                        <div app-bind="client.email" class="text-grey"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-middle-right my-2">
+
+                            <img app-src="view.appointment.customer.avatar" src="/images/avatars/Profile_Placeholder.svg" class="flex-none avatar lg">
+                            <div class="text-left flex-1 ml-1">
+                                <div class="clickable" app-click="goto('/dashboard/clients/',view.appointment.customer._key)">
+                                    <span app-bind="parseName(view.appointment.customer.name)" class="text-weight-600 truncate"></span>
+                                </div>
+                                <div app-bind="view.appointment.customer.tel"></div>
+                                <div app-bind="view.appointment.customer.email" app-class="{'text-red':view.appointment.customer.email_bounce == 'true'}"></div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-appointment-actions">
+
+                <a class="btn border" app-click="updateAppointment('send_confirmation',view.appointment._key)">
+                    Confirm with Client
+                    <span class="icon right black reminder"></span>
+                </a>
+                <a class="btn border" app-click="updateAppointment('confirm',view.appointment._key)">
+                    Mark as Confirmed
+                    <span class="icon right black confirm"></span>
+                </a>
+                <a class="btn border" app-click="updateAppointment('check_in',view.appointment._key,view.appointment.status)">
+                    Check In
+                    <span class="icon right black checkin"></span>
+                </a>
+                <a class="btn border" app-click="updateAppointment('no_show',view.appointment._key,true)">
+                    Client No Show
+                    <span class="icon right black noshow"></span>
+                </a>
+                <a class="btn border" app-click="newNotification('appointment_url',view.appointment)">
+                    Salon Notification
+                    <span class="icon right black bell"></span>
+                </a>
+                <a class="btn border" app-click="goto('/dashboard/calendar/new-appointment?client_id=',view.appointment.customer._key)">
+                    Rebook
+                    <span class="icon right black rebook"></span>
+                </a>
+
+
+
+                <a class="btn border" app-click="edit('appointments',view.appointment._key,'delete')">
+                    Delete
+                    <span class="icon delete black right"></span>
+                </a>
+                <div class="right">
+                    <a onclick="modalCloseAll()" class="btn clear">
+                        Close
+                    </a>
+                    <a class="btn bg-secondary" app-click="updateAppointment(false,view.appointment._key)">
+                        Save
+                        <span class="icon tick right white"></span>
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+
+    </div>
+
+</div>

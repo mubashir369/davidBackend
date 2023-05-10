@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<style type="text/css">p{
+		margin:8px 0;
+		padding:0;
+		}
+		table{
+		border-collapse:collapse;
+		}
+		h1,h2,h3,h4,h5,h6{
+		display:block;
+		margin:0;
+		padding:0;
+		}
+		img,a img{
+		border:0;
+		height:auto;
+		outline:none;
+		text-decoration:none;
+		}
+		body,#bodyTable,#bodyCell{
+		height:100%;
+		margin:0;
+		padding:0;
+		width:100%;
+		font-family: 'Roboto', Arial,sans-serif;
+		}
+		.mcnPreviewText{
+		display:none !important;
+		}
+		#outlook a{
+		padding:0;
+		}
+		img{
+		-ms-interpolation-mode:bicubic;
+		}
+		table{
+		mso-table-lspace:0pt;
+		mso-table-rspace:0pt;
+		}
+		.ReadMsgBody{
+		width:100%;
+		}
+		.ExternalClass{
+		width:100%;
+		}
+		p,a,li,td,blockquote{
+		mso-line-height-rule:exactly;
+		}
+		a[href^=tel],a[href^=sms]{
+		color:inherit;
+		cursor:default;
+		text-decoration:none;
+		}
+		p,a,li,td,body,table,blockquote{
+		-ms-text-size-adjust:100%;
+		-webkit-text-size-adjust:100%;
+		}
+		.ExternalClass,.ExternalClass p,.ExternalClass td,.ExternalClass div,.ExternalClass span,.ExternalClass font{
+		line-height:100%;
+		}
+		a[x-apple-data-detectors]{
+		color:inherit !important;
+		text-decoration:none !important;
+		font-size:inherit !important;
+		font-family:inherit !important;
+		font-weight:inherit !important;
+		line-height:inherit !important;
+		}
+		.templateContainer{
+		min-width:600px !important;
+		}
+		a.mcnButton{
+		display:block;
+		}
+		.mcnImage,.mcnRetinaImage{
+		vertical-align:bottom;
+		}
+		.mcnTextContent{
+		word-break:break-word;
+		}
+		.mcnTextContent img{
+		height:auto !important;
+		}
+		.mcnDividerBlock{
+		table-layout:fixed !important;
+		}
+		/*
+		@tab Page
+		@section Heading 1
+		@style heading 1
+		*/
+		h1{
+		/*@editable*/color:#222222;
+		/*@editable*/font-family: 'Roboto', Arial,sans-serif;
+		/*@editable*/font-size:40px;
+		/*@editable*/font-style:normal;
+		/*@editable*/font-weight:bold;
+		/*@editable*/line-height:150%;
+		/*@editable*/letter-spacing:normal;
+		/*@editable*/text-align:center;
+		}
+		/*
+		@tab Page
+		@section Heading 2
+		@style heading 2
+		*/
+		h2{
+		/*@editable*/color:#df4431;
+		/*@editable*/font-family: 'Roboto', Arial,sans-serif;
+		/*@editable*/font-size:34px;
+		/*@editable*/font-style:normal;
+		/*@editable*/font-weight:bold;
+		/*@editable*/line-height:150%;
+		/*@editable*/letter-spacing:normal;
+		/*@editable*/text-align:center;
+		}
+		/*
+		@tab Page
+		@section Heading 3
+		@style heading 3
+		*/
+		h3{
+		/*@editable*/color:#4e5546;
+		/*@editable*/font-family: 'Roboto', Arial,sans-serif;
+		/*@editable*/font-size:22px;
+		/*@editable*/font-style:normal;
+		/*@editable*/font-weight:bold;
+		/*@editable*/line-height:150%;
+		/*@editable*/letter-spacing:normal;
+		/*@editable*/text-align:left;
+		}
+		/*
+		@tab Page
+		@section Heading 4
+		@style heading 4
+		*/
+		h4{
+		/*@editable*/color:#4e5546;
+		/*@editable*/font-family:Georgia;
+		/*@editable*/font-size:20px;
+		/*@editable*/font-style:italic;
+		/*@editable*/font-weight:normal;
+		/*@editable*/line-height:125%;
+		/*@editable*/letter-spacing:normal;
+		/*@editable*/text-align:center;
+		}
+		/*
+		@tab Header
+		@section Header Container Style
+		*/
+		#templateHeader{
+		/*@editable*/background-color:#ffffff;
+		/*@editable*/background-image:none;
+		/*@editable*/background-repeat:no-repeat;
+		/*@editable*/background-position:center;
+		/*@editable*/background-size:cover;
+		/*@editable*/border-top:0;
+		/*@editable*/border-bottom:0;
+		/*@editable*/padding-top:24px;
+		/*@editable*/padding-bottom:0px;
+		}
+		/*
+		@tab Header
+		@section Header Interior Style
+		*/
+		.headerContainer{
+		/*@editable*/background-color:#transparent;
+		/*@editable*/background-image:none;
+		/*@editable*/background-repeat:no-repeat;
+		/*@editable*/background-position:center;
+		/*@editable*/background-size:cover;
+		/*@editable*/border-top:0;
+		/*@editable*/border-bottom:0;
+		/*@editable*/padding-top:0;
+		/*@editable*/padding-bottom:0;
+		}
+		/*
+		@tab Header
+		@section Header Text
+		*/
+		.headerContainer .mcnTextContent,.headerContainer .mcnTextContent p{
+		/*@editable*/color:#757575;
+		/*@editable*/font-family: 'Roboto', Arial,sans-serif;
+		/*@editable*/font-size:16px;
+		/*@editable*/line-height:150%;
+		/*@editable*/text-align:left;
+		/*@editable*/font-weight: 400;;
+		
+		}
+		/*
+		@tab Header
+		@section Header Link
+		*/
+		.headerContainer .mcnTextContent a,.headerContainer .mcnTextContent p a{
+		/*@editable*/color:#007C89;
+		/*@editable*/font-weight:normal;
+		/*@editable*/text-decoration:underline;
+		}
+		/*
+		@tab Body
+		@section Body Container Style
+		*/
+		#templateBody{
+		/*@editable*/background-color:#ffffff;
+		/*@editable*/background-image:none;
+		/*@editable*/background-repeat:no-repeat;
+		/*@editable*/background-position:center;
+		/*@editable*/background-size:cover;
+		/*@editable*/border-top:0;
+		/*@editable*/border-bottom:0;
+		/*@editable*/padding-top:0;
+		/*@editable*/padding-bottom:0;
+		}
+		/*
+		@tab Body
+		@section Body Interior Style
+		*/
+		.bodyContainer{
+		/*@editable*/background-color:#transparent;
+		/*@editable*/background-image:none;
+		/*@editable*/background-repeat:no-repeat;
+		/*@editable*/background-position:center;
+		/*@editable*/background-size:cover;
+		/*@editable*/border-top:0;
+		/*@editable*/border-bottom:1px none ;
+		/*@editable*/padding-top:0;
+		/*@editable*/padding-bottom:0;
+		}
+		/*
+		@tab Body
+		@section Body Text
+		*/
+		.bodyContainer .mcnTextContent,.bodyContainer .mcnTextContent p{
+		/*@editable*/color:#757575;
+		/*@editable*/font-family: 'Roboto', Arial,sans-serif;
+		/*@editable*/font-size:16px;
+		/*@editable*/line-height:150%;
+		/*@editable*/text-align:left;
+		}
+		/*
+		@tab Body
+		@section Body Link
+		*/
+		.bodyContainer .mcnTextContent a,.bodyContainer .mcnTextContent p a{
+		/*@editable*/color:#2f53d7;
+		/*@editable*/font-weight:normal;
+		/*@editable*/text-decoration:underline;
+		}
+		/*
+		@tab Footer
+		@section Footer Style
+		*/
+		#templateFooter{
+		/*@editable*/background-color:#ffffff;
+		/*@editable*/background-image:none;
+		/*@editable*/background-repeat:no-repeat;
+		/*@editable*/background-position:center;
+		/*@editable*/background-size:cover;
+		/*@editable*/border-top:0;
+		/*@editable*/border-bottom:1px none ;
+		/*@editable*/padding-top:16px;
+		/*@editable*/padding-bottom:24px;
+		}
+		/*
+		@tab Footer
+		@section Footer Interior Style
+		*/
+		.footerContainer{
+		/*@editable*/background-color:#transparent;
+		/*@editable*/background-image:none;
+		/*@editable*/background-repeat:no-repeat;
+		/*@editable*/background-position:center;
+		/*@editable*/background-size:cover;
+		/*@editable*/border-top:1px none ;
+		/*@editable*/border-bottom:0;
+		/*@editable*/padding-top:0;
+		/*@editable*/padding-bottom:0;
+		}
+		/*
+		@tab Footer
+		@section Footer Text
+		*/
+		p{
+		/*@editable*/color:#adadae;
+		/*@editable*/font-family: 'Roboto', Arial,sans-serif;
+		/*@editable*/font-size:12px;
+		/*@editable*/font-weight:400;
+		/*@editable*/line-height:125%;
+		/*@editable*/text-align:left;
+		/*@editable*/letter-spacing:0.24px;
+		}
+		/*
+		@tab Footer
+		@section Footer Link
+		*/
+			@media only screen and (max-width: 480px){
+		/*
+		@tab Mobile Styles
+		@section Heading 1
+		@tip Make the first-level headings larger in size for better readability on small screens.
+		*/
+		h1{
+		/*@editable*/font-size:30px !important;
+		/*@editable*/line-height:125% !important;
+		}
+		}	@media only screen and (max-width: 480px){
+		/*
+		@tab Mobile Styles
+		@section Heading 2
+		@tip Make the second-level headings larger in size for better readability on small screens.
+		*/
+		h2{
+		/*@editable*/font-size:26px !important;
+		/*@editable*/line-height:125% !important;
+		/*@editable*/color:#df4431 !important;
+		
+		}
+		}	@media only screen and (max-width: 480px){
+		/*
+		@tab Mobile Styles
+		@section Heading 3
+		@tip Make the third-level headings larger in size for better readability on small screens.
+		*/
+		h3{
+		/*@editable*/font-size:20px !important;
+		/*@editable*/line-height:150% !important;
+		}
+		}	@media only screen and (max-width: 480px) {
+		/*
+		@tab Mobile Styles
+		@section Heading 4
+		@tip Make the fourth-level headings larger in size for better readability on small screens.
+		*/
+		h4{
+		/*@editable*/font-size:18px !important;
+		/*@editable*/line-height:150% !important;
+		}
+		}	
+	   </style>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<body>
+	<link href="https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i" rel="stylesheet" />
+
+<center>
+	<table align="center" border="0" cellpadding="0" cellspacing="0" height="100%" id="bodyTable" width="100%">
+		<tbody>
+			<tr>
+				<td align="center" id="bodyCell" valign="top">
+					<table border="0" cellpadding="0" cellspacing="0" width="100%">
+						<tbody>
+							<tr>
+								<td align="center" data-template-container="" id="templateHeader" style="background-image: none;background-repeat: no-repeat;background-position: center;background-size: cover;border-top: 0;border-bottom: 0;padding-top: 0;padding-bottom: 0px;" valign="top">
+									<table align="center" border="0" cellpadding="0" cellspacing="0" class="templateContainer" style="width: 600px !important;background: #fff;  border-radius: 10px; margin-bottom: 30px; " width="100%">
+										<tbody>
+											<tr>
+												<td class="headerContainer" valign="top">
+													<table align="center" border="0" cellpadding="0" cellspacing="0" class="templateContainer" style="background: #fff; margin-bottom: 10px;" width="100%">
+														<tbody>
+															<tr>
+																<td class="headerContainer" valign="top">
+																<table border="0" cellpadding="0" cellspacing="0" class="mcnTextBlock" style="min-width:100%; margin-top: 40px; " width="100%">
+																	<tbody class="mcnTextBlockOuter">
+																		<tr>
+																			<td class="mcnTextBlockInner" style="" valign="top">
+																			<table align="left" border="0" cellpadding="0" cellspacing="0" class="mcnTextContentContainer" style="max-width:100%; min-width:100%;" width="100%">
+																				<tbody>
+																					<tr>
+																						<td class="mcnTextContent" style="padding: 0 20px 0 20px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 18px;font-style: normal;font-weight: bold;text-align: left;letter-spacing: 0px;line-height: 1.17;" valign="top"><div><img src="http://143.244.139.198/static/media/logo.04c980ce365d2880c4f1f640e3ea806a.svg"  background="black" style="max-width: 100%; width: 90px; background-color: black;" /></div></td>																						
+																						<td class="mcnTextContent" style="padding: 0 20px 0 20px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 14px;font-style: normal;font-weight: bold;text-align: right;letter-spacing: 0px;line-height: 1.17;" valign="top">
+																							<p style="color: #df4431; text-align: right;"><strong>Basekamp FoodCafe</strong></p>
+																							<div>
+																								<strong> Alexandra Bldg, Ground Floor Front, <br> 28 Queen St, Manchester M2 5HX, United Kingdom </strong>
+																							</div>
+																						</td>
+																					</tr>
+																				</tbody>
+																			</table>
+																			</td>
+																		</tr>
+																	</tbody>
+																</table>
+																</td>
+															</tr>
+														</tbody>
+													</table>
+													<!-- ===== middle content Start===== -->
+													<table align="center" border="0" cellpadding="0" cellspacing="0" class="templateContainer" style="background: #fff; margin-bottom: 50px;" width="100%">
+														<tbody>
+															<tr>
+																<td class="headerContainer" valign="top">
+																<table border="0" cellpadding="0" cellspacing="0" class="mcnTextBlock" style="min-width:100%;" width="100%">
+																	<tbody class="mcnTextBlockOuter">
+																		<tr>
+																			<td class="mcnTextBlockInner" style="padding-top: 20px;" valign="top">
+																			
+																			<table align="left" border="0" cellpadding="0" cellspacing="0" class="mcnTextContentContainer" style="max-width:100%; min-width:100%; margin-bottom: 20px;" width="100%">
+																				<tbody>
+																					<tr>
+																						<td class="mcnTextContent" style="padding: 0 20px 0 20px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 18px;font-style: normal;letter-spacing: 0px;line-height: 1.17;" valign="top">																	
+																							<table align="left" border="0" cellpadding="0" cellspacing="0" class="mcnTextContentContainer" style="max-width:100%; min-width:100%;" width="100%">
+																								<tbody>
+																									<tr>
+																										<td class="mcnTextContent" style="padding: 0 20px 0 20px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 18px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:left;" valign="top">
+																											<p style="font-size: 14px; margin: 3px 0; color: #555; "><b>Pankaj Sharma</b></p>
+																											<p style="font-size: 14px; margin: 3px 0; color: #555; "><b>pankajsharma22@gmail.com</b></p>
+																											<p style="font-size: 14px; margin: 3px 0; color: #555; "><b>+44 012345678</b></p>
+																										</td>
+																										<td class="mcnTextContent" style="padding: 0 20px 0 20px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 18px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:right;" valign="top">
+																											<p style="font-size: 14px; margin: 3px 0; color: #555; text-align:right;"><b>Customer ID:  </b><span>1002BKT2</span></p>
+																											<p style="font-size: 14px; margin: 3px 0; color: #555; text-align:right;"><b>Order ID:  </b><span>210TR5J70</span></p>
+																											<p style="font-size: 14px; margin: 3px 0; color: #555; text-align:right;"><b>Transaction ID:  </b><span>1005478</span></p>
+																										</td>
+																									</tr>
+																									
+																								</tbody>
+																							</table>
+																						</td>
+																					</tr>
+																				</tbody>
+																			</table>
+																			<table align="left" border="0" cellpadding="0" cellspacing="0" class="mcnTextContentContainer" style="max-width:100%; min-width:100%; margin-bottom: 20px;" width="100%">
+																				<tbody>
+																					<tr>
+																						<td  style="padding: 0 20px 0 20px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 18px;font-style: normal;letter-spacing: 0px;line-height: 1.17;" valign="top">																	
+																							<table align="left" border="0"  class="mcnTextContentContainer" style="max-width:100%; min-width:100%; width:100%" >
+																								<tbody>
+																									<tr>
+																										<td class="mcnTextContent" style=" padding: 0 20px 0 20px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 18px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:left;" valign="top">
+																											<p style="color: #000; font-size: 14px; margin: 3px 0;font-weight: bold; font-size: 18px; text-align: left;"><b>Table Number</b></p>
+																										</td>
+																										<td class="mcnTextContent" style=" padding: 0 20px 0 20px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 18px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17; text-align:right;" valign="top">
+																											<p style="color: #000; font-size: 14px; margin: 3px 0;  font-weight: bold; font-size: 18px; text-align: right;"><b>1001</b></p>
+																										</td>
+																									</tr>
+																									
+																									<tr>
+																										<td class="mcnTextContent" style="padding: 0 20px 0 20px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 18px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:left;" valign="top">
+																											<table style="width: 100%; ">
+																												<tbody style="text-align: center;">
+																													<tr>
+																														<td colspan="2" class="mcnTextContent" style="padding: 0 20px 0 20px;font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 18px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:center;" valign="top">
+																															<div style="height: 20px;"></div>
+																													</td>
+																													</tr>
+																												</tbody>
+																											</table>
+																										</td>
+																									</tr>
+																									<tr>
+																										<td class="mcnTextContent" style="background-color: #000; padding: 0 20px 0 20px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 18px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:left;" valign="top">
+																											<p style="font-size: 14px; margin: 3px 0; color: #fff; font-weight: bold; font-size: 18px;"><b>Payment Method</b></p>
+																										</td>
+																										<td class="mcnTextContent" style="background-color: #000; padding: 0 20px 0 20px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 18px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:left;" valign="top">
+																											<p style="font-size: 14px; margin: 3px 0; color: #fff; font-weight: bold; font-size: 18px; text-align: right;"><b>Amount</b></p>
+																										</td>
+																									</tr>
+																									<tr>
+																										<td class="mcnTextContent" style="padding: 0 20px 0 20px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 18px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:right;" valign="top">
+																											<p style="font-size: 14px; margin: 3px 0; color: #555; font-size: 18px; "><b> </b><span>Stripe#</span></p>
+																										</td>
+																										<td class="mcnTextContent" style="padding: 0 20px 0 20px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 18px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:right;" valign="top">
+																											<p style="font-size: 14px; margin: 3px 0; color: #555; font-size: 18px; text-align: right;"><b> </b><span>&pound;34.50</span></p>
+																										</td>
+																									</tr>
+																								</tbody>
+																							</table>
+																							<table align="left" border="0" cellpadding="0" cellspacing="0" class="mcnTextContentContainer" style="max-width:100%; min-width:100%; margin-top: 10px;" width="100%">
+																								<tbody>
+																									<tr>
+																										<th class="mcnTextContent" style="width: 40%;background-color: #000; padding: 0 20px 0 20px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 18px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:left;" valign="top">
+																											<p style="font-size: 14px; margin: 3px 0; color: #fff; font-weight: bold; font-size: 18px;"><b>Item</b></p>
+																										</th>
+																										<th class="mcnTextContent" style="width: 20%;background-color: #000; padding: 0 20px 0 20px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 18px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:left;" valign="top">
+																											<p style="font-size: 14px; margin: 3px 0; color: #fff; font-weight: bold; font-size: 18px; text-align: center;"><b>Qty</b></p>
+																										</th>
+																										<th class="mcnTextContent" style="width: 20%;background-color: #000; padding: 0 20px 0 20px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 18px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:left;" valign="top">
+																											<p style="font-size: 14px; margin: 3px 0; color: #fff; font-weight: bold; font-size: 18px; text-align: right;"><b>Price</b></p>
+																										</th>
+																									</tr>
+																									<tr>
+																										<td class="mcnTextContent" style="padding: 0 20px 0 20px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 16px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:right;" valign="top">
+																											<p style="font-size: 14px; margin: 3px 0; color: #555; font-size: 16px; line-height: 16px;"><b> </b><span>Latte with Art</span></p>
+																										</td>
+																										<td class="mcnTextContent" style="padding: 0 20px 0 20px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 18px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:right;" valign="top">
+																											<p style="font-size: 14px; margin: 3px 0; color: #555; font-size: 16px; text-align: center;"> <span>2</span></p>
+																										</td>
+																										<td class="mcnTextContent" style="padding: 0 20px 0 20px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 18px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:right;" valign="top">
+																											<p style="font-size: 14px; margin: 3px 0; color: #555; font-size: 16px; text-align: right;"> <span>12.00</span></p>
+																										</td>
+																									</tr>
+																									<tr>
+																										<td class="mcnTextContent" style="padding: 0 20px 0 20px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 18px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:right;" valign="top">
+																											<p style="font-size: 14px; margin: 3px 0; color: #555; font-size: 16px; line-height: 18px;"><b> </b><span>BARBER MARMARA hair powder men 20gr</span></p>
+																										</td>
+																										<td class="mcnTextContent" style="padding: 0 20px 0 20px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 18px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:right;" valign="top">
+																											<p style="font-size: 14px; margin: 3px 0; color: #555; font-size: 16px; line-height: 16px; text-align: center;"> <span>1</span></p>
+																										</td>
+																										<td class="mcnTextContent" style="padding: 0 20px 0 20px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 18px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:right;" valign="top">
+																											<p style="font-size: 14px; margin: 3px 0; color: #555; font-size: 16px; text-align: right;"> <span>12.50</span></p>
+																										</td>
+																									</tr>
+																								</tbody>
+																							</table>
+																							<table style="width: 100%; padding-top: 20px;">
+																								<tbody style="text-align: center;">
+																									<tr>
+																										<td class="mcnTextContent" style="border-top: 1px solid #ddd; padding: 0 20px 0 20px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 18px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:right;" valign="top">
+																											<p style="font-size: 14px; margin: 3px 0; color: #555; font-size: 18px;"><b> Subtotal : </b></p>
+																										</td>
+																										<td class="mcnTextContent" style="border-top: 1px solid #ddd;padding: 0 20px 0 20px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 18px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:right;" valign="top">
+																											<p style="font-size: 14px; margin: 3px 0; color: #555; font-size: 18px; text-align: right;"><span>&pound; 24.50</span></p>
+																										</td>
+																									</tr>
+																									<tr>
+																										<td class="mcnTextContent" style=" padding: 0 20px 0 20px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 16px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:right;" valign="top">
+																											
+																										</td>
+																										<td class="mcnTextContent" style="padding: 0 20px 0 20px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 16px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:right;" valign="top">
+																											<table style="width: 100%; background-color: #eee; border-radius: 5px;">
+																												<tbody>
+																													<tr>
+																														<td class="mcnTextContent" style=" padding: 10px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 16px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:right;" valign="top">
+																															<p style="font-size: 14px; margin: 3px 0; color: #333; font-size: 14px;"><b> Copoun : </b></p>
+																														</td>
+																														<td class="mcnTextContent" style=" padding: 10px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 16px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:right;" valign="top">
+																															<p style="font-size: 14px; margin: 3px 0; color: #333; font-size: 14px; text-align: right;"><span>BDK500WE</span></p>
+																														</td>
+																													</tr>
+																													<tr>
+																														<td class="mcnTextContent" style=" padding: 10px; padding-top: 0; padding-bottom: 0; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 16px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:right;" valign="top">
+																															<p style="font-size: 14px; margin: 3px 0; color: #333; font-size: 14px;"><b> Discount : </b></p>
+																														</td>
+																														<td class="mcnTextContent" style=" padding: 10px; padding-top: 0; padding-bottom: 0; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 16px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:right;" valign="top">
+																															<p style="font-size: 14px; margin: 3px 0; color: #333; font-size: 14px; text-align: right;"><span>&pound; 5.50</span></p>
+																														</td>
+																													</tr>
+																													<tr>
+																														<td class="mcnTextContent" style=" padding: 10px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 16px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:right;" valign="top">
+																															<p style="font-size: 14px; margin: 3px 0; color: #333; font-size: 14px;"><b> Delivery : </b></p>
+																														</td>
+																														<td class="mcnTextContent" style=" padding: 10px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 16px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:right;" valign="top">
+																															<p style="font-size: 14px; margin: 3px 0; color: #333; font-size: 14px; text-align: right;"><span>&pound; 5.50</span></p>
+																														</td>
+																													</tr>
+																												</tbody>
+																											</table>
+																											
+																										</td>
+																									</tr>
+																									<tr>
+																										<td colspan="2" >
+																											<p style="margin: 10px 0; border-top: 1px solid #ddd;"></p>
+																										</td>
+																									</tr>
+																									<tr>
+																										<td class="mcnTextContent" style=" padding: 0 20px 0 20px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 18px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:right;" valign="top">
+																											<p style="font-size: 14px; margin: 3px 0; color: #000; font-size: 18px;"><b> Total : </b></p>
+																										</td>
+																										<td class="mcnTextContent" style="padding: 0 20px 0 20px; font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 18px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:right;" valign="top">
+																											<p style="font-size: 14px; margin: 3px 0; color: #000; font-size: 18px; text-align: right;"><span>&pound; 34.50</span></p>
+																										</td>
+																									</tr>
+																								</tbody>
+																							</table>
+																							<table style="width: 100%; padding-top: 20px;">
+																								<tbody style="text-align: center;">
+																									<tr>
+																										<td colspan="2" class="mcnTextContent" style="padding: 0 20px 0 20px;font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 18px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:center;" valign="top">
+																											<div style="height: 40px;"></div>
+																									</td>
+																									</tr>
+																								</tbody>
+																							</table>
+																							<table style="width: 100%; padding-top: 20px;">
+																								<div style="height: 50px;"></div>
+																								<tbody style="text-align: center;">
+																									<tr>
+																										<td colspan="2" class="mcnTextContent" style="padding: 0 20px 0 20px;font-family: 'Roboto', Arial,sans-serif, sans-serif;font-size: 18px;font-style: normal;font-weight: bold;letter-spacing: 0px;line-height: 1.17;text-align:center;" valign="top">
+																											<p style="font-size: 14px; margin: 3px 0; color: #333; font-size: 18px; font-style: italic; text-align: center;"><b> Thanks For Visit </b><span></span></p>
+																										</td>
+																									</tr>
+																								</tbody>
+																							</table>
+																						
+																						</td>
+																					</tr>
+																				</tbody>
+																			</table>
+																			
+																			</td>
+																		</tr>
+																	</tbody>
+																</table>
+																</td>
+															</tr>
+														</tbody>
+													</table>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+									<!-- ===== middle content End===== -->
+								</td>
+							</tr>
+							<tr>
+								
+							</tr>
+	
+							<!-- ===== footer -->
+							
+						</tbody>
+					</table>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</center>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+
+
+    <div class="page px-2 p-s-0" app-init="get('/dashboard/clients/memberships','<%- id %>','members')">
+
+        <div class=" bg-white p-2">
+
+            <div class="table">
+                <div class="row table-header">
+                    <div class="cell middle">Name</div>
+                    <div class="cell middle">Email</div>
+                    <div class="cell middle">Membership Created</div>
+                    <div class="cell middle">Expiry Date</div>
+                    <div class="cell middle">Subscription ID</div>
+                </div>
+                <div class="row" app-for="member in members">
+                    <div class="cell middle text-weight-600 clickable" app-click="goto('/dashboard/clients/',member._key)" app-bind="parseName(member.name)"></div>
+                    <div class="cell middle" app-bind="member.email"></div>
+                    <div class="cell middle" app-bind="parseISODate(member.member_since, 'Do MMM YYYY')"></div>
+                    <div class="cell middle" app-bind="parseISODate(member.expiry, 'Do MMM YYYY')"></div>
+                    <div class="cell middle" app-bind="member.subscription_id"></div>
+                     <!-- <div class="cell middle action-icons" app-attr="{id:'cell-'+member._key}">
+                         <div class="context-link btn border" app-click="toggleContext(member._key)"> 
+                            <span class="icon black arrowdown sm"></span>
+                        </div>
+                         <div class="context dropdown text-left" style="display: none" app-attr="{id:'context-'+member._key}">
+                            <div class="link" app-click="goto('/dashboard/clients/',member._key)">
+                                <span class="icon left black edit"></span>
+                                Goto Client Card
+                            </div>
+                             <div class="link" app-click="unsubscribe(member._key,member.subscription_id)">
+                                <span class="icon left black delete"></span>
+                                Unsubscribe
+                            </div> 
+
+                        </div>  -->
+                    </div> 
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <%- include('../partials/modal/new_membership.ejs') %>

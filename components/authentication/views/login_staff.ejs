@@ -1,0 +1,48 @@
+<% layout('customer-page.ejs') -%>
+
+<% if (guard == 'staff'){ %>
+    <div class="hidden" app-init="get('staff','all')"></div>
+<% } %>
+
+<div class="grid col-2 col-s-1 pt-4">
+    <div class="text-left p-2">
+        <h2 class="mb-2">Login as Staff Member</h2>
+        <form method="post" action="/login/staff" class="grid col-1 gap-1">
+            <div class="">
+
+                <div class="overflow-y" style="max-height: 50vh" app-init="view.email = ''">
+                    <div app-for="member in staff" class="flex list-item clickable mb-1 p-1 bg-white rounded" app-click="selectUser(member)" app-attr="{id:'staff_'+member._key}">
+                        <div class="flex-none mr-1 flex flex-middle"><img src="/images/avatars/Profile_Placeholder.svg" app-src="member.avatar" class="avatar xs"></div>
+                        <div class="flex-1 flex flex-middle-left" app-bind="parseName(member.name)"></div>
+                    </div>
+                </div>
+                <input type="hidden" name="email" app-value="view.email" placeholder="Email Address">
+
+            </div>
+
+    </div>
+    <div class="text-left p-2 transparent" id="login">
+        <h2 class="mb-2">Enter PIN or Password</h2>
+        <div class="mb-2">
+            <input type="number" style="text-security:disc;-webkit-text-security:disc;" name="password" placeholder="Enter PIN" id="pin" autocomplete="false">
+        </div>
+        <div class="grid col-2">
+            <div class="flex flex-middle-left">
+                <a class="text-primary text-small" href="/login/<%- guard %>/reset">Forgot password?</a>
+            </div>
+            <div class="text-right grid col-2 gap-2">
+                <% if (typeof user != 'undefined'){ %>
+                    <a class="btn outline" href="/dashboard/calendar">Cancel <img src="/icons/Icon_ButtonX.svg" class="icon right"></a>
+                <% } else { %>
+                    <div></div>
+                <% } %>
+                <input type="submit" class="btn bg-secondary width-full" value="Login">
+            </div>
+
+        <% if (typeof error != 'undefined'){ %>
+            <div class="text-33-red"><%- error %></div>
+        <% } %>
+
+        </div>
+    </div>
+</div>

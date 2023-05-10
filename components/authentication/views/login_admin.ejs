@@ -1,0 +1,21 @@
+<% layout('customer-page.ejs') -%>
+
+<div class="vh-80 flex flex-middle">
+    <div class="vw-30 vw-s-100 px-s-2 text-left">
+        <h1 class="text-light mb-2">Admin Login</h1>
+        <form method="post" action="/login/admin" class="grid col-2 col-s-1 gap-1">
+            <div class="colspan-2">
+                <input type="text" name="username" placeholder="Username">
+            </div>
+            <div class="colspan-2">
+                <input type="password" name="password" placeholder="Password">
+            </div>
+            <div>
+                <input type="submit" class="btn bg-secondary width-full" value="Login">
+            </div>
+            <div class="text-right">
+                <a href="/login/admin/reset">Forgot password?</a>
+            </div>
+        </form>
+    </div>
+</div>

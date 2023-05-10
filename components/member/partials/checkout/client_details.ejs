@@ -1,0 +1,208 @@
+<div app-show="selected_customer._key" class="client">
+
+    <h4 class="mb-2">Client Details</h4>
+
+    <div class="grid col-9 mb-1 gap-1 bg-white rounded p-2">
+        <div class="colspan-1 colspan-m-9">
+            <div class="relative">
+                <img src="/images/avatars/Profile_Placeholder.svg" app-src="selected_customer.avatar" class="avatar mr-1">
+                <div class="avatar-member" app-show="selected_customer.membership.membership_id"></div>
+            </div>
+        </div>
+        <div class="colspan-4 colspan-m-5 flex flex-middle-left flex-column">
+            <div class="capitalise text-weight-600 text-secondary clickable" app-click="goto('/dashboard/clients/',selected_customer._key)">
+
+                <span app-bind="selected_customer.name.first"></span>
+                <span app-bind="selected_customer.name.last"></span>
+
+            </div>
+            <div class="" app-bind="selected_customer.tel"></div>
+            <div class="" app-bind="selected_customer.email"></div>
+
+            <div class="mt-1">Last skin test: <span app-click="toggleContext('datepicker')" class="text-secondary clickable context-link"><span app-hide="selected_customer.skin_test">Update</span><span app-show="selected_customer.skin_test" app-bind="parseISODate(selected_customer.skin_test,'Do MMMM YYYY')"></span></span>
+                <div class="relative">
+                    <%- include(view.basedir+'/components/dashboard/partials/date-picker-simple.ejs',{type:'skin_test',obj:'selected_customer.skin_test'}) %>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="colspan-4 text-right">
+
+            <div class="flex flex-middle-right">
+                <div app-show="selected_customer.balance.total" class="mb-1">
+                    <button class="btn bg-secondary" app-hide="cart.payment.account" app-click="addToCart('account_credit',selected_customer._key,'<%- cart_id %>')">Use Credit<span app-bind="parsePrice(selected_customer.balance.total)"
+                            class="ml-03"></span> <span class="icon white cardpayment right"></span></button>
+                    <button class="btn border" app-show="cart.payment.account" app-click="addToCart('remove_account_credit',selected_customer._key,'<%- cart_id %>')">Don't Use Credit <span class="icon white close right"></span></button>
+                </div>
+            </div>
+            <button class="btn border" target="client" app-click="addToCart('add_customer','--','<%- cart_id %>',false)">Remove Client <span class="icon black close right"></span></button>
+        </div>
+    </div>
+
+
+
+    <% if (Array.isArray(customer.next_appointments) && customer.next_appointments.length > 0) { %>
+
+        <h4 class="my-2">Next Appointments</h4>
+
+        <div class="appointment-wrap mt-2">
+
+            <% var month_curr, month_prev %>
+
+            <% customer.next_appointments.forEach((appointment) => { %>
+
+                <% if (appointment.date > new Date().toISOString()) { %>
+
+                    <% month_curr = moment(appointment.date).format('MMMM') %>
+
+                    <% if (month_curr != month_prev){ %>
+                        <h4><%- month_curr %></h4>
+                    <% } %>
+
+                    <div class="appointment <%- appointment.status %>">
+                        <div class="date">
+                            <div class="day"><%- moment(appointment.date).format('ddd') %></div>
+                            <div class="date"><%- moment(appointment.date).format('D') %></div>
+                        </div>
+                        <div class="info">
+                            <div class="text-bold"><%- moment(appointment.date).format('h:mma') %></div>
+                            <div><%- appointment.service_name %></div>
+                            <div class="text-bold capitalise">With <%- appointment.staff_name %></div>
+                        </div>
+                        <div class="action">
+                            <a href="/dashboard/calendar/<%- moment(appointment.date).format('YYYY/MM/DD') %>?appointment_id=<%- appointment._key %>" class="btn border">View</a>
+                        </div>
+                    </div>
+
+                    <% month_prev = month_curr %>
+
+                <% } %>
+
+            <% }) %>
+
+            <% month_curr = ''; month_prev = '' %>
+
+        </div>
+
+    <% } else { %>
+
+            <h4 class="my-2">Rebook</h4>
+            <div class="bg-white rounded p-2 grid col-6 col-m-3 gap-1">
+                <% [28,35,42,49,56,63].forEach((day) => { %>
+                <button class="btn border" app-click="rebookAppointment('<%- day %>')"><%- day/7 %> Week<% if (day > 7){ %>s<% } %> <span class="icon black calendar right"></span></button>
+                <% }) %>
+            </div>
+
+    <% } %>
+
+
+    <div app-show="selected_customer.membership.membership_id">
+
+        <h4 class="my-2">Active Membership</h4>
+
+        <div class="bg-white p-2 rounded">
+
+            <div class="grid col-2 gap-1">
+                <div>
+                    <h4 app-bind="selected_customer.membership_details.name"></h4>
+                    <a href="/dashboard/clients/memberships" class="text-secondary">More Info</a>
+                    <p app-bind="selected_customer.membership_details.description"></p>
+                </div>
+                <div class="grid col-2 text-small">
+                    <div>
+                        Payment:
+                    </div>
+                    <div class="">
+                        <span app-bind="parsePrice(selected_customer.membership_details.unit_amount)"></span> <span app-bind="parsePrice(selected_customer.membership_details.interval"></span>
+                    </div>
+                    <div>
+                        Account Deposit:
+                    </div>
+                    <div class="">
+                        <span app-bind="selected_customer.membership_details.deposit_amount"></span>
+                    </div>
+                    <div>
+                        Checkout Discount:
+                    </div>
+                    <div class="">
+                        <span app-bind="selected_customer.membership_details.benefits.discount.amount"></span> off <span app-bind="selected_customer.membership_details.benefits.discount.type"></span>
+                    </div>
+                    <div>
+                        Booking Discount:
+                    </div>
+                    <div class="">
+                        <span app-bind="selected_customer.membership_details.benefits.booking_discount.amount"></span> off <span app-bind="selected_customer.membership_details.benefits.booking_discount.length"></span> weeks in advance
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div app-hide="selected_customer.membership.membership_id">
+
+        <h4 class="my-2">Available Memberships</h4>
+
+
+    </div>
+
+
+</div>
+
+
+<div app-hide="selected_customer._key">
+
+
+
+    <div class="grid col-2 gap-1 mb-1" app-init="get('customers','today')">
+
+        <div>
+            <h4 class="mb-2">Add a Client</h4>
+            <p class="mb-2">Select an existing client, or just click Next.</p>
+        </div>
+
+        <div class="text-right">
+            <a class="btn bg-secondary" href="/dashboard/clients?new_client=true" target="client">
+                New Client <span class="icon white add right"></span>
+            </a>
+        </div>
+    </div>
+
+    <input type="text" class="thick mb-1 border" placeholder="Search clients by name, number or email" onkeyup="scope.searchApi('customers',this.value)">
+
+    <div class="table mb-5" app-init="get('customers','today')">
+        <div class="row" app-for="client in customers">
+
+            <div class="cell middle clickable" style="width: 4em" app-click="addToCart('add_customer',client._key,'<%- cart_id %>',false)">
+                <img app-src="client.avatar" src="/images/avatars/Profile_Placeholder.svg" class="icon avatar lg">
+            </div>
+            <div class="cell middle clickable text-bold capitalise" app-click="addToCart('add_customer',client._key,'<%- cart_id %>',false)" app-bind="parseName(client.name)"></div>
+            <div class="cell middle action-icons" app-attr="{id:'cell-'+client._key}" style="width: 5em">
+                <div class="context-link btn border" app-click="toggleContext(client._key)">
+                    <span class="icon black arrowdown sm"></span>
+                </div>
+                <div class="context dropdown text-left" style="display: none" app-attr="{id:'context-'+client._key}">
+                    <div class="link" app-click="addToCart('add_customer',client._key,'<%- cart_id %>',false)">
+                        <span class="icon black add left"></span>
+                        Select
+                    </div>
+                    <!-- <div class="link" app-click="edit('customers',client)">
+                         <img src="/icons/Edit_Icon.svg" class="icon">
+                         Edit
+                    </div> -->
+                    <div class="link" app-click="goto('/dashboard/clients/',client._key)">
+                        <span class="icon black client left"></span>
+                        Client Card
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+</div>

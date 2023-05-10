@@ -1,0 +1,342 @@
+
+
+<div class="grid col-3 gap-1 border-bottom pb-1 mb-1">
+    <div><span class="text-bold">From:</span> <span class="text-primary"><%- moment(result.meta.start).format('llll') %></span></div>
+    <div><span class="text-bold">To:</span> <span class="text-primary"><%- moment(result.meta.end).format('llll') %></span></div>
+    <div class="text-right">
+    </div>
+</div>
+
+<div class="grid col-3 gap-1">
+
+    <div class="vh-75 overflow-y rowspan-2 mr-1">
+
+        <% result.transactions.forEach((transaction,i)=>{ %>
+
+            <% var staff_id_class = '' %>
+            <% if (transaction.items){ %>
+                <% transaction.items.forEach((item,i)=>{ %>
+
+                    <% if (item.service_items && item.service_items.length > 0){ %>
+
+                        <% item.service_items.forEach((service_item,i)=>{ %>
+                            <% staff_id_class = staff_id_class+service_item.staff_id+' ' %>
+                        <% }) %>
+                    <% } else if (item.staff_id){ %>
+                        <% staff_id_class = staff_id_class+item.staff_id+' ' %>
+                    <% } else { %>
+                        <% staff_id_class = staff_id_class+'no_staff ' %>
+                    <% }%>
+                <% }) %>
+            <% } %>
+
+            <div class="bg-light-grey p-1 mb-1 transaction <%- staff_id_class %>">
+                <div class="grid col-4 rounded text-small text-weight-600">
+                    <div class="colspan-3">
+                        <%- moment(transaction._created).format('DD/MM/YY HH:mm') %>
+                        <% if (transaction.customer && transaction.customer.name){ %>
+                            &nbsp;| <%- transaction.customer.name %>
+                        <% } %>
+                            &nbsp;| <%- transaction._key %>
+                    </div>
+                    <div class="text-right">
+                        <a href="/dashboard/checkout/<%- transaction._key %>" target="checkout" class="text-primary">Edit</a>
+                    </div>
+                </div>
+
+                <div class="border-bottom text-small">
+                    <% if (transaction.items){ %>
+
+                        <% transaction.items.forEach((item,i)=>{ %>
+
+                            <% if (item.service_items && item.service_items.length > 0){ %>
+
+                                <div class="grid col-6">
+                                    <div class="colspan-3">
+
+                                        <%- item.name %>
+                                        <% if (item.service_id || item.appointment_id){ %>
+                                            &nbsp;(Serv)
+                                        <% } else if (item.type == 'products'){ %>
+                                            &nbsp;(Prod)
+                                        <% } %>
+
+                                    </div>
+                                    <div><%- item.quantity %></div>
+                                    <div></div>
+                                    <div class="text-right text-weight-600">£<%- item.total %></div>
+
+                                    <% if (item.adjustment){ %>
+                                        <div class="colspan-3">Adj.</div>
+                                        <div></div>
+                                        <div><%- item.adjustment %></div>
+                                        <div class="text-right text-weight-600">£<%- view.functions.getPrice(item,'adjustment_value') %></div>
+                                    <% } %>
+                                </div>
+
+                                <% item.service_items.forEach((service_item,i)=>{ %>
+
+                                    <% if (service_item.staff_name){ %>
+
+                                        <div class="grid col-6">
+                                            <div class="colspan-3 text-primary">
+                                                <%- service_item.staff_name %>
+                                            </div>
+                                            <div></div>
+                                            <div><%- service_item.split_percent %>%</div>
+                                            <div class="text-right text-weight-600">£<%- parseFloat(service_item.split_value).toFixed(2) %></div>
+
+                                        </div>
+
+                                    <% } %>
+
+                                <% }) %>
+
+                                <div class="mb-05"></div>
+
+                            <% } else { %>
+
+                                <div class="grid col-6 mb-05">
+                                    <div class="colspan-3">
+
+                                        <%- item.name %>
+                                        <% if (item.service_id || item.appointment_id){ %>
+                                            &nbsp;(Serv)
+                                        <% } else if (item.type == 'products'){ %>
+                                            &nbsp;(Prod)
+                                        <% } %>
+                                        <br><span class="text-small-1 text-primary"><%- item.staff_name %></span>
+                                    </div>
+                                    <div><%- item.quantity %></div>
+                                    <div><% if (item.split){ %><%- item.split %>%<% if (item.split_value){ %>/<%- item.split_value %><% } %><% } %></div>
+                                    <div class="text-right text-weight-600">£<%- item.total %></div>
+
+                                    <% if (item.adjustment){ %>
+                                        <div class="colspan-3">Adj.</div>
+                                        <div></div>
+                                        <div><%- item.adjustment %></div>
+                                        <div class="text-right text-weight-600">£<%- view.functions.getPrice(item,'adjustment_value') %></div>
+                                    <% } %>
+                                </div>
+
+                            <% } %>
+
+                        <% }) %>
+                    <% } %>
+                </div>
+
+                <div class="grid col-3 text-small">
+                    <div class="colspan-2">Paid via <span class="text-primary"><%- view.functions.parseName(transaction.method) %></div>
+                    <div class="text-right text-weight-600">
+                        <% if (transaction.payment.vouchers){ %>
+                            Vouchers&nbsp;&nbsp; -£<%- parseFloat(transaction.payment.vouchers).toFixed(2) %><br>
+                        <% } %>
+                        <% if (transaction.payment.account){ %>
+                            Account&nbsp;&nbsp;-£<%- parseFloat(transaction.payment.account).toFixed(2) %><br>
+                        <% } %>
+
+                        <% if (transaction.method == 'petty_cash'){ %>
+                        -£<%- transaction.payment.petty_cash_out %>
+                        <% } else { %>
+                            £<%- transaction.item_total %>
+                        <% } %>
+                    </div>
+                </div>
+
+            </div>
+
+        <% }) %>
+
+
+    </div>
+
+    <div class="colspan-2">
+
+        <h3 class="text-primary">Transactions</h3>
+
+        <p class="my-2">This report contains <%- result.transactions.length %> transactions from the database, and <%- result.totals.all.count %> transactions have been counted. The overall total has been calculated from the transaction totals, whereas all other totals are calculated from the individual transaction items. There should be parity with all rows and all columns. All totals are excluding vat</p>
+
+        <p class="my-2">The Salon has completed <%- result.totals.salon.appointments.total %> customer appointments in this time period, <%- result.totals.salon.appointments.with_products %> of which also had retail sales, which equates to <%- ((result.totals.salon.appointments.with_products/result.totals.salon.appointments.total)*100).toFixed(2) %>%</p>
+
+        <div class="table">
+
+            <div class="row table-header">
+                <div class="cell middle pl-05" style="width:10rem">Name</div>
+                <div class="cell middle text-right">Services</div>
+                <div class="cell middle text-right">Products</div>
+                <div class="cell middle text-right pr-05">Total*</div>
+            </div>
+
+            <% for (let i in result.totals){ %>
+
+                <% if (i !== 'salon' && i !== 'all' && i != 'no_staff'){ %>
+                    <div class="row staff-row" id="row-<%- i %>">
+                        <div class="cell middle pl-05"><a onclick="filterTransactions('<%- i %>')" class="text-weight-600 text-primary"><%- result.totals[i].name %></a></div>
+                        <div class="cell middle text-right">£<%- parseFloat(result.totals[i].services.total).toFixed(2) %> (<%- result.totals[i].services.count %>)</div>
+                        <div class="cell middle text-right">£<%- parseFloat(result.totals[i].products.total).toFixed(2) %> (<%- result.totals[i].products.count %>)</div>
+                        <div class="cell middle text-weight-600 text-right pr-05">£<%- parseFloat(result.totals[i].total).toFixed(2) %></div>
+                    </div>
+                <% } %>
+
+            <% } %>
+
+            <div class="row staff-row" id="row-no_staff">
+                <div class="cell middle pl-05"><a onclick="filterTransactions('no_staff')" class="text-weight-600 text-primary">No Staff</a></div>
+                <div class="cell middle text-right">£<%- parseFloat(result.totals.no_staff.services.total).toFixed(2) %> (<%- result.totals.no_staff.services.count %>)</div>
+                <div class="cell middle text-right">£<%- parseFloat(result.totals.no_staff.products.total).toFixed(2) %> (<%- result.totals.no_staff.products.count %>)</div>
+                <div class="cell middle text-weight-600 text-right pr-05">£<%- parseFloat(result.totals.no_staff.total).toFixed(2) %></div>
+            </div>
+
+            <div class="row staff-row" id="row-salon" style="background-color:#f2f2f2">
+                <div class="cell middle pl-05"><a onclick="filterTransactions('salon')" class="text-weight-600 text-primary">Salon Costs</a></div>
+                <div class="cell middle text-right">£<%- parseFloat(result.totals.salon.services.total).toFixed(2) %> (<%- result.totals.salon.services.count %>)</div>
+                <div class="cell middle text-right">£<%- parseFloat(result.totals.salon.products.total).toFixed(2) %> (<%- result.totals.salon.products.count %>)</div>
+                <div class="cell middle text-weight-800 text-right pr-05">£<%- parseFloat(result.totals.salon.total).toFixed(2) %></div>
+            </div>
+
+            <div class="row staff-row" id="row-all" style="background-color:#f2f2f2">
+                <div class="cell middle pl-05"><a onclick="filterTransactions('all')" class="text-weight-600 text-primary">All</a></div>
+                <div class="cell middle text-right">£<%- parseFloat(result.totals.all.services.total).toFixed(2) %> (<%- result.totals.all.services.count %>)</div>
+                <div class="cell middle text-right">£<%- parseFloat(result.totals.all.products.total).toFixed(2) %> (<%- result.totals.all.products.count %>)</div>
+                <% if (parseFloat(result.totals.all.sub_total).toFixed(2) != parseFloat(result.totals.all.total_check).toFixed(2)){ %>
+                    <div class="cell middle text-33-red text-weight-800 text-right pr-05">
+                        Trans: £<%- parseFloat(result.totals.all.sub_total).toFixed(2) %>
+                        <br>Items: £<%- parseFloat(result.totals.all.total_check).toFixed(2) %>
+                        <br>Diff: £<%- (parseFloat(result.totals.all.sub_total) - parseFloat(result.totals.all.total_check)).toFixed(2) %>
+                    </div>
+                <% } else { %>
+                    <div class="cell middle text-weight-800 text-right pr-05">£<%- parseFloat(result.totals.all.sub_total).toFixed(2) %></div>
+                <% } %>
+
+            </div>
+
+        </div>
+        <div class="text-right text-small-1 mt-2">* not inc. voucher and accounts sales, inc. vouchers and accounts spent</div>
+
+
+    </div>
+
+</div>
+
+<% if (result.working_hours){ %>
+
+    <% var total = {} %>
+    <h3 class="text-primary">Working Hours</h3>
+
+    <div class="table">
+        <div class="row table-header">
+            <div class="cell middle">Day</div>
+            <% result.staff.forEach((staff) => { %>
+                <div class="cell middle text-center capitalise"><%- staff.name.first %> <%- staff.name.last %></div>
+            <% }) %>
+        </div>
+
+
+
+    <% for (var day in result.working_hours){ %>
+
+        <div class="row">
+            <div class="cell middle"><%- moment(day).format('ddd Do MMM') %></div>
+
+            <% result.working_hours[day].forEach((hours,i) => { %>
+                <% if (!total[hours.staff_id]){ %>
+                    <% total[hours.staff_id] = 0 %>
+                <% } %>
+                <div class="cell middle">
+                    <div class="grid col-2">
+                        <div class="text-center" title="Start: <%- moment(hours.start).format('HH:mm') %> | End: <%- moment(hours.end).format('HH:mm') %>">
+                            <% if (hours.hours > 0){ %>
+                                <% if (moment(hours.absence_end).isAfter(moment(hours.end))){ %>
+
+                                    <%- (hours.hours/60).toFixed(2) %>
+                                    <% total[hours.staff_id] = total[hours.staff_id]+hours.hours %>
+                                <% } else { %>
+                                    <%- ((hours.hours - hours.absence)/60).toFixed(2) %>
+                                    <% total[hours.staff_id] = total[hours.staff_id]+(hours.hours - hours.absence) %>
+                                <% } %>
+
+                            <% } else { %>
+                                0
+                            <% } %>
+                        </div>
+
+                        <% if (hours.absence > 1440){ %>
+                            <% hours.remainder = hours.absence - 1440 %>
+                            <% var next_day = moment(day).add(1,'day').toISOString() %>
+                            <% if (result.working_hours[next_day] && result.working_hours[next_day][i]){ %>
+                                <% result.working_hours[next_day][i].absence = result.working_hours[next_day][i].absence + hours.remainder %>
+                            <% } %>
+                            <% hours.absence = 1440 %>
+                        <% } %>
+
+                        <div class="bg-light-grey text-center"><% if (hours.absence <= 600){ %><%- (hours.absence/60).toFixed(2) %><% } %> <%- hours.description %></div>
+                    </div>
+                </div>
+            <% }) %>
+
+        </div>
+
+        <% if (day == Object.keys(result.working_hours).pop()){ %>
+            <div class="row table-header">
+                <div class="cell middle">Total Worked</div>
+                <% result.staff.forEach((staff) => { %>
+                    <div class="cell middle text-center capitalise"><%- (total[staff._key]/60).toFixed(2) %>hrs</div>
+                <% }) %>
+            </div>
+        <% } %>
+
+
+    <% } %>
+
+    </div>
+
+<% } %>
+
+<script>
+
+    var filterTransactions = function(id){
+
+        var tran_els = document.getElementsByClassName('transaction'),
+            row_els = document.getElementsByClassName('staff-row')
+
+        if (tran_els && tran_els.length > 0){
+
+            for (var i in tran_els){
+
+                if (tran_els[i] && tran_els[i].style){
+
+                    if (id == 'all'){
+                        tran_els[i].style.display = 'block'
+                    } else {
+                        if (tran_els[i].classList && tran_els[i].classList.contains && !tran_els[i].classList.contains(id)){
+                            tran_els[i].style.display = 'none'
+                        } else {
+                            tran_els[i].style.display = 'block'
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+
+        if (row_els && row_els.length > 0){
+
+            for (var i in row_els){
+
+                if (row_els[i] && row_els[i].style){
+                    if (row_els[i].getAttribute('id') == 'row-'+id){
+                        row_els[i].style.backgroundColor = '#f2f2f2'
+                    } else {
+                        row_els[i].style.background = 'none'
+                    }
+                }
+
+            }
+
+        }
+
+    }
+
+</script>

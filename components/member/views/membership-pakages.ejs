@@ -1,0 +1,149 @@
+<% layout('member.ejs') -%>
+
+<%- include ../partials/header-member.ejs %>
+
+    <div class="page m-1">
+
+
+
+
+    <!-- ===== Membership Plan page ===== -->
+
+    <div class="p-0">
+        <div class="membership_buy grid col-5">
+               <div class="membership_buy_box colspan-3">
+                <% var check = 0; %>
+               <% for(var i=0; i< member_subscriptions.length; i++) { %>
+                    <% if(member.subscription_id===member_subscriptions[i]._key ){%>
+                   <div class="membership-card my-1 currentMember p-1 radius-5" >
+                   <%}else {%>
+                   <div class="membership-card my-1 p-1">
+                   <%}%>
+                        <div class="d-flex align-items-center justfy-content-between" >
+                            <div class="text dp-text-subTitle2 text-left "><span class="title-caption"><%-member_subscriptions[i].name%></span><span class="undefined"></span></div>
+                            <% if(member.subscription_id===member_subscriptions[i]._key  && cancellation.length >0){  %>
+                                <div class="membership-card-price bg-primary text-white  radius-5"> <span></span> Cancellation Requested</div>
+                                
+                                <%} else if(member.subscription_id===member_subscriptions[i]._key ){  %>
+                                    <a id="button" class="bg-primary text-white dp-btn " onclick=" cancelSubsRequest('<%- member.subscription_id%>','<%- member._key%>','<%- member.name%>','<%- member.email%>');">
+                                        Cancel 
+                                    </a>
+                                    <%}%>
+                                    
+                        </div>
+                        <div class="membership-card-price bg-primary text-white px-1 radius-50 p-01 d-inline"> <span> &#163;</span> <%-member_subscriptions[i].unit_amount/100%></div>
+                        <p class="mt-1">
+                            <%=member_subscriptions[i].description%>
+                        </p>
+                        <div class="text-left text-white">
+
+                        <% if(member.subscription_id===member_subscriptions[i]._key ){  %>
+
+                            <% check = 1; %>
+
+                        <div style="    border-top: 1px solid #972c1f;"> 
+                            <div class="d-flex justify-content-between mt-03"> 
+                                <span> Your current plan &nbsp;  <small class="d-block"> Seats Left:  <%- remainingSeat%> </span></span> 
+                                <div class="text-right">
+                                    <span> Expiring: <%- expires%> </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <% } else if((check == 1 || onemonth>=1 || member.subscription_id===undefined || member.subscription_id==="undefined" ) && cancellation.length ==0){ %>
+                            <!-- remove this(&& cancellation.length ==0) to show all buy now button after perticulat level when cancellation is in progress..  -->
+
+                        <a class="bg-secondary text-white dp-btn" href="/member/membership_purchase/<%=member_subscriptions[i]._key%>">Buy Now</a>
+
+                       
+                        <%} else if(member.subscription_id==="" || member.subscription_id=== null){%>
+                        <a class="bg-secondary text-white dp-btn" href="/member/membership_purchase/<%=member_subscriptions[i]._key%>">Buy Now</a>
+                        <%}%>
+
+                        </div>
+                       
+                   </div>
+                   <% } %>
+                   <!--div class="membership-card">
+                       <div class="d-flex align-items-center justfy-content-between">
+                           <div class="text dp-text-subTitle2 text-left "><span class="title-caption">Level 2</span><span class="undefined"></span></div>
+                           <div class="membership-card-price bg-primary text-white px-1 radius-5"> <span> £</span> 150</div>
+                       </div>
+                       <p class="">
+                        Description for testing
+                       </p>
+                       <div class="text-left ">
+                            <a class="bg-secondary text-white dp-btn" href="/member/membership_purchase/price_1M2b7lHfeWtaNgKZb17B1Cd7">Buy Now</a>
+                       </div>
+                       <div class="divider mb-1 mt-1"></div>
+                  </div>
+                   <div class="membership-card">
+                       <div class="d-flex align-items-center justfy-content-between">
+                           <div class="text dp-text-subTitle2 text-left "><span class="title-caption">Level 3</span><span class="undefined"></span></div>
+                           <div class="membership-card-price bg-primary text-white px-1 radius-5"> <span> £</span> 40</div>
+                       </div>
+                       <p class="">
+                            Buy 3 seats and on free
+                       </p>
+                       <div class="text-left ">
+                            <a class="bg-secondary text-white dp-btn" href="/member/membership_purchase/price_1M2b7lHfeWtaNgKZb17B1Cd7">Buy Now</a>
+                       </div>
+                       <div class="divider mb-1 mt-1"></div>
+                  </div>
+                   <div class="membership-card">
+                       <div class="d-flex align-items-center justfy-content-between">
+                           <div class="text dp-text-subTitle2 text-left "><span class="title-caption">Level 4</span><span class="undefined"></span></div>
+                           <div class="membership-card-price bg-primary text-white px-1 radius-5"> <span> £</span> 135</div>
+                       </div>
+                       <p class="">
+                           Buy now and have benefits of 3 seats free
+                       </p>
+                       <div class="text-left ">
+                            <a class="bg-secondary text-white dp-btn" href="/member/membership_purchase/price_1M2b7lHfeWtaNgKZb17B1Cd7">Buy Now</a>
+                       </div>
+                       <div class="divider mb-1 mt-1"></div>
+                  </div-->
+                  
+               </div>
+         </div>
+    </div>
+
+     <!-- ===== Membership Plan page ===== -->
+
+
+        <div id='calendar'></div>  
+    </div>
+
+    
+
+<script>
+
+const cancelSubsRequest = async (data,id,name,email) =>{
+    const button = document.getElementById("button");
+    button.addEventListener("click",async function() {
+        if (confirm("Are you sure you want to cancel ?")) {
+            console.log(data,id,name,email)
+    
+    
+    await fetch('/api/memberships/raiseCancelRequest', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({"membership_id":data,"status":"pending","memberId":id,"name":name,"email":email,"created_at":new Date(),"updated_at":new Date()})
+    })
+    .then(response => response.json())
+    .then(data => {window.location.href=window.location.href})
+    .catch(error => console.error(error));
+        }
+    })
+    
+}
+
+
+
+
+</script>
+<link href="/js/calendar-lib/main.css" rel='stylesheet' />
+
+

@@ -1,0 +1,28 @@
+
+
+<div class="filter-wrap flex pb-0" app-show="filters" app-init="getFilters('<%- type %>')">
+
+    <div class="labels">
+        Filter
+    </div>
+
+    <div class="buttons">
+
+        <div class="filter" app-for="fc in filterCategories" app-class="{'selected': current_filter==fc.value}" app-click="applyFilter('<%- type %>',fc.value)"><span app-bind="fc.text"></span></div>
+
+    </div>
+
+</div>
+
+<div class="filter-wrap flex" app-show="view.filters">
+
+    <div class="labels capitalise" app-bind="current_filter">
+    </div>
+
+    <div class="buttons">
+
+        <div class="filter" app-for="fb in filterButtons" app-class="{'selected': current_filter_value==fb.value}" app-click="applyFilter('<%- type %>',fb.value,'true')"><span app-bind="fb.text"></span>&nbsp;&nbsp;(<span app-bind="fb.count"></span>)</div>
+
+    </div>
+
+</div>

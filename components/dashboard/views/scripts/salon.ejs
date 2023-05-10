@@ -1,0 +1,547 @@
+<script>
+
+             extendedController = function(){
+
+                 <% if (typeof salon == 'object'){ %>
+                     scope.salon = <%- JSON.stringify(salon) %>
+                 <% } else { %>
+                     scope.salon = {}
+                 <% } %>
+
+                 scope.saveSalon = function(salon){
+                     scope.post('salon',salon).then((data)=>{
+                         scope.notify('Saved')
+                         modalCloseAll()
+                     }).catch((err)=>{
+                         scope.notify(err)
+                     })
+                 }
+
+                 scope.cafe_sorting = function(val){
+                     scope.post('cafeproducts/getAllProduct',{'sortby':val}).then((data)=>{
+                         console.log(data)
+                         scope.cafeproducts = data
+                         return false;
+                     }).catch((err)=>{
+                         scope.notify(err)
+                     })
+                 }
+                 scope.cafe_order_sorting =async  function(val){
+                    await  scope.post('customers/getallcafeordersFilter',{'status':val}).then( async (data)=>{
+                         console.log(data)
+                          scope.customers = data
+                         return false;
+                     }).catch((err)=>{
+                         scope.notify(err)
+                     })
+                 }
+                 scope.salon_order_sorting =async  function(val){
+                    await  scope.get(`customers/getproorders?status=${val}`).then( async (data)=>{
+
+                          scope.customers = data
+                         return false;
+                     }).catch((err)=>{
+                         scope.notify(err)
+                     })
+                 }
+                 scope.cancel_order_sorting =async  function(val){
+                    await  scope.get(`memberships/getCancelationRequests?userType=${val}`).then( async (data)=>{
+                         console.log(data)
+                          scope.memberships = data
+                         return false;
+                     }).catch((err)=>{
+                         scope.notify(err)
+                     })
+                 }
+                 scope.filterByRedeemStatus =async  function(val){
+                    await  scope.get(`members/getRedeem?status=${val}`).then( async (data)=>{
+                         console.log(data)
+                          scope.members = data
+                         return false;
+                     }).catch((err)=>{
+                         scope.notify(err)
+                     })
+                 }
+
+
+                 scope.saveFoodOrder = function(product){
+                     product.processingTime =document.getElementById('status').value
+                     console.log(product._key,product.order_status,product.processingTime )
+                     console.log(product);
+
+                     scope.post('cafeproducts/chgstatus',product).then((data)=>{
+                         scope.notify('Saved')
+                         setTimeout(()=>{ modalCloseAll(); window.location.href=window.location.href; }, 2000)
+
+                     }).catch((err)=>{
+                         scope.notify(err)
+                     })
+                 }
+                 scope.saveProductOrder = function(product){
+
+                     scope.post('salon/chgstatus',product).then((data)=>{
+                         scope.notify('Saved')
+                         setTimeout(()=>{ modalCloseAll(); window.location.href=window.location.href; }, 2000)
+
+                     }).catch((err)=>{
+                         scope.notify(err)
+                     })
+                 }
+
+                 scope.saveServiceData = function() {
+                     //console.log(scope.services_cms_data)
+
+                     scope.post('services_cms_data/save',scope.services_cms_data).then((data)=>{
+                         scope.notify('Saved')
+                         modalCloseAll()
+                     }).catch((err)=>{
+                         scope.notify(err)
+                     })
+
+
+                 }
+
+
+
+                 scope.saveProduct =async function(){
+                     if(parseInt(scope.new.rating)>5 || parseInt(scope.new.rating)<1){
+                         scope.notify('Rating should be between 1 to 5 number')
+
+                     }
+                     else{
+                         // should be done using loops... using this method because don't want to change any of the input element's id....
+                     const imageArr={};
+                    const img1=document.getElementById("new_image").value===""?"":document.getElementById("new_image")
+                    const img2=document.getElementById("new_image2").value===""?"":document.getElementById("new_image2")
+                    const img3=document.getElementById("new_image3").value===""?"":document.getElementById("new_image3")
+                    const img4=document.getElementById("new_image4").value===""?"":document.getElementById("new_image4")
+                    const img5=document.getElementById("new_image5").value===""?"":document.getElementById("new_image5")
+                         console.log(img1,img2,img3,img4,img5)
+                         const arr=[]
+                         if(img1!==""){
+                             arr.push({image: img1,index:1})
+                         }
+                         if(img2!==""){
+                             arr.push({image: img2,index:2})
+                         }
+                         if(img3!==""){
+                             arr.push({image: img3,index:3})
+                         }
+                         if(img4!==""){
+                             arr.push({image: img4,index:4})
+                         }
+                         if(img5!==""){
+                             arr.push({image: img5,index:5})
+                         }
+                     console.log(arr)
+                     Promise.all(arr.map(async (value,i)=>{
+                     if(value.image!==''){
+                        console.log(value.image)
+                                  var pp;
+
+                                     let flag=0;
+                                     if( value.image.files.length>0){
+                                         var fileToLoad = value.image.files[0];
+                                         pp = fileToLoad
+
+                                     }
+                                     let formData = new FormData();
+
+                                     console.log(pp)
+                                      formData.append('image',pp );
+                                     let post_data = {
+                                         method: 'POST',
+                                         body: formData,
+                                         'Content-Type' :	"multipart/form-data"
+                                     }
+                                     console.log(post_data.body);
+                                   var img=  await fetch('/image-upload',post_data)
+                                   img= await img.json();
+                                   if(value.index ===1){
+                                   scope.new.image=img.data.url}
+                                   else if(value.index===2){
+                                     scope.new.image2=img.data.url
+                                   }
+                                   else if(value.index===3){
+                                     scope.new.image3=img.data.url
+                                   }
+                                   else if(value.index===4){
+                                     scope.new.image4=img.data.url
+                                   }
+                                   else if(value.index===5){
+                                     scope.new.image5=img.data.url
+                                   }
+                                   return img.data.url;
+                         }
+                         })).then(async () =>{
+                         scope.new.discounted = scope.new.price - (parseFloat(scope.new.price) * scope.new.discount/100)
+                         console.log(console.log(JSON.stringify(scope.new)))
+
+                        await scope.post('products',scope.new).then(async (product_data)=>{scope.notify('Saved') ;setTimeout(()=>{window.location.href=window.location.href},3000)});
+
+                        })
+                       }
+                 }
+
+
+                 scope.saveFoodProduct = function(){
+
+                     console.log(scope.new)
+
+                     if(parseInt(scope.new.rating)>5 || parseInt(scope.new.rating)<1){
+                         scope.notify('Rating should be between 1 to 5 number')
+                     }else{
+
+                         scope.new.discounted = scope.new.price - (parseFloat(scope.new.price) * scope.new.discount/100)
+
+                         scope.post('cafeproducts',scope.new).then((product_data)=>{
+
+                             scope.view.modal = false
+                             // scope.new = {}
+                             scope.notify('Saved')
+                             window.location.href=window.location.href
+
+                         })
+
+                     }
+
+
+                 }
+                 scope.saveFoodProduct1 = function() {
+
+
+                     console.log(scope.new)
+
+                     if(parseInt(scope.new.rating)>5 || parseInt(scope.new.rating)<1){
+                         scope.notify('Rating should be between 1 to 5 number')
+                     }else{
+
+                         scope.new.discounted = scope.new.price - (parseFloat(scope.new.price) * scope.new.discount/100)
+
+                         scope.post('cafeproducts',scope.new).then((product_data)=>{
+
+                             scope.view.modal = false
+                             // scope.new = {}
+                             scope.notify('Saved')
+
+                         })
+
+                     }
+
+
+                 }
+
+                 scope.saveTestimonial = function(){
+
+                     scope.post('testimonials',scope.new).then((testi_data)=>{
+
+                         scope.view.modal = false
+                         scope.new = {}
+                         scope.notify('Saved')
+
+                     })
+
+                 }
+
+                 scope.toggleProducts = function(cat) {
+                     console.log(cat,scope.new.mem_products)
+                     let oldata = scope.new
+                     if(cat==='all'){
+                         scope.get('products/list').then((data2)=>{
+                             //console.log(data2)
+                             scope.new = oldata
+                             //console.log(cat,scope.new.name)
+                             let newarr = []
+                             data2.map((val,key)=>{
+
+                                 if(oldata.mem_products && oldata.mem_products.length>0 && oldata.mem_products.includes(val._key)){
+                                     val.selected = "true"
+                                 }else {
+                                     val.selected = "false"
+                                 }
+                                 newarr.push(val)
+
+                             })
+
+                             //console.log(newarr)
+
+                             scope.products = newarr
+                         })
+
+                     } else{
+                         scope.post('products/getbycat',{'id':cat}).then((data2)=>{
+
+                             scope.new = oldata
+                             let newarr = []
+                             data2.map((val,key)=>{
+
+                                 if(oldata.mem_products && oldata.mem_products.length>0 && oldata.mem_products.includes(val._key)){
+                                     val.selected = "true"
+                                 }else {
+                                     val.selected = "false"
+                                 }
+                                 newarr.push(val)
+
+                             })
+
+                             //console.log(newarr)
+
+                             scope.products = newarr
+                         })
+                     }
+                 }
+
+                 scope.tabtwo = function() {
+                     let oldata = scope.new
+                     scope.view.tab = 'two'
+
+                     scope.get('products/list').then((data2)=>{
+                         scope.new = oldata
+                         console.log(oldata.mem_products)
+                         let newarr = []
+                         data2.map((val,key)=>{
+
+                             if(oldata.mem_products && oldata.mem_products.length>0 && oldata.mem_products.includes(val._key)){
+                                 val.selected = "true"
+                             }else {
+                                 val.selected = "false"
+                             }
+                             newarr.push(val)
+
+                         })
+
+                         console.log(newarr)
+
+                         scope.products = newarr
+                     })
+
+
+
+                 }
+
+
+                 scope.saveMember = function(update){
+                       console.log("update",update);
+                       if(update=="update"){
+                           scope.new.update=true
+                       }
+                       var uploadeImg= document.getElementById('image_1');
+                       console.log(uploadeImg.value)
+                       if(uploadeImg.value ===''){
+                           scope.post('members',scope.new).then((mem_data)=>{
+
+                           console.log(mem_data)
+
+                           scope.view.modal = false
+                           scope.new = {}
+                           scope.notify('Saved')})
+                       }
+                       else{
+
+                           var formData = new FormData();
+                           if(uploadeImg.value!=='' && uploadeImg.files.length>0){
+                               var fileToLoad = uploadeImg.files[0];
+                                   pp = fileToLoad
+                                   formData.append('image', pp);
+                                   let post_data = {
+                                       method: 'POST',
+                                       body: formData,
+                               }
+                               let response =  fetch('/image-upload',post_data)
+                                 .then(response => response.json())
+                                 .then(data => {
+                                   scope.new.avatar = data.data.url;
+                                   scope.post('members',scope.new).then((mem_data)=>{
+
+       console.log(mem_data)
+
+       scope.view.modal = false
+       scope.new = {}
+       scope.notify('Saved') })
+                                 })
+
+                           }
+
+                       }
+
+
+                 }
+
+                 scope.toggleSellOnline = function(){
+
+                     scope.new.sell_online = !scope.new.sell_online
+                     // scope.post('products',scope.new).then((product_data)=>{
+                     //     scope.notify('Saved')
+                     // })
+
+                 }
+                 scope.toggleIsAdult = function(){
+
+                     scope.new.isAdult = !scope.new.isAdult
+                     // scope.post('products',scope.new).then((product_data)=>{
+                     //     scope.notify('Saved')
+                     // })
+
+                 }
+
+                 scope.parseProductCategory = function(idx){
+                     if (scope.salon.product_categories && scope.salon.product_categories[idx] && scope.salon.product_categories[idx].name){
+                         return scope.salon.product_categories[idx].name
+                     } else if(scope.salon.product_categories&&idx){
+                      let cat=  scope.salon.product_categories.find((obj)=>obj._id==idx)
+                         return cat.name
+                     }else{
+                        return ""
+                     }
+
+                 }
+
+                 scope.parseFoodProductCategory = function(idx){
+
+                     //console.log(scope.salon.food_categories[idx],idx)
+                     let name = ''
+                     scope.salon.food_categories.map((filter)=>{
+                         if (filter._id == idx){
+                             name = filter.name
+                         }
+                     })
+                     return name
+
+                 }
+
+                 scope.orderProduct = function(product){
+
+                     product.on_order = !product.on_order
+                     let payload = {
+                         _key: product._key,
+                         value: product.on_order
+                     }
+
+                     scope.post('products/add_to_order',payload).then((prod_data)=>{
+                         scope.new = prod_data[0]
+                     }).catch(err => {
+                         scope.notify(err, 'error')
+                     })
+
+                 }
+
+                 scope.getFilters = function(type){
+
+                     scope.get(type+'/init/get_filters').then((data)=>{
+                         scope.filterCategories = data
+                     })
+
+                 }
+
+                 scope.applyFilter = function(type, filter, get){
+
+                     if (get){
+
+                         if (filter == scope.current_filter_value){
+
+                             scope.current_filter_value = ''
+                             scope.get(type)
+
+                         } else {
+
+                             scope.current_filter_value = filter
+
+                             let filter_data = {
+                                 field: scope.current_filter,
+                                 value: filter
+                             }
+
+                             if (filter == 'fb.value'){
+                                 delete filter_data.value
+                             }
+                             scope.post(type+'/filter', filter_data).then((data)=>{
+                                 scope[type] = data
+                             })
+
+                         }
+
+                     } else {
+
+                         if (filter == scope.current_filter){
+
+                             scope.view.filters = false
+                             scope.current_filter = ''
+
+                             scope.get(type)
+
+                         } else {
+
+                             scope.view.filters = true
+                             scope.current_filter = filter
+
+                             scope.get(type+'/'+filter+'/get_filters').then((data)=>{
+                                 const newData=data.filter((da)=>da.type!="none")
+                                 scope.filterButtons = newData.map((filter)=>{
+
+                                     if (!filter.type){
+                                         filter.type = 'none'
+                                     }
+                                     return {value: filter.value, text: filter.type, count: filter.count}
+                                 })
+                             })
+
+                         }
+
+                     }
+
+                 }
+                 scope.downloadLink = function(){
+                     window.open(scope.new.cvDoc, '_blank');
+                 }
+                 scope.cafeOrderSearch=(val)=>{
+                   let url =`customers/searchCafeOrders?value=${val}`
+      scope.get(url).then((data)=>{
+         console.log("dataa",data);
+        let a= data.map((obj)=>{
+    if(!obj.tableNumber){
+        obj.tableNumber="Pick up"
+    }
+    return obj
+         })
+         scope.customers=a
+      })
+                 }
+
+  scope.getallcafeorders=()=>{
+      let url=`/api/customers/getallcafeorders`
+      scope.get(url).then((res)=>{
+
+        let dat=res.data.map((obj)=>{
+          if(!obj.tableNumber){
+              obj.tableNumber="Pick up"
+          }
+          return obj
+        })
+          scope.customers=dat
+          document.addEventListener('DOMContentLoaded', init(Math.round(parseInt(res.count)/10)), false);
+      })
+  }
+  scope.changepage=(page)=>{
+  console.log("ppppppage",page);
+  let url=`/api/customers/getallcafeorders?page=${page}`
+  scope.get(url).then((res)=>{
+      let dat=res.data.map((obj)=>{
+          if(!obj.tableNumber){
+              obj.tableNumber="Pick up"
+          }
+          return obj
+        })
+        scope.customers=dat
+          // document.addEventListener('DOMContentLoaded', init(Math.round(parseInt(res.count)/10)), false);
+  })
+  }
+  scope.parseNormalDate=(d)=>{
+  let date=new Date(d)
+  let mm=date.getMonth()+1
+  mm=mm<=9?`0${mm}`:mm
+  return `${date.getFullYear()}-${mm}-${date.getDay()}`
+
+     }
+
+             }
+</script>

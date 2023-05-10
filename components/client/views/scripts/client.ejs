@@ -1,0 +1,52 @@
+<script>
+
+    extendedController = function(){
+
+        scope.client_data = {
+            _key: "<%- client_data._key %>",
+            name: {
+                first: "<%- client_data.name.first %>",
+                last: "<%- client_data.name.last %>"
+            },
+            tel: "<%- client_data.tel %>",
+            email: "<%- client_data.email %>",
+            gender: "<%- client_data.gender %>",
+            <% if (typeof client_data.address == 'object'){ %>address: <%- JSON.stringify(client_data.address) %>,<% } %>
+            <% if (client_data.dob){ %>dob: <%- JSON.stringify(client_data.dob) %><% } %>
+        }
+
+        <% if (typeof consultation == 'object' && consultation._key){ %>
+            scope.consultation = <%- JSON.stringify(consultation) %>
+        <% } else { %>
+            scope.consultation = {}
+        <% } %>
+console.log(scope.consultation)
+        scope.saveDetails = function(){
+
+            scope.post('customers/save_details', scope.client_data).then((client_data)=>{
+                scope.notify('Details saved')
+            }).catch((err)=>{
+                scope.notify(err,'error')
+            })
+
+        }
+
+        scope.saveConsultation = function(done){
+
+            scope.consultation.customer_id = "<%- client_data._key %>"
+
+            scope.post('consultations',scope.consultation).then((consultation)=>{
+
+                scope.notify('Saved, thank you!')
+                console.log(consultation)
+
+            }).catch((err)=>{
+                console.log(err)
+                scope.notify(err,'error')
+            })
+
+        }
+
+    }
+
+</script>

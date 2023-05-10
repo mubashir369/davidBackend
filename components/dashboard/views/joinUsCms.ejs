@@ -1,0 +1,52 @@
+
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+
+
+            <div class="mt-50 p-0">
+               
+                <div class="divider mb-2 p-0"></div>
+
+            </div>
+            <div  class="grid col-6 gap-2 ">
+                <div class="colspan-6">
+                    
+                    <div class="bg-white box-shadow p-2 radius-10 border">
+                        <label>Heading</label>
+                        <input type="text" class="rounded mb-1" id="section1Head" placeholder="Heading" name="heading"
+                            value="<%- section1.heading%>">
+                        <label>Description</label>
+                        <script src="https://cdn.ckeditor.com/4.20.1/standard/ckeditor.js"></script>
+                        <textarea id="section1Desc" name="section1Desc" type="text" rows="8" class="rounded mb-1" placeholder="Description"
+                            name="description"><%-section1.desc%></textarea>
+
+                            <div class="link">
+                                <div class="mt-1 colspan-6 ">
+                                    <button type="submit" app-click="submitJoinUs()" class="dp-btn bg-secondary">Save </button>
+                                </div>
+                               </div>
+                    </div>
+                    
+                      
+                </div>
+            </div>
+           
+           
+        </div>
+        
+        <script>
+            CKEDITOR.replace( 'section1Desc' );
+           
+            </script>
+        <script>
+
+
+            
+
+
+
+        </script>
+
+
+

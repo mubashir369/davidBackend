@@ -1,0 +1,116 @@
+<% layout('member.ejs') -%>
+
+    <%- include ../partials/header-member.ejs %>
+
+    <div class="page allReport" style="white-space: normal">
+
+        <div class="grid col-4 col-m-3 col-s-1 gap-1 allReport-cards">
+
+            <div class="bg-grey rounded p-2">
+                <h4 class="text-bold"> Wallet Balance</h4>
+               
+                <p>Available : £ <%- parseFloat(wallet).toFixed(2)%></p>
+                <!-- <button class="dp-btn text-white bg-secondary" app-click="get('members','reedeem?id=<%- user._key%>&name=<%- user.name%>')">Redeem</button> -->
+                <% if(redeem._key){%>
+                    
+                    <button class="dp-btn text-white bg-primary" >Redeem Requested</button>
+                    <%} else{%>
+                        <button class="dp-btn text-white bg-secondary" app-click="view.modal = 'show_modal2'">Redeem</button>
+
+                        <%}%>
+            </div>
+            
+
+            
+
+        </div>
+
+    </div>
+
+    <div class="modal" app-show="view.modal == 'show_modal2'" anim="{'enter':'fade-in'}">
+
+        <div class="modal-body p-0" anim="{'enter':'move-up','duration':'0.2'}">
+            <div class="modal-header" >
+            <div class="title">
+                    <h4 class="text-black">
+                        <span>Redeem</span>
+                    </h4>
+                </div>
+                <div class="text-right">
+                    <h4 class="close-icon clickable" onclick="modalCloseAll()">&times;</h4>
+                </div>
+            </div>
+            
+
+            <div class="modal-appointment-actions flex flex-middle-right p-1 text-right">
+                <input type="text"  id="amount" placeholder="enter amount">
+                <a class="dp-btn text-white bg-secondary m-0" onclick="checkReedeem(`<%- wallet%>`);">
+                    Redeem
+                </a>
+            
+        </div>
+
+        </div>
+
+    </div>
+
+    <div class="modal"  id="viewModal" style="display: none;">
+
+        <div class="modal-body p-0" >
+            <div class="modal-header ">
+                <div class="title text-black " style="font-size: 18px;">
+                    <p class="m-0">Add your wallet balance</p>
+                </div>
+                <div class="text-right close">
+                    <h4 class="close-icon clickable" onclick="modalCloseAll()">&times;</h4>
+                </div>
+            </div>
+            <div class="modal-content flex justify-content-center p-1">
+                <form class="grid col-12 common-form">
+                    <div class="colspan-8">
+                        <input  type="number" placeholder="Enter Radeem Money"/>
+                    </div>
+                    <div class="colspan-4">
+                        <button class="btn bg-secondary ml-04" >
+                            Add Balance
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="results">
+
+    </div>
+<script>
+    checkReedeem = async (bal)=>{
+        const amount = document.getElementById("amount").value;
+       
+        if(parseInt(bal)<parseInt(amount)){
+            alert("not enough funds")
+            console.log("not enough funds")
+        }
+        else{
+            const data={}
+            data.userType="member"
+            data.id=`<%- user._key%>`
+            data.amount=amount
+            data.status="pending",
+            data.Remarks="redeem request"
+            data.remaining = parseInt(bal)-parseInt(amount)
+            const url =`/api/members/redeemRequest`
+            await fetch(url, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(data)
+})
+.then(response => response.json())
+.then((data) => {window.location.href=window.location.href })
+.catch(error => console.error(error))
+
+        }
+    }
+</script>

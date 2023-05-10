@@ -1,0 +1,282 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+
+    <div class="page grid col-12 col-s-1 h-100 overflow-y bg-light-grey ">
+
+    <% if (cart_id != null && cart_id == 'new'){ %> <%# create transaction %>
+
+        <div class="colspan-8 p-3 p-m-2 p-s-2 pb-7 overflow-y" app-init="get('transactions','new_transaction','cart')">
+
+            <div class="" app-show="view.checkout_page == 'items'">
+                <%- include('../partials/checkout/items.ejs') %>
+            </div>
+
+            <div class="" app-show="view.checkout_page == 'discounts'">
+                <%- include('../partials/checkout/discounts.ejs') %>
+            </div>
+
+            <div class="" app-show="view.checkout_page == 'client_details'">
+                <%- include('../partials/checkout/client_details.ejs') %>
+            </div>
+
+            <div class="" app-show="view.checkout_page == 'payment'">
+                <%- include('../partials/checkout/payment.ejs') %>
+            </div>
+
+            <div class="" app-show="view.checkout_page == 'complete'">
+                <%- include('../partials/checkout/complete.ejs') %>
+            </div>
+
+    <% } else if (cart_id != null){ %> <%# edit existing transaction %>
+
+        <div class="colspan-8 p-3 p-m-2 p-s-2 pb-7 overflow-y" app-init="get('transactions','cart?id=<%- cart_id %>','cart')">
+
+            <div class="" app-show="view.checkout_page == 'items'">
+                <%- include('../partials/checkout/items.ejs') %>
+            </div>
+
+            <div class="" app-show="view.checkout_page == 'discounts'">
+                <%- include('../partials/checkout/discounts.ejs') %>
+            </div>
+
+            <div class="" app-show="view.checkout_page == 'client_details'">
+                <%- include('../partials/checkout/client_details.ejs') %>
+            </div>
+
+            <div class="" app-show="view.checkout_page == 'payment'">
+                <%- include('../partials/checkout/payment.ejs') %>
+            </div>
+
+            <div class="" app-show="view.checkout_page == 'complete'">
+                <%- include('../partials/checkout/complete.ejs') %>
+            </div>
+
+    <% } else { %> <%# transaction list %>
+
+        <div class="colspan-8 p-3 p-m-2 p-s-2 overflow-y">
+
+            <%- include('../partials/checkout/cafe_transactions.ejs') %>
+
+    <% } %>
+
+        </div>
+
+
+    <% if (cart_id != null){ %>
+
+        <div class="colspan-4 p-3 p-m-2 p-s-2 bg-white">
+
+            <%- include('../partials/checkout/sidebar.ejs') %>
+
+        </div>
+
+        <section class="footer">
+
+            <% if (typeof transaction_key != 'undefined'){ %>
+                <div></div>
+                <button class="dp-btn text-white bg-secondary" app-click="saveTransaction(true)">Update Transaction <span class="icon rebook white right"></span></button><br>
+            <% } else { %>
+
+                <a class="dp-btn text-white clear flex" app-hide="view.grouped_carts" app-click="deleteTransaction('<%- cart_id %>')">Delete Transaction</a>
+
+                <button class="dp-btn text-white my-1 border" app-show="view.grouped_carts" app-click="groupTransaction('ungroup')">Ungroup</button>
+
+
+                <button class="dp-btn text-white bg-secondary" app-hide="view.checkout_page == 'payment'" app-click="checkoutPage()">Next <span class="icon arrowright white right"></span></button>
+                <button app-show="view.checkout_page == 'payment'" class="dp-btn text-white bg-secondary" app-click="saveTransaction(true)">Complete <span app-show="view.grouped_carts">&nbsp;All</span><span class="icon tick white right"></span></button>
+            <% } %>
+
+
+        </section>
+
+    <% } else { %>
+
+        <div class="colspan-4 p-2 p-s-1 bg-white">
+
+            <%- include('../partials/checkout/cafe_transaction_options.ejs') %>
+
+        </div>
+
+    <% }%>
+
+
+    </div>
+
+    <div class="modal" app-show="view.modal == 'select_stylist'" anim="{'enter':'fade-in'}">
+
+        <div class="modal-body" anim="{'enter':'move-up','duration':'0.2'}">
+
+            <div class="grid col-2 pb-1">
+                <div>
+                    <h4 class="text-light">
+                        Select Stylist
+                    </h4>
+                </div>
+                <div class="text-right">
+                    <h4 class="close-icon text-light clickable" onclick="modalCloseAll()">&times;</h4>
+                </div>
+            </div>
+
+            <div class="grid col-4 gap-1">
+
+                <% staff.forEach((stylist,i)=>{ %>
+
+                    <div class="colspan-3 flex flex-middle-left"><img src="<%- stylist.avatar %>" class="avatar mr-1"><%- stylist.name.first %> <%- stylist.name.last %></div>
+                    <div class="flex flex-middle-right"><button class="dp-btn outline" app-click="addStylistService('<%- stylist._key %>','<%- stylist.name.first %> <%- stylist.name.last %>')">Select</button></div>
+
+                <% }) %>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="modal" app-show="view.modal == 'complete'" anim="{'enter':'fade-in'}">
+
+        <div class="modal-body" anim="{'enter':'move-up','duration':'0.2'}">
+
+            <div class="grid col-2 pb-1">
+                <div>
+                    <h4 class="text-light">
+                        Complete Transaction
+                    </h4>
+                </div>
+                <div class="text-right">
+                    <h4 class="close-icon text-light clickable" onclick="modalCloseAll()">&times;</h4>
+                </div>
+            </div>
+
+            <div class="grid col-2 gap-1">
+
+                <div>
+
+                    <p class="" app-show="cart.payment.petty_cash_in">
+                        Petty Cash In
+                    </p>
+                    <p class="" app-show="cart.payment.petty_cash_out">
+                        Petty Cash Out
+                    </p>
+                    <p class="" app-show="cart.payment.change">
+                        Change Due
+                    </p>
+                    <p class="text-weight-600" app-hide="cart.refund_total">
+                        Total
+                    </p>
+                    <p class="text-weight-600" app-show="cart.refund_value">
+                        Amount to Refund
+                    </p>
+                    <p class="text-weight-600" app-show="cart.refund_total">
+                        New Total
+                    </p>
+
+                </div>
+                <div>
+
+                    <p class="text-right" app-show="cart.payment.petty_cash_in">
+                        £<span app-bind="cart.payment.petty_cash_in"></span>
+                    </p>
+                    <p class="text-right" app-show="cart.payment.petty_cash_out">
+                        £<span app-bind="cart.payment.petty_cash_out"></span>
+                    </p>
+                    <p class="text-right" app-show="cart.payment.change">
+                        £<span app-bind="cart.payment.change"></span>
+                    </p>
+                    <p class="text-right text-weight-600" app-hide="cart.refund_total">
+                        £<span app-bind="cart.total"></span>
+                    </p>
+                    <p class="text-right text-weight-600" app-show="cart.refund_value">
+                        £<span app-bind="cart.refund_value"></span>
+                    </p>
+                    <p class="text-right text-weight-600" app-show="cart.refund_total">
+                        £<span app-bind="cart.refund_total"></span>
+                    </p>
+
+                </div>
+
+                <button class="dp-btn bg-primary mt-1" app-click="view.modal = false">Cancel</button>
+                <button class="dp-btn bg-secondary width-full mt-1" app-click="saveTransaction()">Complete<span class="icon tick right white"></span></button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="modal" app-show="view.modal == 'remove'" anim="{'enter':'fade-in'}">
+
+        <div class="modal-body" anim="{'enter':'move-up','duration':'0.2'}">
+            <div class="grid col-12 pb-1">
+                <div class="colspan-11">
+                    <h4 class="text-light" app-bind="view.modal_title">
+                        Delete Transaction
+                    </h4>
+                </div>
+                <div class="text-right">
+                    <h4 class="close-icon text-light clickable" onclick="modalCloseAll()">&times;</h4>
+                </div>
+            </div>
+            <div class="grid col-2 gap-2">
+                <button class="dp-btn bg-primary width-full" onclick="modalCloseAll()">Cancel</button>
+                <button class="dp-btn bg-secondary width-full" app-click="deleteTransaction(new.cart_id,true,new.status)" app-bind="view.modal_button">Delete<span class="icon delete right white"></span></button>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="modal" app-show="view.modal == 'stripe'" anim="{'enter':'fade-in'}">
+
+        <div class="modal-body" anim="{'enter':'move-up','duration':'0.2'}">
+            <div class="grid col-12 pb-1">
+                <div class="colspan-11">
+                    <h4 class="text-light" app-bind="view.modal_title">
+                        Stripe Transaction
+                    </h4>
+                </div>
+                <div class="text-right">
+                    <h4 class="close-icon text-light clickable" onclick="modalCloseAll()">&times;</h4>
+                </div>
+            </div>
+
+            <form action="/charge" method="post" id="payment-form" class="stripe">
+
+                <div>
+
+                    <% if (typeof user != 'undefined' && user.role && user.role >= 2 || typeof user != 'undefined' && user.guard == 'admin'){ %>
+                        <div style="max-height: 20rem; overflow-y:auto">
+                            <div class="my-1 text-left" app-for="method in stripe_data.methods">
+                                <label class="block mb-1 text-left clickable p-1">
+                                    <input type="radio" app-click="setMethod(method.id)" app-class="{'bg-33-white':method.id == stripe_data.selected_method}">
+                                    **** **** **** <span app-bind="method.card.last4"></span>
+                                </label>
+                            </div>
+                        </div>
+                    <% } %>
+
+                    <div id="card-element" class="">
+                    <!-- A Stripe Element will be inserted here. -->
+                    </div>
+
+                    <div id="card-errors" role="alert" class="mb-2 text-33-red"></div>
+
+                </div>
+
+                <div class="">
+
+                    <button class="dp-btn bg-secondary w-100" id="pay-now">Charge<span class="icon cardpayment right white"></span></button>
+                </div>
+
+
+            </form>
+
+            <button class="mt-2 btn border width-full" onclick="modalCloseAll()">Cancel</button>
+
+        </div>
+
+    </div>
+
+    <% if (cart_id != null){ %>
+        <%- include('../../dashboard/partials/modal/voucher.ejs',{cart_id: cart_id}) %>
+    <% } %>

@@ -1,0 +1,99 @@
+<% layout('member.ejs') -%>
+
+<%- include ../partials/header-member.ejs %>
+    <!-- Welcome to the dashboard india! <br><br> -->
+
+    
+        <div class="page px-2 px-s-0 reports-page">
+            <div class="grid col-12 gap-2 ">
+                <div class="colspan-12 ">
+                    <div class="d-flex @flex-middle-right align-items-center p-03 px-0">
+                        <div class="d-flex align-items-center">
+                            <label class="m-0 pr-03">Filter</label>
+                            <select id ="type" onchange="updateText()" style="width: 200px;">
+                                <option value="today">Today</option>
+                                <option value="weekly">Last Week</option>
+                                <option value="monthly">Last Month</option>
+                                <option value="yearly">Last Year</option>
+                            </select>
+                            <!-- <button class="bg-primary text-white sm-btn ml-1" style="padding: 8.5px 25px !important;">Submit</button> -->
+                        </div>
+                    </div>
+                    <div class="divider p-0 my-04"></div>
+                    <div class="grid col-12 gap-2 pt-1">
+                        <div class="colspan-6">
+                            <div class="bg-white box-shadow2 bg-secondary text-white p-1 radius-5 dashboardCard">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="dashboardCard-title w-75">
+                                        <h3>Service Report  </h3>
+                                        <span>Breakdown of Service Provider Earnings </span>
+                                        <button style=" text-transform: capitalize;" onclick="downloadReport('getSalonOrServiceProviderEarning',)" class="bg-primary d-block mt-1 dp-btn sm-btn text-white">Today &nbsp;  <i class="fa fa-download" style="font-size:12px"></i></button>
+                                    </div>
+                                    <i class="icon white settings"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="colspan-6">
+                            <div class="bg-white box-shadow2 bg-secondary text-white p-1 radius-5 dashboardCard">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="dashboardCard-title w-75">
+                                        <h3>Clients Details  </h3>
+                                        <span>(Customers details Such as Name, Email, Contact, Number of services etc.) </span>
+                                        <button style=" text-transform: capitalize;" onclick="downloadReport('customers','<%- user._key%>')" class="bg-primary d-block mt-1 dp-btn sm-btn text-white">Today &nbsp;  <i class="fa fa-download" style="font-size:12px"></i></button>
+                                    </div>
+                                    <i class="icon food white"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="colspan-6">
+                            <div class="bg-white box-shadow2 bg-secondary text-white p-1 radius-5 dashboardCard">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="dashboardCard-title w-75">
+                                        <h3>Commission Earned </h3>
+                                        <span>Commission earned on products and services </span>
+                                        <button  style=" text-transform: capitalize;" onclick="downloadReport('member_commission')" class="bg-primary d-block mt-1 dp-btn sm-btn text-white">Today &nbsp;  <i class="fa fa-download" style="font-size:12px"></i></button>
+                                    </div>
+                                    <i class="icon white client w-25"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="colspan-6">
+                            <div class="bg-white box-shadow2 bg-secondary text-white p-1 radius-5 dashboardCard">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="dashboardCard-title w-75">
+                                        <h3>Product  sales and stock check Report  </h3>
+                                        <span>Breakdown of product sales and a report on products that are below re-order threshold </span>
+                                        <button style=" text-transform: capitalize;" onclick="downloadReport('products')" class="bg-primary d-block mt-1 dp-btn sm-btn text-white">Today &nbsp;  <i class="fa fa-download" style="font-size:12px"></i></button>
+                                    </div>
+                                    <i class="icon white client"></i>
+                                </div>
+                            </div>
+                        </div> -->
+                    
+                    </div>
+                </div>
+            </div>
+
+        </div>
+            <script>
+updateText=()=>{
+    
+    var value = document.getElementById("type").value;
+    var buttons = document.getElementsByTagName("button");
+    for (var i = 0; i < buttons.length; i++) {
+    buttons[i].innerHTML = `${value} &nbsp;  <i class="fa fa-download" style="font-size:12px"></i>`
+    }
+}
+downloadReport=(type)=>{
+    var _key ='<%- user._key%>'
+    console.log(_key)
+    var value = document.getElementById("type").value;
+    try{
+          window.location.href=`../default_routes/report?type=${value}&reportType=${type}&_key=${_key}`
+    }catch(e){
+        
+    }
+}
+            </script>
+      
+

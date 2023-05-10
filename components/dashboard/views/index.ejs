@@ -1,0 +1,12 @@
+
+<% layout('dashboard.ejs') -%>
+
+<% if (typeof user != 'undefined'){ %>
+
+    Welcome to the dashboard <%= user.first_name %>! <br><br>
+
+<% } else { %>
+
+    This is the dashboard
+
+<% } %>

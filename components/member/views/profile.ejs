@@ -1,0 +1,144 @@
+<% layout('member.ejs') -%>
+
+    <%- include ../../member/partials/header-member.ejs %>
+        <form method="post" action="/member/save-profile" id="formm">
+
+    <div class="hidden" app-init="get('salon','54855602')"></div>
+
+    <div class="page grid col-12 col-s-1 client overflow-hidden" app-init="get('staff','<%- member._key %>','member')">
+
+            
+
+            <div class="colspan-12 bg-33-light-grey pb-5">
+
+               <div class="grid col-2 gap-1">
+
+                    <div>
+
+                        <div class="grid col-4 mb-1">
+                            <div class="" app-init="new.avatar = ''" style="width: 5rem">
+                                <label>Member Image</label>
+                                <label for="image_1" class="clickable" id="fileDisplayArea">
+                                <% if (member.avatar==""){ %>
+                                    <img src="/images/products/upload.svg" app-src="new.avatar" class="avatar radius-0">
+                                <% } else { %>
+                                    <img src="<%=member.avatar%>" app-src="new.avatar" class="avatar radius-0">
+                                <% } %>
+                                </label>
+                                <input id="image_1" type="file" name="avatar1"  app-model="new.avatar">
+                                <input type="hidden" id="avatar" name="avatar">
+
+                            </div>
+                            <div class="colspan-3 grid col-1 gap-1">
+                                <div>
+                                    <label>Full Name</label>
+                                    <input type="text" name="name" placeholder="Full name" class="rounded" value="<%=member.name%>">
+                                </div>
+
+                                <div>
+                                    <label>Email</label>
+                                    <input type="text" name="email" placeholder="Email address" class="rounded" value="<%=member.email%>" readonly>
+                                </div>
+
+
+                                <div>
+                                    <label>Phone</label>
+                                    <input type="text" name="phone" placeholder="phone" class="rounded" value="<%=member.phone%>">
+                                </div>                                
+
+
+                               
+
+                                       
+
+                                <div>
+                                    <label>Description</label>
+                                    <textarea name="description" class="" style=""><%=member.description%></textarea>
+                                    
+                                </div>                                       
+
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                    <div class="adminMemberPopup ">
+                        <label>Services</label>
+                        <div class="adminMemberPopup-list dp-scroll">
+                        <% if (services){ %>
+                                <% services.forEach((item,i)=>{ %>
+                                    <label class="text-black"><input type="checkbox" name="mem_services[]" 
+                                    value="<%=item._key%>"
+                                    <%=member.mem_services.includes(item._key)?'checked':''%> class="mr-1"><%-item.name %></label>
+                                <% }) %>
+                            <% } %>
+                        </div>
+                    </div>
+
+
+                </div>
+
+             
+
+            </div>
+
+
+        <section class="footer">
+       
+            
+          <input type="hidden" name="_key" value="<%-member._key%>">
+<button class="dp-btn bg-secondary" type="button" id="submitform" onclick="submmit()">Save <span class="icon tick right white"></span></button>
+            
+       
+        </section>
+
+
+    </div>
+                </form>
+
+    <% if (typeof member != 'undefined' && member._key == user._key || user.guard == 'admin'){ %>
+        <%- include ../../dashboard/partials/modal/member_profile.ejs %>
+    <% } %>
+
+    <script>
+    function submmit(){
+        var imgsrc = document.querySelector('#fileDisplayArea img').getAttribute('src')
+        var uploadeImg= document.getElementById('image_1');
+        if(uploadeImg.value ===''){
+           document.getElementById('avatar').value = imgsrc;
+        document.getElementById('formm').submit()
+       }
+       else{
+           var formData = new FormData();
+
+       }
+                        if(uploadeImg.value!=='' && uploadeImg.files.length>0){
+                            // console.log(cv.files)
+                            var fileToLoad = uploadeImg.files[0];
+                            pp = fileToLoad
+                            formData.append('image', pp);
+                            let post_data = {
+                                method: 'POST',
+                                body: formData,
+                        }
+                          console.log(formData)
+                          let response =  fetch('/image-upload',post_data)
+                          .then(response => response.json())
+                          .then(data => {
+                            document.getElementById('avatar').value = data.data.url;
+                            document.getElementById('formm').submit()
+                         // This will log the data returned by the API
+                        })
+                        .catch(error => {
+                            console.error(error); // This will log any errors that occur during the API call
+                        });
+                        
+                          
+        //alert(imgsrc)
+        //return false;
+    }}
+
+
+    </script>

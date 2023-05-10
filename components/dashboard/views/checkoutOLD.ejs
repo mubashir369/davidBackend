@@ -1,0 +1,361 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+
+    <div class="page grid col-12 col-s-1 h-100 overflow-hidden">
+
+    <% if (cart_id != null){ %>
+
+        <div class="colspan-4 bg-white">
+
+            <div class="grid col-3 mb-2">
+
+                <div class="mb-1 text-weight-500">ID:</div>
+                <div class="mb-1 colspan-2"><span app-bind="cart.id"></span></div>
+
+                <div class="mb-1 text-weight-500 flex flex-middle-left">Method:</div>
+                <div class="mb-1 colspan-2">
+                    <select app-model="cart.method" class="border">
+                        <option value="" disabled>Select...</options>
+                        <option value="card">Card</option>
+                        <option value="cash">Cash</option>
+                        <option value="balance">Account</option>
+                        <option value="vouchers">Vouchers</option>
+                        <option value="split">Split Payment</option>
+                        <option value="payment_link">Payment Link</option>
+                        <option value="" disabled>Cash Options</options>
+                        <option value="petty_cash">Petty Cash Out</option>
+                        <option value="cash_transfer_in">Cash Transfer In</option>
+                        <option value="cash_transfer_out">Cash Transfer Out</option>
+                    </select>
+                </div>
+
+                <div app-show="cart.method == 'split'" class="colspan-3 grid col-3 mb-2 gap-1">
+                    <div class="flex flex-middle-right">Card:</div><input type="text" app-model="cart.payment.card" class="colspan-2 border">
+                    <div class="flex flex-middle-right">Cash:</div><input type="text" app-model="cart.payment.cash" class="colspan-2 border">
+                    <div class="flex flex-middle-right">Account:</div><input type="text" app-model="cart.payment.balance" class="colspan-2 border">
+                </div>
+
+                <div app-show="cart.method == 'cash'" class="colspan-3 grid col-3 mb-2 gap-1">
+                    <div class="flex flex-middle-right">Cash:</div><input type="text" app-model="cart.payment.cash" class="colspan-2 border">
+                </div>
+
+                <div app-show="cart.offer_code_data.value" class="mb-1 text-weight-500">Offer Code:</div>
+                <div app-show="cart.offer_code_data.value" class="mb-1 colspan-2"><span app-bind="cart.offer_code_data.description"></span><br><span class="text-small clickable text-primary" app-click="addToCart('offer_code','remove','<%- cart_id %>')">Remove</span></div>
+
+                <div app-hide="cart.offer_code_data.value" class="mb-2 colspan-3">
+                    <input type="text" app-model="cart.offer_code" onkeyup="scope.addToCart('offer_code', this.value, '<%- cart_id %>')" class="border" placeholder="Scan or enter offer code...">
+                </div>
+
+                <div class="mb-2 colspan-3">
+                    <input type="text" onkeyup="scope.addToCart('voucher', this.value, '<%- cart_id %>')" class="border" placeholder="Scan or enter voucher code...">
+                </div>
+                <button app-click="addToCart('voucher','remove','<%- cart_id %>')" class="dp-btn outline">Remove all</button>
+
+
+            </div>
+
+            <div class="grid col-3 mb-2">
+            <div class="colspan-2 text-weight-500 pb-3" app-show="cart.payment.change">Change:</div>
+            <div class="pb-3" app-show="cart.payment.change">£<span app-bind="cart.payment.change"></span></div>
+
+                <div class="colspan-2 text-weight-500 pb-3" app-show="cart.payment.outstanding">Outstanding:</div>
+                <div class="pb-3" app-show="cart.payment.outstanding">£<span app-bind="cart.payment.outstanding"></span></div>
+
+                <div class="colspan-2 text-weight-500 pb-3" app-show="cart.payment.vouchers">Vouchers:</div>
+                <div class="pb-3" app-show="cart.payment.vouchers">£<span app-bind="cart.payment.vouchers"></span></div>
+
+                <div class="colspan-2 text-weight-500">Sub Total:</div>
+                <div class="">£<span app-bind="cart.sub_total"></span></div>
+
+                <div class="colspan-2 text-weight-500">VAT:</div>
+                <div class="">£<span app-bind="cart.tax"></span></div>
+
+                <div class="colspan-2 text-weight-500">Total:</div>
+                <div class="">£<span app-bind="cart.total"></span></div>
+
+            </div>
+
+            <div app-show="view.grouped_carts" class="grid col-3 mb-2">
+                <div class="colspan-2 text-weight-500">Group Sub Total:</div>
+                <div class="">£<span app-bind="grouped_totals.sub_total"></span></div>
+
+                <div class="colspan-2 text-weight-500">Group VAT:</div>
+                <div class="">£<span app-bind="grouped_totals.tax"></span></div>
+
+                <div class="colspan-2 text-weight-500">Group Total:</div>
+                <div class="">£<span app-bind="grouped_totals.total"></span></div>
+            </div>
+
+        </div>
+
+        <section class="footer">
+
+            <% if (typeof transaction_key != 'undefined'){ %>
+                <button class="dp-btn text-white bg-secondary" app-click="put('transactions','<%- transaction_key %>',cart)">Update Transaction</button><br>
+            <% } else { %>
+                <button class="dp-btn text-white my-1 border" app-show="view.grouped_carts" app-click="groupTransaction('ungroup')">Ungroup</button>
+
+                <button class="dp-btn text-white my-1 border" app-hide="view.grouped_carts" app-click="view.modal = 'remove'">Delete Transaction</button>
+                <button app-show="view.ok_to_checkout" class="dp-btn text-white bg-secondary" app-click="saveTransaction(true)">Complete <span app-show="view.grouped_carts">&nbsp;All</span></button>
+                <button app-hide="view.ok_to_checkout" class="dp-btn text-white bg-secondary" app-click="addToCart('update',false,'<%- cart_id %>',cart)">Update Transaction</button>
+            <% } %>
+
+        </section>
+
+    <% } else { %>
+
+        <div class="colspan-4 scroll">
+        <h4 class="mb-2">New Transaction</h4>
+            <div app-hide="view.group_transactions">
+                <a class="dp-btn bg-secondary" href="/dashboard/clients">Customer Transaction <img src="/icons/add.svg" class="icon right"></a><br><br>
+                <a class="dp-btn bg-primary" href="/dashboard/checkout/new">New Transaction <img src="/icons/add.svg" class="icon right"></a><br><br>
+                <a class="dp-btn clickable border" app-click="view.group_transactions = !view.group_transactions">Group Transactions <img src="/icons/DR_Icon_GroupItems.svg" class="icon right"></a>
+            </div>
+            <div app-show="view.group_transactions">
+                <a class="dp-btn clickable bg-primary" app-click="groupTransaction('process')"><img src="/icons/add.svg" class="icon left"> Process Selected Transactions</a>
+            </div>
+        </div>
+
+    <% }%>
+
+
+
+
+        <% if (cart_id != null && cart_id == 'new'){ %>
+            <div class="colspan-8 bg-33-light-grey pr-2 pb-5 overflow-y" app-init="get('transactions','new_transaction','cart')">
+        <% } else if (cart_id != null){ %>
+            <div class="colspan-8 bg-33-light-grey pr-2 pb-5 overflow-y" app-init="get('transactions','cart?id=<%- cart_id %>','cart')">
+
+        <% } else { %>
+            <div class="colspan-8 bg-33-light-grey pr-2 pb-5 overflow-y">
+        <% } %>
+
+            <% if (cart_id == null && typeof carts != 'undefined'){ %>
+
+                <h4 app-show="view.group_transactions" class="text-primary mb-2">Select transactions to group</h4>
+
+                <% for (var i in carts){ %>
+                    <a class="grid rounded col-3 p-1 mb-1 clickable capitalise <% if (typeof carts[i].status != 'undefined'){ %>cart-<%- carts[i].status %><% } %>" app-click="groupTransaction('<%- carts[i].id.replace(/cart\_/,'') %>',<% if (typeof carts[i].customer != 'undefined'){ %>'<%- carts[i].customer.name %>'<% } %>)" app-class="view.grouped_<%- carts[i].id.replace(/cart\_/,'') %>">
+                        <div class="text-weight-500">
+
+                            <% if (typeof carts[i].customer != 'undefined'){ %>
+                                <% if (typeof carts[i].customer.avatar != 'undefined' && carts[i].customer.avatar){ %>
+                                    <img src="<%- carts[i].customer.avatar %>" class="icon avatar lg">
+                                <% } else { %>
+                                    <img src="/images/avatars/Profile_Placeholder.svg" class="icon avatar lg">
+                                <% } %>
+                                <%- carts[i].customer.name %>
+                            <% } else { %>
+                                <%- carts[i].id %>
+                            <% } %>
+                        </div>
+                        <div class="flex flex-middle-right">
+                            <%- carts[i].items.length %> Item<% if (carts[i].items.length != 1){ %>s<% } %>
+                        </div>
+                        <div class="flex flex-middle-right text-right">
+                            £<%- carts[i].total %>
+                            <% if (typeof carts[i].status != 'undefined' && carts[i].status == 'pending'){ %>
+                                <%- carts[i].status %>
+                            <% } %>
+
+                            <% if (typeof carts[i].link_sent != 'undefined'){ %>
+                                <br>Sent: <%- functions.parseDate(carts[i].link_sent) %>
+                            <% } %>
+                        </div>
+                    </a>
+                <% } %>
+
+            <% } else if (cart_id != null){ %>
+
+                <div class="tabs">
+                    <a class="clickable" app-for="transaction in view.grouped_carts" app-bind="transaction.name" app-click="goto('/dashboard/checkout/',transaction.id)"></a>
+                </div>
+
+                <% if (typeof customer != 'undefined') { %>
+
+                    <div class="grid col-7 mb-4 gap-1 bg-white rounded p-1">
+                        <div class="colspan-1 flex flex-middle">
+                        <% if (customer.avatar){ %>
+                            <img src="<%- customer.avatar %>" class="avatar">
+                        <% } else { %>
+                            <img src="/images/avatars/Profile_Placeholder.svg" class="avatar">
+                        <% } %>
+                        </div>
+                        <div class="colspan-4 flex flex-middle-left flex-column">
+                            <div class="capitalise">
+                                <div class="text-weight-500">
+                                    <%- customer.name.first %> <%- customer.name.last %>
+                                </div>
+                            </div>
+                            <div class="text-small"><%- customer.tel %></div>
+                            <div class="text-small"><%- customer.email %></div>
+                            <div class="text-small">Last skin test: <span app-show="cart.customer.skin_test" app-bind="cart.customer.skin_test"></span><span app-hide="cart.customer.skin_test"><%- customer.skin_test %></span></div>
+                        </div>
+                        <div class="colspan-2 text-right">
+                            <div class="mb-1">Account: <span class="text-weight-500">£<% if (customer.balance != null) { %><%- customer.balance.total.toFixed(2) %><% } else { %>0<% } %></span></div>
+                            <div><a class="text-primary text-small" target="client" href="/dashboard/clients/<%- customer._key %>">Goto Client Card</a></div>
+                            <div><a class="text-primary text-small" app-click="updateSkinTest(cart.customer_id)">Update Skin Test</a></div>
+                        </div>
+                    </div>
+
+                <% } %>
+
+                <div class="table">
+                    <div class="row table-header">
+                        <div class="cell middle">Item</div>
+                        <div class="cell middle" style="width: 7em">Price</div>
+                        <div class="cell middle text-center" style="width: 6em">Qty</div>
+                        <div class="cell middle text-right" style="width: 6em"></div>
+                    </div>
+                    <div app-for="item in cart.items" class="row">
+                        <div class="cell middle" app-bind="item.name"></div>
+                        <div class="cell middle"><input type="number" step="0.01" app-model="item.price" onkeyup="scope.view.ok_to_checkout = false"></div>
+                        <div class="cell middle text-center"><input type="number" step="1" app-model="item.quantity" onkeyup="scope.view.ok_to_checkout = false"></div>
+                        <div class="cell middle text-right"><button app-click="addToCart('remove',item._key,'<%- cart_id %>')" class="dp-btn bg-primary">&times;</button></div>
+                    </div>
+                </div>
+
+                <div class="grid col-2 gap-2 mt-2">
+                    <div class="relative layer-2">
+                        <div class="mt-1">
+                            <input type="text" class="search-dropdown" placeholder="Search or Scan a Product..." app-model="view.product_search" app-click="view.product_search_results = !view.product_search_results" onkeyup="scope.searchApi('products',this.value,'product')" spellcheck="false">
+                        </div>
+
+                        <div class="table search-select absolute" app-show="view.product_search_results">
+                            <div class="row clickable flex" app-for="product in products" app-click="addToCart('products',product._key,'<%- cart_id %>')">
+                                <div class="text-bold flex-2 capitalise"><span app-bind="product.name"></span> <span class="text-33-red text-small" app-show="product.stock <= '0'">Not in stock</span></div>
+                                <div class="text-light flex-1 capitalise" app-bind="product.category"></div>
+                                <div class="text-light text-right flex-1">£<span app-bind="product.price"></span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative layer-2">
+                        <div class="mt-1">
+                            <input type="text" class="search-dropdown" placeholder="Search services..." app-model="view.search" app-click="view.search_results = !view.search_results" onkeyup="scope.searchApi('services',this.value)" spellcheck="false">
+                        </div>
+
+                        <div class="table search-select absolute context" app-show="view.search_results">
+                            <div class="row clickable flex" app-for="service in services" app-click="addToCart('services',service._key,'<%- cart_id %>')">
+                                <div class="text-bold flex-2 capitalise" app-bind="service.name"></div>
+                                <div class="text-light flex-1 capitalise" app-bind="service.category"></div>
+                                <div class="text-light text-right flex-1">£<span app-bind="service.price"></span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative layer-1">
+                        <div class="mt-1">
+                            <input type="text" class="search-dropdown" placeholder="Search or Scan a Voucher..." app-model="view.voucher_search" app-click="view.voucher_search_results = !view.voucher_search_results" onkeyup="scope.searchApi('vouchers',this.value,'voucher')" spellcheck="false">
+                        </div>
+
+                        <div class="table search-select absolute" app-show="view.voucher_search_results">
+                            <div class="row clickable flex" app-for="voucher in vouchers" app-click="addToCart('vouchers',voucher._key,'<%- cart_id %>')">
+
+                                <div class="text-bold flex-2 capitalise"><span app-bind="voucher.barcode"></span></div>
+                                <div class="text-light text-right flex-1">£<span app-bind="voucher.value"></span></div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <% if (typeof recommended_products != 'undefined' && recommended_products.length > 0){ %>
+
+                    <h4 class="text-primary mt-4 mb-2">Recommended Products</h4>
+
+                    <div class="p-2 bg-white rounded">
+                        <% for (var i in recommended_products){ %>
+                            <div class="grid col-6 pb-05">
+                                <div class="colspan-3"><span class="text-bold"><%- recommended_products[i].name %></span><br><span class="text-33-grey">Recommended By: <%- recommended_products[i].staff.name.first %> <%- recommended_products[i].staff.name.last %></span></div>
+                                <div class="flex flex-middle-left"><%- recommended_products[i].description %></div>
+                                <div class="flex flex-middle-right pr-1">£<%- recommended_products[i].price %></div>
+                                <div class="flex flex-middle-right">
+                                    <button class="dp-btn bg-secondary" app-click="addToCart('products','<%- recommended_products[i]._key %>','<%- cart_id %>')">
+                                        Add <img src="/icons/add.svg" class="icon right">
+                                    </button>
+                                </div>
+                            </div>
+
+                        <% } %>
+                    </div>
+                <% } %>
+
+            <% } %>
+
+        </div>
+
+
+
+    </div>
+
+    <div class="modal" app-show="view.modal == 'complete'" anim="{'enter':'fade-in'}">
+
+        <div class="modal-body" anim="{'enter':'move-up','duration':'0.2'}">
+
+            <div class="grid col-2 pb-1">
+                <div>
+                    <h4 class="text-light">
+                        Complete Transaction
+                    </h3>
+                </div>
+                <div class="text-right">
+                    <h4 class="close-icon text-light clickable" onclick="modalCloseAll()">&times;</h4>
+                </div>
+            </div>
+
+            <div class="grid col-2 gap-1">
+
+                <div>
+
+                    <p class="text-light" app-show="cart.payment.change">
+                        Change Due
+                    </p>
+                    <h4 class="text-light">
+                        Total
+                    </h4>
+
+                </div>
+                <div>
+
+
+                    <p class="text-right text-light" app-show="cart.payment.change">
+                        £<span app-bind="cart.payment.change"></span>
+                    </p>
+                    <h4 class="text-right text-light" app-hide="view.grouped_carts">
+                        £<span app-bind="cart.total"></span>
+                    </h4>
+                    <h4 class="text-right text-light" app-show="view.grouped_carts">
+                        £<span app-bind="grouped_totals.total"></span>
+                    </h4>
+
+                </div>
+
+                <button class="dp-btn  mt-1" app-click="view.modal = false">Cancel</button>
+                <button class="dp-btn bg-secondary width-full mt-1" app-click="saveTransaction()">Complete</button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="modal" app-show="view.modal == 'remove'" anim="{'enter':'fade-in'}">
+
+        <div class="modal-body" anim="{'enter':'move-up','duration':'0.2'}">
+            <div class="grid col-2 pb-1">
+                <div>
+                    <h4 class="text-light">
+                        Delete Transaction
+                    </h3>
+                </div>
+                <div class="text-right">
+                    <h4 class="close-icon text-light clickable" onclick="modalCloseAll()">&times;</h4>
+                </div>
+            </div>
+            <div class="grid col-2 gap-2">
+                <button class="dp-btn width-full" onclick="modalCloseAll()">Cancel</button>
+                <button class="dp-btn bg-secondary width-full" app-click="get('transactions','delete_cart?id=<%- cart_id %>')">Delete</button>
+            </div>
+
+        </div>
+
+    </div>

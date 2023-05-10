@@ -1,0 +1,91 @@
+<% layout('member.ejs') -%>
+
+    <%- include ../partials/header-member.ejs %>
+        <form method="post" action="/member/addprice">
+
+    <div class="hidden" app-init="newAppointment('set_event_type','staff_appointment')"></div>
+    <div class="hidden" app-init="newStaffAppointment('set_opening_times')"></div>
+
+
+
+
+    <div class="page h-100 overflow-y bg-light-grey p-1 priceSetting">
+
+            <!-- <div class="grid col-12 gap-2"> -->
+                  <% if (typeof error != 'undefined' && error != ''){ %>
+                    <div class="notification p-0" style="text-align: left;"><%- error %></div>
+                <% } %>                    
+            <!-- </div> -->
+
+
+            <% if (typeof success != 'undefined' && success != ''){ %>
+              <div class=" notification p-0" id="notify" ><%- success %></div>
+            <% } %>
+
+                    <% if(services){ %>
+                            <div class="grid col-12 layer-5">
+                            <table class="colspan-6 table app-parent-price border-0" >
+                              <tr>      
+                                <th style="width: 60%;" class="text-center"> Service</th>
+                                <th style="width: 40%;" class="text-center"> Price</th>         
+                              </tr>
+                              <!-- <tbody >
+                                <tr>
+                                  <td colspan="2">
+                                      <table class="dp-scroll v-scroll d-block" style="max-height: 500px;"> -->
+                                          <% 
+          
+                                          for(key in services) {
+          
+                                            if(services.hasOwnProperty(key)) {                            
+                                          %>
+                                            <tr><td style="width: 60%;" class="text-left"><%-services[key].name%></td>
+                                          
+                                            <td style="width: 100%;" class="align-items-center"><span>&#163;</span> <input type="text" style="width: 80%;border: 1px solid #ddd; font-weight: 600; margin-left: 5px;" name="price[<%-services[key]._key%>]" value="<%-member.services_price && typeof member.services_price[services[key]._key] !== 'undefined'?parseFloat(member.services_price[services[key]._key]).toFixed(2):''%>" onkeyup="this.value = this.value.replace(/[^0-9\.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="0" />
+                                            </td>
+                                            </tr>
+                                        <% } } %>
+
+                                      <!-- </table>
+                                  </td>
+                                </tr>
+                            </tbody> -->
+                          </table>
+
+                          </div>
+
+
+
+                        <% } %>
+
+
+            </div>
+
+        </div>
+
+        <section class="footer">
+  
+
+
+            <input type="hidden" name="member_id" value="<%-member._key%>">
+            <div class="dp-btn text-white bg-secondary cursor-pointer">
+              <input type="submit" class="bg-none dp-btn p-0 text-white border-0 cursor-pointer" value="Save">
+            </div>
+
+
+
+        </section>
+
+                </form>
+
+    <%- include('../partials/modal/book_seat.ejs') %>
+
+    <script>
+
+    setTimeout(function(){
+        document.getElementById("notify").style.display = "none";
+    },2000);
+
+
+    </script>
+       

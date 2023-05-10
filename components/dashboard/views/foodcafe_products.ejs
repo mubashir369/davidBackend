@@ -1,0 +1,135 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+
+    <div class="page px-2 px-s-0">
+
+        <div class="px-2 pt-2 pb-0 hidden hidden-m">
+            <input type="text" class="search colspan-2 border" placeholder="Search..." app-model="view.search" onkeyup="scope.searchApi('cafeproducts',this.value)" spellcheck="false">
+        </div>
+        <div class="page px-1 px-s-0">
+
+            <!-- <div class="px-2 pt-2 pb-0 hidden hidden-m">
+                <input type="text" class="search colspan-2 border" placeholder="Search..." app-model="view.search" onkeyup="scope.searchApi2('cafeproducts',this.value)" spellcheck="false">
+            </div> -->
+    
+            <div class="px-2 pt-2 pb-0">
+            <select
+            className="ml-lg-10 dp-text-description mt-1 mt-md-0"
+            onchange="scope.cafe_sorting(this.value)"
+            style="width: 10rem;
+            float: right;"
+            >
+            <option value="">Sort By:</option>
+            <option value="name-ASC" data-extra="name">
+              Alphabet: A - Z
+            </option>
+            <option data-extra="name" value="name-DESC">
+              Alphabet: Z - A
+            </option>
+            <option data-extra="price" value="price-ASC">
+              Price: Low - High
+            </option>
+            <option data-extra="price" value="price-DESC">
+              Price: High - Low
+            </option>
+    
+          </select>
+        </div>
+
+            
+
+        <div>
+
+            <div class="table align-middle" app-init="get('cafeproducts','bytype/<%-collection%>')">
+
+                <div class="row table-header">
+
+                    <div class="cell middle" style="width: 5rem;"></div>
+                    <div class="cell middle mobile-cell">Product Name</div>
+                    <!--div class="cell middle">Brand</div-->
+                    <div class="cell middle">Category</div>
+                    <div class="cell middle text-right hidden-m">Barcode</div>
+                    <div class="cell middle text-right" style="width: 5rem;">RRP</div>
+                    <div class="cell middle text-right hidden-m" style="width: 5rem;">Online</div>
+                    <div class="cell middle text-right" style="width: 5rem;">Stock</div>
+                    <!--div class="cell middle text-right hidden-m" style="width: 5rem;">On Order</div-->
+                    <div class="cell middle" style="width: 5rem;">Action</div>
+
+                </div>
+
+                <div class="row" app-for="product in cafeproducts">
+
+                    <div class="cell middle text-bold p-1 clickable" app-click="edit('cafeproducts',product)"><img app-src="product.image" src="/images/products/Product_placeholder.svg"></div>
+                    <div class="cell middle text-weight-600 capitalise clickable mobile-cell" app-bind="product.name" app-click="edit('cafeproducts',product)"></div>
+                    <!--div class="cell middle capitalise clickable" app-bind="product.brand" app-click="edit('cafeproducts',product)"></div-->
+                    <div class="cell middle text-light capitalise" app-bind="parseFoodProductCategory(product.category)"></div>
+                    <div class="cell middle text-light text-right hidden-m" app-bind="product.barcode"></div>
+                    <div class="cell middle text-light text-right" app-bind="parsePrice(product.price)"></div>
+                    <div class="cell middle text-light text-right hidden-m"><div app-show="product.sell_online"><span class="icon tick secondary"></span></div></div>
+                    <div class="cell middle text-light text-right" app-bind="product.stock"></div>
+                    <!--div class="cell middle text-light text-center hidden-m"><div app-show="product.on_order"><span class="icon tick secondary"></span></div></div-->
+                    <div class="cell middle text-right action-icons" app-attr="{id:'cell-'+product._key}">
+
+                        <div class="context-link btn border" app-click="toggleContext(product._key)">
+                            <span class="icon black arrowdown sm"></span>
+                        </div>
+                        <div class="context dropdown text-left" style="display: none" app-attr="{id:'context-'+product._key}">
+                            <div class="link" app-click="edit('cafeproducts',product)">
+                                <span class="icon black edit left"></span>
+                                Edit
+                            </div>
+                            <div class="link" app-click="edit('cafeproducts',product,'delete')">
+                                <span class="icon black delete left"></span>
+                                Delete
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+     <div class="modal" app-show="view.modal == 'show_delete'" anim="{'enter':'fade-in','exit':'fade-out'}">
+
+        <div class="modal-body p-0" anim="{'enter':'move-up','duration':'0.2'}">
+
+            <div class="modal-header text-primary">
+                <div>
+                    <h4 class="text-light">
+                        Delete <span app-bind="new.name"></span>?
+                    </h4>
+                </div>
+                <div class="text-right">
+                    <h4 class="close-icon clickable" onclick="modalCloseAll()">&times;</h4>
+                </div>
+            </div>
+            <div class="grid col-2 pb-1 gap-1 text-left">
+                <div class="text-right pt-1">
+                    <a class="btn border w-100" app-click="modalCloseAll()">
+                        Cancel
+                    </a>
+                </div>
+
+                <div class="text-right pt-1">
+                    <a class="btn bg-secondary w-100" app-click="delete('cafeproducts',new._key)">
+                        Delete
+                        <span class="icon delete white right"></span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <%- include('../../dashboard/partials/modal/new_foodproduct.ejs') %>
+
+   

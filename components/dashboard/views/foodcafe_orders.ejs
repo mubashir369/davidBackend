@@ -1,0 +1,334 @@
+<% layout('dashboard.ejs') -%> <%- include ../../dashboard/partials/header.ejs
+%>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+/>
+<div class="page px-1 px-s-0 cafeOrder-page">
+  <div class="grid gap-3 col-12">
+    <div class="colspan-6 pb-0">
+      <input
+        type="text"
+        class="search colspan-2 border"
+        placeholder="Search..."
+        onkeyup="scope.cafeOrderSearch(this.value)"
+        spellcheck="false"
+      />
+    </div>
+    <div class="colspan-6 pb-0">
+      <div class="px-2 pb-0">
+        <select
+          className="ml-lg-10 dp-text-description mt-1 mt-md-0"
+          onchange="scope.cafe_order_sorting(this.value)"
+          style="width: 10rem; float: right"
+        >
+          <option value="">Status</option>
+          <option value="Pending">Pending</option>
+          <option value="Processing">Processing</option>
+          <option value="Pick your order">Pick your order</option>
+          <option value="Cancelled">Cancelled</option>
+          <option value="Delivering">Delivering</option>
+          <option value="Delivered">Delivered</option>
+          <option value="Completed">Completed</option>
+          <option value="Cancel Requested">Cancel Requested</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="px-2 pt-2 pb-0 hidden hidden-m">
+    <input
+      type="text"
+      class="search colspan-2 border"
+      placeholder="Search..."
+      app-model="view.search"
+      onkeyup="scope.searchApi('cafeproducts',this.value)"
+      spellcheck="false"
+    />
+  </div>
+
+  <!--div><a class="dp-btn color-white bg-primary dp-btn-glow-black mt-1" app-click="view.modal = 'show_edit'">Edit Details <span class="icon edit right white"></span></a></div-->
+
+  <div>
+    <div
+      class="table align-middle"
+      app-init="getallcafeorders('customers','getallcafeorders')"
+    >
+      <div class="row table-header">
+        <div class="cell middle pl-1">Order Id</div>
+        <div class="cell middle">Order Date</div>
+        <div class="cell middle">Transaction Id</div>
+        <div class="cell middle mobile-cell">Table Number</div>
+        <div class="cell middle mobile-cell">Total</div>
+        <!--div class="cell middle">Brand</div-->
+        <!-- <div class="cell middle" style="width: 12%;">Products</div> -->
+        <div class="cell middle text-left hidden-m">Pickup</div>
+        <div class="cell middle text-left hidden-m">Status</div>
+        <div class="cell middle text-left">ID Proof</div>
+        <div class="cell middle text-left">Customer</div>
+        <div class="cell middle text-center">Invoice</div>
+        <div class="cell middle text-center">Action</div>
+      </div>
+
+      <div class="row" app-for="product in customers">
+        <div
+          class="cell middle text-light capitalise clickable"
+          app-bind="product.transaction_id"
+        ></div>
+        <div
+          class="cell middle text-light capitalise clickable"
+          app-bind="parseNormalDate(product._created)"
+        ></div>
+        <div
+          class="cell middle text-light capitalise clickable"
+          app-bind="product.stripe_transcation_id"
+        ></div>
+        <div
+          class="cell middle text-light capitalise clickable"
+          app-bind="product.tableNumber"
+        ></div>
+
+        <div
+          class="cell middle text-light capitalise clickable"
+          app-bind="parsePrice(product.total)"
+        ></div>
+
+        <!-- <div class="cell middle" >                   
+
+                                             
+                            <div class="row tableCellScroll dp-scrollbar cafeOrder-prodCol">
+                               
+                                <div app-bind="product.items[0].name" class="salonOrder-page-qtyName"></div>
+                                <div app-show="product.items[0].quantity"><span class="d-flex align-items-center">Qty:<p app-bind="product.items[0].quantity"></p> X <p app-bind="parsePrice(product.items[0].price)"></p></span></div>
+
+                                <div app-bind="product.items[1].name" class="salonOrder-page-qtyName"></div>
+                                <div app-show="product.items[1].quantity"><span class="d-flex align-items-center">Qty:<p app-bind="product.items[1].quantity"></p> X <p app-bind="parsePrice(product.items[1].price)"></p></span></div>
+
+                                <div app-bind="product.items[2].name" class="salonOrder-page-qtyName"></div>
+                                <div app-show="product.items[2].quantity"><span class="d-flex align-items-center">Qty:<p app-bind="product.items[2].quantity"></p> X <p app-bind="parsePrice(product.items[2].price)"></p></span></div>
+
+                                <div app-bind="product.items[3].name" class="salonOrder-page-qtyName"></div>
+                                <div app-show="product.items[3].quantity"><span class="d-flex align-items-center">Qty:<p app-bind="product.items[3].quantity"></p> X <p app-bind="parsePrice(product.items[3].price)"></p></span></div>
+
+                                <div app-bind="product.items[4].name" class="salonOrder-page-qtyName"></div>
+                                <div app-show="product.items[4].quantity"><span class="d-flex align-items-center">Qty:<p app-bind="product.items[4].quantity"></p> X <p app-bind="parsePrice(product.items[4].price)"></p></span></div>
+
+                                <div app-bind="product.items[5].name" class="salonOrder-page-qtyName"></div>
+                                <div app-show="product.items[5].quantity"><span class="d-flex align-items-center">Qty:<p app-bind="product.items[5].quantity"></p> X <p app-bind="parsePrice(product.items[5].price)"></p></span></div>
+
+                                <div app-bind="product.items[6].name"></div>
+                                <div app-show="product.items[6].quantity"><span>Qty:<p app-bind="product.items[6].quantity"></p> X <p app-bind="parsePrice(product.items[6].price)"></p></span></div>
+
+                                <div app-bind="product.items[7].name"></div>
+                                <div app-show="product.items[7].quantity"><span>Qty:<p app-bind="product.items[7].quantity"></p> X <p app-bind="parsePrice(product.items[7].price)"></p></span></div>
+
+                                <div app-bind="product.items[8].name"></div>
+                                <div app-show="product.items[8].quantity"><span>Qty:<p app-bind="product.items[8].quantity"></p> X <p app-bind="parsePrice(product.items[8].price)"></p></span></div>
+
+                                <div app-bind="product.items[9].name"></div>
+                                <div app-show="product.items[9].quantity"><span>Qty:<p app-bind="product.items[9].quantity"></p> X <p app-bind="parsePrice(product.items[9].price)"></p></span></div>
+
+                                <div app-bind="product.items[10].name"></div>
+                                <div app-show="product.items[10].quantity"><span>Qty:<p app-bind="product.items[10].quantity"></p> X <p app-bind="parsePrice(product.items[10].price)"></p></span></div>
+                            </div>                        
+                       
+      
+                    </div> -->
+
+        <div
+          class="cell middle text-light capitalise clickable"
+          app-bind="product.pickup"
+        ></div>
+        <div
+          class="cell middle text-light capitalise clickable"
+          app-bind="product.order_status"
+        ></div>
+        <div class="cell middle text-bold p-1 clickable">
+          <div app-show="product.liquor_img">
+            <a app-click="gotoImg(product.liquor_img)" target="_blank"
+              ><img
+                app-src="product.liquor_img"
+                src="/images/products/Product_placeholder.svg"
+            /></a>
+          </div>
+          <div app-hide="product.liquor_img">Under 18</div>
+        </div>
+        <div class="cell middle">
+          <span>
+            <a app-bind="product.customer[0].name.first"></a>
+            <a app-bind="product.customer[0].name.last"></a>
+          </span>
+          <div app-bind="product.customer[0].email"></div>
+        </div>
+        <div
+          class="cell middle text-center capitalise clickable"
+          app-click="downloadInvoice(product.transaction_id,product.customer[0].name.first,product.customer[0].name.last,product.customer[0].email,'Foodcafe Product Invoice')"
+        >
+          <i class="fa fa-download" style="font-size: 24px"></i>
+        </div>
+        <div class="cell middle text-center capitalise clickable">
+          <button
+            app-click="edit('cafeproducts',product)"
+            class="dp-btn bg-primary"
+          >
+            View
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="paginationID" class="pagination"></div>
+</div>
+
+<%- include('../../dashboard/partials/modal/new_foodorder.ejs') %>
+
+<div
+  class="modal"
+  app-show="view.modal == 'show_delete'"
+  anim="{'enter':'fade-in','exit':'fade-out'}"
+>
+  <div class="modal-body" anim="{'enter':'move-up','duration':'0.2'}">
+    <div class="grid col-2 pb-1 gap-1 text-left">
+      <div>
+        <h4 class="text-light">Delete <span app-bind="new.name"></span>?</h4>
+      </div>
+      <div class="text-right">
+        <h4 class="close-icon clickable" onclick="modalCloseAll()">&times;</h4>
+      </div>
+
+      <div class="text-right pt-1">
+        <a class="btn border w-100" app-click="modalCloseAll()"> Cancel </a>
+      </div>
+
+      <div class="text-right pt-1">
+        <a
+          class="btn bg-secondary w-100"
+          app-click="delete('cafeproducts',new._key)"
+        >
+          Delete
+          <span class="icon delete white right"></span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  let starting = 1;
+  var pagePagination = {
+    code: "",
+    Extend: function (data) {
+      data = data || {};
+      pagePagination.size = data.size || 0;
+      pagePagination.page = data.page || 0;
+      pagePagination.step = data.step || 0;
+    },
+    Add: function (p, q) {
+      for (var l = p; l < q; l++) {
+        pagePagination.code += "<a>" + l + "</a>";
+      }
+    },
+    Last: function () {
+      pagePagination.code += "<i>...</i><a>" + pagePagination.size + "</a>";
+    },
+    First: function () {
+      pagePagination.code += "<a>1</a><i>...</i>";
+    },
+    Click: function () {
+      pagePagination.page = +this.innerHTML;
+      pagePagination.Start();
+    },
+    Prev: function () {
+      pagePagination.page--;
+      //scope.changepage(pagePagination.page)
+      if (pagePagination.page < 1) {
+        pagePagination.page = 1;
+      }
+      pagePagination.Start();
+    },
+    Next: function () {
+      pagePagination.page++;
+      //scope.changepage(pagePagination.page)
+      if (pagePagination.page > pagePagination.size) {
+        pagePagination.page = pagePagination.size;
+      }
+      pagePagination.Start();
+    },
+    Bind: function () {
+      var a = pagePagination.e.getElementsByTagName("a");
+      for (var num = 0; num < a.length; num++) {
+        if (+a[num].innerHTML === pagePagination.page)
+          a[num].className = "current";
+        a[num].addEventListener("click", pagePagination.Click, false);
+      }
+      console.log(pagePagination.page);
+      //scope.changepage(pagePagination.page)
+    },
+    Finish: function () {
+      pagePagination.e.innerHTML = pagePagination.code;
+      pagePagination.code = "";
+      pagePagination.Bind();
+    },
+    Start: function () {
+      if (pagePagination.size < pagePagination.step * 2 + 6) {
+        pagePagination.Add(1, pagePagination.size + 1);
+      } else if (pagePagination.page < pagePagination.step * 2 + 1) {
+        pagePagination.Add(1, pagePagination.step * 2 + 4);
+        pagePagination.Last();
+      } else if (
+        pagePagination.page >
+        pagePagination.size - pagePagination.step * 2
+      ) {
+        pagePagination.First();
+        pagePagination.Add(
+          pagePagination.size - pagePagination.step * 2 - 2,
+          pagePagination.size + 1
+        );
+      } else {
+        pagePagination.First();
+        pagePagination.Add(
+          pagePagination.page - pagePagination.step,
+          pagePagination.page + pagePagination.step + 1
+        );
+        pagePagination.Last();
+      }
+
+      console.log(pagePagination.page);
+      pagePagination.Finish();
+
+      if (starting !== pagePagination.page) {
+        scope.changepage(pagePagination.page);
+        starting = pagePagination.page;
+      }
+    },
+    Buttons: function (e) {
+      var nav = e.getElementsByTagName("a");
+      nav[0].addEventListener("click", pagePagination.Prev, false);
+      nav[1].addEventListener("click", pagePagination.Next, false);
+    },
+    Create: function (e) {
+      var html = [
+        "<a>◄</a>", // previous button
+        "<span></span>", // paginationID container
+        "<a>►</a>", // next button
+      ];
+      e.innerHTML = html.join("");
+      pagePagination.e = e.getElementsByTagName("span")[0];
+      pagePagination.Buttons(e);
+    },
+    Init: function (e, data) {
+      pagePagination.Extend(data);
+      pagePagination.Create(e);
+      pagePagination.Start();
+    },
+  };
+
+  var init = function (data) {
+    console.log(data, "ddddddd");
+    pagePagination.Init(document.getElementById("paginationID"), {
+      size: data,
+      page: 1,
+      step: 5,
+    });
+  };
+  
+
+</script>

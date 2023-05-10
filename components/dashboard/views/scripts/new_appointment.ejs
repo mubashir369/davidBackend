@@ -1,0 +1,817 @@
+
+<script>
+
+    extendedController = function(){
+
+        scope.view.show_repeat = true
+
+        scope.newAppointment = function(type, data){
+
+            if (type == 'get'){
+
+                scope.get('appointments',data).then((appt_data)=>{
+
+                    scope.appointment = appt_data[0]
+
+                }).catch((err)=>{
+                    scope.notify(err,'error')
+                })
+
+            } else if (type == 'edit'){
+
+                scope.new_appointment = data
+
+            } else if (type == 'add_customer'){
+
+                scope.view.selected_customer = data
+            //    localStorage.setItem('appointment_customer',JSON.stringify(data))
+                scope.view.search = ''
+                scope.view.select_service = true
+                scope.storeNewAppointment()
+
+                scope.post('appointments/findClientPreviousAppointments/',{customer_id:scope.view.selected_customer._key}).then((prev_data)=>{
+
+                    scope.prev_appointments = prev_data
+
+                }).catch((err)=>{
+                    scope.notify(err,'error')
+                })
+
+            } else if (type == 'remove_customer'){
+
+                scope.view.selected_customer = {}
+            //    localStorage.setItem('appointment_customer','')
+                scope.view.search = ''
+                scope.view.select_service = false
+
+                scope.storeNewAppointment('reset')
+
+            } else if (type == 'remove'){
+
+                if (!scope.visual_appointments || !scope.visual_appointments[data]){
+                    return
+                }
+
+                scope.appointments = scope.appointments.filter((item,i)=>{
+                    return scope.visual_appointments[data].linked.indexOf(i+'') === -1
+                })
+
+                scope.visual_appointments.splice(data,1)
+
+                if (scope.appointments.length == 0){
+                    scope.view.ok_to_book = false
+                    scope.new_appointment.start_time = moment(scope.query.date).format('H:mm')
+                }
+
+                scope.storeNewAppointment()
+
+            } else if (type == 'set_absence'){
+
+                scope.new_appointment.description = data
+
+            } else if (type == 'set_event_type'){
+
+                scope.new_appointment.event_type = data
+
+            } else if (type == 'set_start'){
+
+                scope.selectDate(data, 'start','time')
+                scope.new_appointment.start_time = data
+                scope.view.select_start_time = false
+
+            } else if (type == 'set_end'){
+
+                scope.selectDate(data, 'end','time')
+                scope.new_appointment.end_time = data
+                scope.view.select_start_time = false
+
+            } else if (type == 'toggle_closed'){
+
+                scope.selectDate('8:00', 'start','time')
+                scope.selectDate('22:00', 'end','time')
+                scope.new_appointment.start_time = 'closed'
+                scope.new_appointment.end_time = 'closed'
+
+            } else if (type == 'set_duration'){
+
+                scope.new_appointment.duration = data
+                scope.view.select_duration = false
+
+            } else if (type == 'get_price'){
+
+                if (scope.new_appointment.service && scope.new_appointment.service.prices && scope.new_appointment.service.prices.length > 0){
+                    return parseFloat(scope.new_appointment.service.prices[data].value).toFixed(2)
+                }
+
+            } else if (type == 'add_stylist'){
+
+                scope.new_appointment.staff_id = data._key
+                scope.new_appointment.staff_name = data.name.first+' '+data.name.last
+                scope.new_appointment.staff_level = data.level
+                scope.view.select_stylist = false
+
+                if (scope.new_appointment.event_type != 'customer_appointment'){
+                    scope.view.selected_customer = data
+                }
+
+            } else if (type == 'add_service'){
+
+                scope.new_appointment.service_id = data._key
+                scope.new_appointment.service = data
+                scope.new_appointment.duration = data.duration
+                scope.view.search = data.name
+                scope.view.search_results = false
+                scope.staff = JSON.parse(JSON.stringify(scope.staff))
+
+                scope.get('appointments',scope.new_appointment.date+'/staff_availability','staff_availability')
+
+            } else if (type == 'rebook'){
+
+                scope.new_appointment.note = data.note
+
+                scope.new_appointment.service_id = data.service._key
+                scope.new_appointment.service = data.service
+                scope.new_appointment.duration = data.service.duration
+                scope.view.search = data.service.name
+                scope.view.search_results = false
+                scope.staff = JSON.parse(JSON.stringify(scope.staff))
+
+                scope.newAppointment('push')
+
+            } else if (type == 'rebook_stylist'){
+
+                scope.new_appointment.staff_id = data.stylist._key
+                scope.new_appointment.staff_name = data.stylist.name.first+' '+data.stylist.name.last
+                scope.new_appointment.staff_level = data.stylist.level
+                scope.new_appointment.note = data.note
+
+                scope.new_appointment.service_id = data.service._key
+                scope.new_appointment.service = data.service
+                scope.new_appointment.duration = data.service.duration
+                scope.view.search = data.service.name
+                scope.view.search_results = false
+                scope.staff = JSON.parse(JSON.stringify(scope.staff))
+
+                scope.newAppointment('push')
+
+            //    scope.get('appointments',scope.new_appointment.date+'/staff_availability','staff_availability')
+
+            } else if (type == 'push'){
+
+                scope.view.previous_appointments = false
+
+                let start_time
+
+                if (scope.new_appointment.event_type == 'customer_appointment'){
+
+                    if (!scope.new_appointment.staff_id){
+                        scope.notify('Please select a stylist','error')
+                        return
+                    }
+                    if (!scope.new_appointment.start_time){
+                        scope.notify('Please select a start time','error')
+                        return
+                    }
+                    if (!scope.new_appointment.service){
+                        scope.notify('Please select a service','error')
+                        return
+                    }
+                    if (!scope.new_appointment.duration){
+                        scope.notify('Please select a duration','error')
+                        return
+                    }
+
+                    let start_time = scope.new_appointment.start_time.split(':'),
+                        date,
+                        end_date,
+                        last_task = scope.new_appointment.service.service_items[scope.new_appointment.service.service_items.length-1],
+                        visual_date,
+                        visual_linked = []
+
+                    for (var i in scope.new_appointment.service.service_items){
+
+                        if (i == 0){
+
+                            date = scope.selected_date.obj.set({hours:start_time[0],minutes:start_time[1]})
+                            visual_date = date
+
+                            end_date = moment(date).add(scope.new_appointment.service.service_items[i].duration,'minutes')
+
+                        } else {
+
+                            if (scope.new_appointment.service.service_items && scope.new_appointment.service.service_items[i-1] && scope.new_appointment.service.service_items[i-1].wait_time){
+
+                                date = moment(end_date).add(scope.new_appointment.service.service_items[i-1].wait_time,'minutes')
+                                end_date = moment(date).add(scope.new_appointment.service.service_items[i].duration,'minutes')
+
+                            } else {
+                                date = moment(end_date)
+                                end_date = moment(date).add(scope.new_appointment.service.service_items[i].duration,'minutes')
+                            }
+
+                        }
+
+                        scope.new_appointment.service.service_items[i].date = date.toISOString()
+                        scope.new_appointment.service.service_items[i].staff_name = scope.new_appointment.staff_name
+
+                        let appointment = {
+                                event_type: scope.new_appointment.event_type,
+                                service_name:scope.new_appointment.service.service_items[i].name,
+                                service_id:scope.new_appointment.service_id,
+                                staff_id:scope.new_appointment.staff_id,
+                                staff_name: scope.new_appointment.staff_name,
+                                date: date.format('HH:mm'),
+                                end_date:end_date.format('HH:mm')
+                            }
+
+                        if (scope.new_appointment.note){
+                            appointment.note = scope.new_appointment.note
+                        }
+
+                        if (scope.new_appointment.service.salon_confirmation){
+                            appointment.salon_confirmation = scope.new_appointment.service.salon_confirmation
+                        }
+
+                        if (appointment.service_name){
+
+                            scope.appointments.push(appointment)
+                            visual_linked.push((scope.appointments.length-1)+'')
+
+                            let next_appt_time = moment(end_date.toISOString()).utc()
+
+                            if (last_task && last_task.wait_time){
+                                next_appt_time = next_appt_time.add(last_task.wait_time,'minutes')
+                            }
+
+                            if (i >= scope.new_appointment.service.service_items.length-1){
+
+                                let visual_data = JSON.parse(JSON.stringify(scope.new_appointment.service))
+
+                                if (visual_data.service_items.length == 1){
+                                    visual_data.staff_name = scope.new_appointment.staff_name
+                                    delete visual_data.service_items
+                                }
+                                visual_data.date = visual_date.toISOString()
+                                visual_data.linked = visual_linked
+                                visual_data.price = scope.newAppointment('get_price',scope.new_appointment.staff_level)
+
+                                scope.visual_appointments.push(visual_data)
+
+                                scope.new_appointment = {
+                                    service_id:'',
+                                    staff_id:scope.new_appointment.staff_id,
+                                    staff_name: scope.new_appointment.staff_name,
+                                    staff_level: scope.new_appointment.staff_level,
+                                    duration:'',
+                                    event_type: 'customer_appointment',
+                                    start_time :next_appt_time.format('HH:mm')
+                                }
+                                scope.selectDate(scope.new_appointment.start_time,false,'time')
+                                break;
+                            }
+
+                        }
+
+                    }
+
+                } else if (scope.new_appointment.event_type == 'staff_appointment'){
+
+
+
+                    if (!scope.new_appointment.description){
+                        scope.notify('Please select a reason','error',10,'fa-exclamation-circle')
+                        return
+                    }
+                    if (!scope.selected_end_date || !scope.selected_end_date.full){
+                        scope.notify('Please add a duration or end date','error',10,'fa-exclamation-circle')
+                        return
+                    }
+
+                    if (scope.selected_end_date.obj.isBefore(scope.selected_date.obj)){
+                        scope.notify('Please select a duration, or a specific date which after the start date','error',20,'fa-exclamation-circle')
+                        return
+                    }
+
+                    if (!scope.new_appointment.reoccurence && !scope.new_appointment.reoccurences && !scope.new_appointment.reoccurence_interval){
+                    } else if (scope.new_appointment.reoccurence && scope.new_appointment.reoccurences && scope.new_appointment.reoccurence_interval){
+
+                        if (isNaN(scope.new_appointment.reoccurence) || isNaN(scope.new_appointment.reoccurences)){
+                            scope.notify('Entered repeat fields must be numbers','error',20,'fa-exclamation-circle')
+                            return
+                        }
+
+                        if (scope.new_appointment.reoccurence == 0 || scope.new_appointment.reoccurences == 0){
+                            scope.notify('Repeat fields must be greater than 0','error',20,'fa-exclamation-circle')
+                            return
+                        }
+
+                        if (scope.new_appointment.reoccurences > 366){
+                            scope.notify('Please specify fewer than 366 occurences','error',20,'fa-exclamation-circle')
+                            return
+                        }
+
+                    } else {
+                        scope.notify('Please complete all repeat fields','error',20,'fa-exclamation-circle')
+                        return
+                    }
+
+                    date = scope.selected_date.full
+                    end_date = scope.selected_end_date.full
+
+                    if (scope.new_appointment.start_time == 'closed'){
+
+                        let appointment = {
+                                event_type: 'staff_appointment',
+                                description: 'closed',
+                                staff_id: 'all',
+                                staff_name: 'Salon is closed',
+                                date: date,
+                                end_date:end_date
+                            }
+
+                        scope.view.selected_customer = {
+                            _key: 'available'
+                        }
+
+                        if (appointment.description){
+
+                            scope.appointments = []
+
+                            scope.appointments.push(appointment)
+
+                            if (scope.new_appointment.reoccurence && scope.new_appointment.reoccurences && scope.new_appointment.reoccurence_interval){
+
+                                for (var i=1;i<parseInt(scope.new_appointment.reoccurences);i++){
+
+                                    let new_appointment = JSON.parse(JSON.stringify(appointment)),
+                                        ii = parseInt(scope.new_appointment.reoccurence)*i
+
+                                    new_appointment.date = moment(appointment.date).utc().add(ii,scope.new_appointment.reoccurence_interval).toISOString()
+                                    new_appointment.end_date = moment(appointment.end_date).utc().add(ii, scope.new_appointment.reoccurence_interval).toISOString()
+
+                                    scope.appointments.push(new_appointment)
+
+                                }
+
+                            }
+
+                        }
+
+                    } else if (scope.new_appointment.staff_id == 'all' && scope.staff){
+
+                        scope.appointments = []
+                        scope.view.selected_customer = {
+                            _key: 'available'
+                        }
+
+                        for (var stylist in scope.staff){
+
+                            if (typeof scope.staff[stylist]._key == 'undefined'){
+                                continue;
+                            }
+
+                            let appointment = {
+                                    event_type:scope.new_appointment.event_type,
+                                    description:scope.new_appointment.description,
+                                    staff_id: scope.staff[stylist]._key,
+                                    staff_name: scope.parseName(scope.staff[stylist].name),
+                                    staff_level: scope.staff[stylist].level,
+                                    date: date,
+                                    end_date:end_date
+                                }
+
+                            if (appointment.description){
+
+                                scope.appointments.push(appointment)
+
+                                if (scope.new_appointment.reoccurence && scope.new_appointment.reoccurences && scope.new_appointment.reoccurence_interval){
+
+                                    for (var i=1;i<parseInt(scope.new_appointment.reoccurences);i++){
+
+                                        let new_appointment = JSON.parse(JSON.stringify(appointment)),
+                                            ii = parseInt(scope.new_appointment.reoccurence)*i
+
+                                        new_appointment.date = moment(appointment.date).utc().add(ii,scope.new_appointment.reoccurence_interval).toISOString()
+                                        new_appointment.end_date = moment(appointment.end_date).utc().add(ii, scope.new_appointment.reoccurence_interval).toISOString()
+
+                                        scope.appointments.push(new_appointment)
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    } else {
+
+                        let appointment = {
+                                event_type:scope.new_appointment.event_type,
+                                description:scope.new_appointment.description,
+                                staff_id:scope.new_appointment.staff_id,
+                                staff_name: scope.new_appointment.staff_name,
+                                staff_level: scope.new_appointment.staff_level,
+                                date: date,
+                                end_date:end_date
+                            }
+
+                        if (appointment.description){
+
+                            scope.appointments = []
+
+                            scope.appointments.push(appointment)
+
+                            if (scope.new_appointment.reoccurence && scope.new_appointment.reoccurences && scope.new_appointment.reoccurence_interval){
+
+                                for (var i=1;i<parseInt(scope.new_appointment.reoccurences);i++){
+
+                                    let new_appointment = JSON.parse(JSON.stringify(appointment)),
+                                        ii = parseInt(scope.new_appointment.reoccurence)*i
+
+                                    new_appointment.date = moment(appointment.date).add(ii,scope.new_appointment.reoccurence_interval).toISOString()
+                                    new_appointment.end_date = moment(appointment.end_date).add(ii, scope.new_appointment.reoccurence_interval).toISOString()
+
+                                    scope.appointments.push(new_appointment)
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                    // scope.selectDate(end_date)
+                    scope.view.modal = 'staff_absence_confirm'
+                    return
+
+
+                } else if (scope.new_appointment.event_type == 'memo'){
+
+                    date = scope.selected_date.full
+
+                    let appointment = {
+                            event_type:scope.new_appointment.event_type,
+                            description:scope.new_appointment.description,
+                            staff_id:scope.new_appointment.staff_id,
+                            staff_name: scope.new_appointment.staff_name,
+                            date: date,
+                            end_date: moment(date).add(30,'minutes')
+                        }
+
+                    if (appointment.description){
+                        scope.appointments.push(appointment)
+                        scope.new_appointment = {
+                            description:'',
+                            staff_id:scope.new_appointment.staff_id,
+                            event_type: 'memo'
+                        }
+                    }
+
+                }
+
+                scope.appointments.sort(function(a,b){
+                    return a.date - b.date
+                })
+
+                scope.storeNewAppointment()
+
+                scope.view.search = ''
+
+                if (moment().isAfter(scope.selected_date.obj)){
+                    scope.notify('Appointment date or time is in the past', false, 5, 'fa-clock')
+                }
+
+                scope.view.ok_to_book = true
+
+            } else if (type == 'save'){
+
+                scope.notify('Saving, please wait...')
+
+                let payload_date = scope.selected_date.full
+
+                var payload = {
+                    appointments: scope.appointments,
+                    customer_id: scope.view.selected_customer._key,
+                    paid: false,
+                    source: 'Booked in salon',
+                    selected_date:payload_date
+                }
+
+                if (scope.appointments.length > 0){
+
+                    payload_date = scope.appointments[0].date
+
+                    if (payload_date.match(/^[0-9][0-9]:[0-9][0-9]$/)){
+                        payload_date = scope.selected_date.full
+                    }
+
+                    payload.range = {
+                        start: moment(scope.appointments[0].date).set({hours:0,minutes:0,seconds:0}).toISOString(),
+                        end: moment(scope.appointments[0].end_date).set({hours:23,minutes:59,seconds:59}).toISOString()
+                    }
+
+                    scope.appointments.map((appt) => {
+
+                        if (appt.date < payload.range.start){
+                            payload.range.start = moment(appt.date).set({hours:0,minutes:0,seconds:0}).toISOString()
+                        }
+
+                        if (appt.end_date > payload.range.end){
+                            payload.range.end = moment(appt.end_date).set({hours:23,minutes:59,seconds:59}).toISOString()
+                        }
+
+                    })
+
+                }
+
+                if (scope.new_appointment.note){
+                    payload.note = scope.new_appointment.note
+                }
+
+                if (scope.selected_end_date && scope.selected_end_date.full){
+                    payload.end_date = scope.selected_end_date.full
+                }
+
+                 // console.log(payload)
+
+                 let url = '/api/appointments'
+                 if (data && data == 'staff_availability'){
+                     url = '/api/appointments/add_staff_availability'
+                 }
+
+                http('post', url, payload)
+                    .then((data)=>{
+
+                        scope.notify('Saved','success').then(()=>{
+                            scope.storeNewAppointment('reset')
+
+                            let url = '/api/transactions/search_carts?str='+scope.parseName(scope.view.selected_customer.name)
+
+                            http(url)
+                                .then((data) => {
+
+                                    let url = "/dashboard/calendar"
+                                    if (data){
+                                        data = JSON.parse(data)
+                                        if (data[0].id){
+                                            url= "/dashboard/checkout/"+data[0].id.replace(/cart\_/,'')+'?page=client_details'
+                                        } else {
+                                            url = "/dashboard/calendar"
+                                        }
+                                    } else {
+                                        url = "/dashboard/calendar"
+                                    }
+
+                                    window.location.href = url
+
+                                }).catch((err)=>{
+                                    window.location.href = "/dashboard/calendar"
+                                })
+
+                            // window.location.href = "/dashboard/calendar"
+                        })
+
+                    }).catch((data)=>{
+
+                        scope.notify(data,'error')
+                    })
+
+            } else if (type == 'new_appointment_customer'){
+
+            //    localStorage.setItem('appointment_customer',JSON.stringify(data))
+                window.location.href = "/dashboard/calendar/new-appointment/today"
+
+            }
+
+        }
+
+        scope.saveClient = function(){
+
+            scope.post('customers',scope.new).then((cust_data)=>{
+                scope.view.modal = false
+                scope.client_profile = cust_data
+                scope.notify('Saved')
+            }).catch((err)=>{
+
+                scope.notify(err,'error',15,'fa-exclamation-circle')
+
+            })
+
+        }
+
+
+        scope.newStaffAppointment = function(type, data){
+
+            if (type == 'set_reason'){
+
+                scope.new_appointment.description = data
+                scope.new_appointment.status = 'staff_appointment'
+                scope.get('salon','54855602').then((salon_data)=>{
+                    let day_num = moment(scope.selected_date.full).format('d')
+
+                    if (salon_data.opening_times[day_num]){
+                        scope.view.salon_open = scope.salon.opening_times[day_num].open
+                        scope.view.salon_close = scope.salon.opening_times[day_num].close
+                    } else {
+                        scope.view.salon_open = false
+                        scope.view.salon_close = false
+                    }
+
+                })
+
+                if (data == 'not_available'){
+                    scope.new_appointment.not_available = true
+                } else {
+                    scope.new_appointment.not_available = false
+                }
+
+            } else if (type == 'get'){
+
+                let found_availability = <% if (typeof availability != 'undefined'){ %><%- JSON.stringify(availability) %><% } else { %>false<% } %>;
+                // if (found_availability && found_availability[0]){
+                //     scope.new_appointment.description = found_availability[0].description
+                //     scope.newAppointment('set_start',moment(found_availability[0].date).utc().format('HH:mm'))
+                //     scope.newAppointment('set_end',moment(found_availability[0].end_date).utc().format('HH:mm'))
+                // }
+
+            } else if (type == 'set_opening_times'){
+
+                scope.new_appointment.description = 'available'
+                scope.new_appointment.status = 'staff_appointment'
+                scope.new_appointment.staff_id = 'all'
+
+                scope.get('staff','all')
+
+                scope.get('salon','54855602').then((salon_data)=>{
+
+                    let day_num = moment(scope.selected_date.full).format('d')
+
+                    if (salon_data.opening_times[day_num]){
+
+                        scope.view.salon_open = scope.salon.opening_times[day_num].open
+                        scope.view.salon_close = scope.salon.opening_times[day_num].close
+
+                        if (!scope.view.salon_open || scope.view.salon_open == 'undefined' || scope.view.salon_open == 'closed'){
+                            scope.view.salon_open = '9:00'
+                        }
+
+                        if (!scope.view.salon_close || scope.view.salon_close == 'undefined' || scope.view.salon_close == 'closed'){
+                            scope.view.salon_close = '17:00'
+                        }
+
+                    //    scope.view.show_repeat = false
+
+                        scope.get('salon',scope.selected_date.full+'/is_open').then((avail_data)=>{
+
+                            if (avail_data && avail_data.open !== false){
+
+                                scope.newAppointment('set_start',avail_data.open)
+                                scope.newAppointment('set_end',avail_data.close)
+
+                                if (avail_data.note){
+                                    scope.new_appointment.note = avail_data.note
+                                }
+
+                            } else {
+                                scope.newAppointment('set_start',scope.view.salon_open)
+                                scope.newAppointment('set_end',scope.view.salon_close)
+                            }
+                        })
+
+                    } else {
+                        scope.view.salon_open = false
+                        scope.view.salon_close = false
+                    }
+
+                })
+
+            } else if (type == 'full_day'){
+
+                scope.new_appointment.end = 'full_day'
+                scope.new_appointment.end_time = false
+                scope.new_appointment.original_date = moment(scope.selected_date.full)
+
+                scope.selectDate(scope.selected_date.full,'end')
+
+                if (scope.view.salon_open && scope.view.salon_close){
+                    scope.selectDate(scope.view.salon_open,false,'time')
+                    scope.selectDate(scope.view.salon_close,'end','time')
+                } else {
+                    scope.notify('Salon open and closing times are not available for this day','error')
+                }
+
+
+            } else if (type == 'set_end'){
+
+                scope.view.set_end_date = false
+
+                if (scope.new_appointment.end = 'full_day' && scope.new_appointment.original_date){
+                    scope.new_appointment.end = ''
+                    scope.selectDate(scope.new_appointment.original_date.format('HH:mm'),false,'time')
+                }
+
+                scope.selectDate(false, 'end')
+
+                if (data.match(/\:/)){
+
+                    scope.selectDate(data,'end','time')
+
+                } else {
+
+                    if (scope.new_appointment && scope.new_appointment.original_date){
+                        scope.selectDate(scope.new_appointment.original_date)
+                    }
+                    data_int = parseInt(data)
+                    data_int = moment(scope.selected_date.full).utc().add(data_int,'minutes').format('HH:mm')
+                    scope.selectDate(data_int,'end','time')
+
+                }
+
+                scope.new_appointment.end_time = data
+
+            } else if (type == 'show_end_date'){
+
+                scope.view.modal = 'set_end'
+                scope.new_appointment.end_time = false
+
+                if (scope.selected_end_date.obj.isSame(scope.selected_date.obj,'day')){
+                    scope.view.show_repeat = true
+                } else {
+                    scope.view.show_repeat = false
+                }
+
+
+            } else if (type == 'set_reoccurence'){
+
+                scope.new_appointment.reoccurence = parseInt(data)
+
+            } else if (type == 'set_reoccurence_interval'){
+
+                scope.view.reoccurence_interval = false
+                scope.new_appointment.reoccurence_interval = data
+
+                if (!scope.new_appointment.reoccurence){
+                    scope.new_appointment.reoccurence = 1
+                }
+
+            } else if (type == 'remove'){
+
+                scope.appointments.splice(data,1)
+
+            } else if (type == 'set_end_date'){
+
+                scope.selectDate(false,'end')
+
+            }
+
+        }
+
+        scope.storeNewAppointment = function(reset){
+
+            if (reset == 'cancel'){
+
+                localStorage.setItem('appointment_payload','')
+                window.location.href = '/dashboard/calendar'
+
+            } else if (reset){
+
+                localStorage.setItem('appointment_payload','')
+
+            } else {
+
+                var payload = {
+                    appointments: scope.appointments,
+                    customer_id: scope.view.selected_customer._key,
+                    paid: false,
+                    source: 'Booked in salon',
+                    date: scope.view.appointment_date,
+                    customer: scope.view.selected_customer
+                }
+
+                localStorage.setItem('appointment_payload',JSON.stringify(payload))
+            }
+
+        }
+
+        scope.parseInterval = function(input){
+
+            if (input == 'new_appointment.reoccurence_interval'){
+                input = 'Select...'
+            }
+            if (input){
+                return input.replace(/s/,'')
+            } else {
+                return 'Select...'
+            }
+        }
+
+        scope.capitalise = function (str, lower = false){
+            return (lower ? str.toLowerCase() : str).replace(/(?:^|\s|["'[{])+\S/g, match => match.toUpperCase());
+        }
+
+}
+
+
+</script>

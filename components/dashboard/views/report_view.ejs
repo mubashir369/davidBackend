@@ -1,0 +1,34 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+
+    <div class="page" style="white-space: normal">
+
+            <div>
+                <% if (typeof template == 'string' && template.length > 0 &&  result != false){ %>
+
+                    <%- include("../../dashboard/report_templates/"+template+".ejs") %>
+
+                <% } else if (typeof error !='undefined'){ %>
+
+                    <%- error %>
+                    
+                <% } else { %>
+
+                    <div class="vh-100 flex flex-middle">
+                        Please wait <span class="icon time black right"></span>
+                    </div>
+
+                    <script>
+
+                        setInterval(function(){
+                            window.location.reload()
+                        },5000)
+
+                    </script>
+
+                <% } %>
+            </div>
+
+
+    </div>

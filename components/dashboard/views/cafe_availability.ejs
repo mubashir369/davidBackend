@@ -1,0 +1,79 @@
+<% layout('dashboard.ejs') -%>
+<%- include ../../dashboard/partials/header.ejs %>
+<div class="page grid col-12 col-s-1 client overflow-hidden" app-init="getCafeTime()">
+
+    <div class="colspan-10 pr-2">
+
+        <div class="p-1 bg-secondary p-1 radius-10 box-shadow dashboard-card">
+            <div class="capitalise text-bold  dp-text-subTitle2 text-white" app-bind="cafe.name"></div>
+            <div><a class="dp-btn color-white bg-primary dp-btn-glow-black mt-1" app-click="view.modal = 'show_edit'">Edit Details <span class="icon edit right white"></span></a></div>
+        </div>
+
+        <div class="p-1 mt-1 salon-timimg-box">
+            <div app-for="time in cafe.opening_times" class="grid col-3 gap-1">
+                <div class="" app-bind="getDay({{index}})"></div>
+                <div class="text-right text-weight-500" app-bind="time.open"></div>
+                <div class="text-right text-weight-500" app-bind="time.close"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="modal" app-show="view.modal == 'show_edit'" anim="{'enter':'fade-in'}">
+
+    <div class="modal-body p-0 w-80 w-m-90" anim="{'enter':'move-up','duration':'0.2'}">
+
+        <div class="modal-header text-primary">
+            <div class="title">
+                <p class="m-0">Cafe Availability</p>
+            </div>
+            <div class="close">
+                <span class="icon close white clickable" onclick="modalCloseAll()"></span>
+            </div>
+        </div>
+
+        <div class="modal-content p-2">
+
+            <div class="grid col-1 gap-2">
+
+                
+                <div>
+                    <label>Opening and Closing times</label>
+                    <div class="grid col-3 gap-1 mb-1">
+
+                        <% for (var day in [0,1,2,3,4,5,6]){ %>
+                            <div class="" app-bind="getDay('<%- day %>')"></div>
+                            <div class="">
+                                <select app-model="cafe.opening_times[<%- day %>].open" class="rounded">
+                                    <option app-value="closed">Closed</option>
+                                    <option app-for="hrs in getHrs" app-value="hrs" app-bind="hrs"></option>
+                                </select>
+                            </div>
+                            <div class="">
+                                <select app-model="cafe.opening_times[<%- day %>].close" class="rounded">
+                                    <option value="closed">Closed</option>
+                                    <option app-for="hrs_close in getHrs" app-value="hrs_close" app-bind="hrs_close"></option>
+                                </select>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="modal-appointment-actions flex flex-middle-right">
+            <a class="btn border" onclick="modalCloseAll()">
+                <span>Cancel</span>
+                <span class="icon close right black"></span>
+            </a>
+            <a class="btn bg-secondary" app-click="saveCafe(cafe)">
+                <span>Save</span>
+                <span class="icon add right white"></span>
+            </a>
+        </div>
+
+    </div>
+
+</div>

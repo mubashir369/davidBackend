@@ -1,0 +1,232 @@
+.thirds {
+
+    &-wrap {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-gap: 2rem;
+
+        @media small {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    &-box {
+
+        h2 {
+            font-size: 1.625rem;
+            margin-bottom: 4.375rem;
+        }
+
+        .third {
+
+            border-radius: $border-radius;
+            background-color: white;
+            box-shadow: $shadow;
+            padding: 2.438rem;
+            font-size: 1rem;
+            color: $text-grey;
+            text-align: left;
+            margin-top: -2rem;
+
+            @media small {
+                margin-bottom: 1rem;
+            }
+
+            h3 {
+                font-size: 1.25rem;
+                color: $text-dark-grey;
+                font-weight:500;
+                margin-bottom: 1.75rem;
+            }
+
+            a {
+                color: $brand-light;
+            }
+
+        }
+
+    }
+
+    &-dark {
+
+        background: $bg-dark-gradient;
+        color: $text-light;
+        padding: 5rem 0 8.75rem 0;
+
+        h2 {
+            font-size: 1.625rem;
+            margin-bottom: 4.375rem;
+        }
+
+        .third {
+
+            padding: 0 2.5rem;
+
+            h3 {
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+                padding: 0 2.5rem;
+            }
+
+            p {
+                margin-bottom: 1rem;
+            }
+
+        }
+
+    }
+
+    &-light {
+
+        padding: 5rem 0 8.75rem 0;
+
+        h2 {
+            font-size: 1.625rem;
+            margin-bottom: 4.375rem;
+        }
+
+        .third {
+
+            padding: 0 2.5rem;
+
+            h3 {
+                font-size: 1.5rem;
+                margin-bottom: 2rem;
+                padding: 0 2.5rem 2rem 2.5rem;
+                border-bottom: 2px solid $brand-light;
+            }
+
+            p {
+                margin-bottom: 1rem;
+            }
+
+        }
+
+    }
+
+    &-team {
+
+        background: $bg-dark-gradient;
+        color: $text-light;
+        padding: 5rem 0 8.75rem 0;
+
+        h2 {
+            font-size: 1.625rem;
+            margin-bottom: 4.375rem;
+        }
+
+        a.prev-post,a.next-post {
+            display: inline-block;
+            width: 0.625rem;
+            height: 0.625rem;
+            border: 2px solid $text-grey;
+            border-width: 0 2px 2px 0;
+
+            &:hover {
+                border-color: $text-light;
+            }
+        }
+
+        a.prev-post {
+            transform: rotate(135deg);
+        }
+
+        a.next-post {
+            transform: rotate(-45deg);
+        }
+
+        .third {
+
+            padding: 0 2.5rem;
+            height: 20rem;
+
+            h3 {
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+                padding: 0 2.5rem;
+            }
+
+            p {
+                margin-bottom: 1rem;
+            }
+
+        }
+
+    }
+
+    &-posts {
+
+        background: $bg-dark-gradient;
+        color: $text-light;
+        padding: 5rem 0 8.75rem 0;
+        text-align: left;
+
+        h2 {
+            font-size: 1.625rem;
+            margin-bottom: 4.375rem;
+        }
+
+        a.prev-post,a.next-post {
+            display: inline-block;
+            width: 0.625rem;
+            height: 0.625rem;
+            border: 2px solid $text-grey;
+            border-width: 0 2px 2px 0;
+            margin-left: 2.5rem;
+
+            &:hover {
+                border-color: $text-light;
+            }
+        }
+
+        a.prev-post {
+            transform: rotate(135deg);
+        }
+
+        a.next-post {
+            transform: rotate(-45deg);
+        }
+
+        .third {
+
+            border-radius: $border-radius;
+            background-color: white;
+            box-shadow: $shadow;
+            font-size: 1rem;
+            color: $text-grey;
+            text-align: left;
+            overflow: hidden;
+
+            img {
+                display: block;
+                width:100%;
+                height: 15rem;
+                object-fit: cover;
+            }
+
+            .content {
+
+                padding: 2.3rem;
+
+                h3 {
+                    font-size: 1rem;
+                    color: $text-dark-grey;
+                    font-weight:500;
+                    margin-bottom: 0.625rem;
+                }
+
+                p {
+                    color: $text-grey;
+
+                    &.time {
+                        font-size: 0.813rem;
+                        font-style: italic;
+                    }
+                }
+
+            }
+
+        }
+    }
+
+}

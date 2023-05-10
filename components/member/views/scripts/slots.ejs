@@ -1,0 +1,146 @@
+
+<script>
+
+    extendedController = function(){
+
+        scope.view.send_conf = false
+
+        scope.newAppointment = function(type, data,user=''){
+        
+            console.log(user)
+
+            console.log(type,data)
+
+            if (type == 'get'){
+
+                //scope.new_appointment.event_type = data
+                console.log(type,data)
+
+            }else if (type == 'set_event_type'){
+
+                scope.new_appointment.event_type = data
+
+            } else if (type == 'set_start'){
+
+                scope.selectDate(data, 'start','time')
+                scope.new_appointment.start_time = data
+                scope.view.select_start_time = false
+
+            } else if (type == 'set_end'){
+
+                scope.selectDate(data, 'end','time')
+                scope.new_appointment.end_time = data
+                scope.view.select_start_time = false
+
+            }else if (type == 'push'){
+
+                console.log('scope',scope.new_appointment)
+
+                if(!scope.new_appointment.start_time1 || !scope.new_appointment.end_time1 || !scope.new_appointment.date){
+                    scope.notify('Please select start and end time with date.','error')
+                    return;
+                }
+
+                if(parseInt(scope.new_appointment.start_time1.split(':')[0])>parseInt(scope.new_appointment.end_time1.split(':')[0])){
+                    scope.notify('Start time should not greater than end time!','error')
+                    return false;
+                }
+
+
+                let x = {
+                  slotInterval: 30,
+                  openTime: scope.new_appointment.start_time1,
+                  closeTime: scope.new_appointment.end_time1
+                };
+
+                //Format the time
+                let startTime = moment(x.openTime, "HH:mm");
+
+                //Format the end time and the next day to it 
+                let endTime = moment(x.closeTime, "HH:mm"); //.add(1, 'days');
+
+                //Times
+                let allTimes = {};
+
+                //Loop over the times - only pushes time with 30 minutes interval
+                while (startTime < endTime) {
+                    let mytime = startTime.format("HH:mm")
+                  //Add interval of 30 minutes
+                  startTime.add(x.slotInterval, 'minutes');
+                  allTimes[mytime]= mytime +' - '+ startTime.format("HH:mm"); 
+                }
+
+                console.log(allTimes);
+
+
+                scope.post('members/addslots',{'slots':allTimes,'member_data':user,'date':'date_'+scope.new_appointment.date.split('-').join('')}).then((camp_data)=>{
+
+                        scope.notify('Slots added successfully!!')       
+                        setTimeout(()=>{ window.location.reload(); }, 2000)
+
+                    }).catch(err => {
+                        scope.notify(err,'error')
+                    })
+
+            } 
+
+
+
+        }
+
+
+        scope.deleteslot = function(key,user,date,data){
+            console.log(key,user,data)
+            if(confirm('Are you sure?')){
+            
+            scope.get('members/slotsbymember/'+user+'**'+date).then((camp_data)=>{
+
+                    scope.post('members/addslots',{'slots':camp_data,'member_data':user, 'key': key,'date':date}).then((camp_data)=>{
+
+                        scope.notify('Slot deleted successfully!!')       
+                        setTimeout(()=>{ window.location.href = window.location.href; }, 3000)
+
+                    }).catch(err => {
+                        scope.notify(err,'error')
+                    })
+
+            }).catch(err => {
+                scope.notify(err,'error')
+            })
+
+            }
+
+        }
+        scope.deleteslot2 = async function(){
+            scope.notify(`Slots Before Today's Date Can't be Deleted`)
+        }
+
+        
+
+
+        scope.saveprice = async function(user=0,data){
+            //alert('a')
+            console.log(scope.new.price,user,data)
+
+            //return;
+
+
+            scope.post('members/addprice',{'price':JSON.stringify(scope.new.price),'member_id':user}).then((camp_data)=>{
+
+                        scope.notify('Price added successfully!!')       
+                        //setTimeout(()=>{ window.location.reload(); }, 2000)
+
+                    }).catch(err => {
+                        scope.notify(err,'error')
+                    })
+
+
+        }
+
+        
+
+        
+
+    }
+
+</script>

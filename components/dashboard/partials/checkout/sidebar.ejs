@@ -1,0 +1,52 @@
+
+<h4 class="text-weight-700 mb-1">Transaction Summary</h4>
+<div class="divider mb-1 p-0"></div>
+
+<div class="grid col-3 mb-2">
+
+
+    <div class="colspan-2 text-weight-500">Items:</div>
+    <div class="" style="margin-left:0.35rem">£<span app-bind="cart.item_total"></span></div>
+
+    <div class="colspan-2 text-weight-500" app-show="cart.payment.discount">Discount:</div>
+    <div class="" app-show="cart.payment.discount">-£<span app-bind="cart.payment.discount"></span></div>
+
+    <div class="colspan-2 text-weight-500" app-show="cart.payment.account">Account Credit:</div>
+    <div class="" app-show="cart.payment.account">-£<span app-bind="cart.payment.account"></span></div>
+
+    <div class="colspan-2 text-weight-500" app-show="cart.payment.vouchers">Vouchers:</div>
+    <div class="" app-show="cart.payment.vouchers">-£<span app-bind="cart.payment.vouchers"></span></div>
+    
+    <div class="divider colspan-3 mb-1 mt-1 p-0"></div>
+
+    <div class="colspan-2 text-weight-500 ">Sub Total:</div>
+    <div class=" mt-2" style="margin-left:0.35rem">£<span app-bind="cart.sub_total"></span></div>
+
+    <div class="colspan-2 text-weight-500">VAT:</div>
+    <div class="" style="margin-left:0.35rem">£<span app-bind="cart.tax"></span></div>
+
+    <div class="divider colspan-3 mb-1 mt-1 p-0"></div>
+
+    <div class="colspan-2 text-weight-600 "><span app-show="cart.refund_value">Original Payment</span><span app-hide="cart.refund_value">Total:</span></div>
+    <div class="text-weight-600 " style="margin-left:0.35rem">
+        £<span app-bind="cart.total"></span>
+    </div>
+
+    <div class="colspan-2 text-weight-600 mt-1" app-show="cart.refund_value">Refund Total:</div>
+    <div class="mt-1 text-weight-600" style="margin-left:0.35rem" app-show="cart.refund_value">-£<span app-bind="cart.refund_value"></span></div>
+    <div class="colspan-3">
+        <a onclick="scope.addToCart('update',true,false,scope.cart)" class="text-left mt-2 dp-btn bg-primary">Update<span class="icon rebook white right"></span></a>
+    </div>
+</div>
+
+<div app-show="view.grouped_carts" class="grid col-3 mb-2">
+    <div class="colspan-2 text-weight-500">Group Sub Total:</div>
+    <div class="" style="margin-left:0.35rem">£<span app-bind="grouped_totals.sub_total"></span></div>
+
+    <div class="colspan-2 text-weight-500">Group VAT:</div>
+    <div class="" style="margin-left:0.35rem">£<span app-bind="grouped_totals.tax"></span></div>
+
+    <div class="colspan-2 text-weight-500">Group Total:</div>
+    <div class="" style="margin-left:0.35rem">£<span app-bind="grouped_totals.total"></span></div>
+
+</div>

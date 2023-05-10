@@ -1,0 +1,128 @@
+.btn {
+
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $border-radius;
+    // border: 1px solid $brand-primary-light;
+    text-transform: none;
+    height: $button-height;
+    padding: 0 0.8rem 0.07rem 0.8rem;
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: $brand-black;
+    white-space: nowrap;
+
+    &.bg-primary, &.bg-primary.border {
+        color: #fff;
+        border: none;
+    }
+
+    &.border {
+        border: 1px solid $bg-grey;
+        background: none;
+    }
+
+    &.bg-secondary, &.bg-secondary.border {
+        color: #fff;
+        border: none;
+    }
+
+    &.outline {
+        border: 1px solid $brand-secondary;
+        background: none;
+        color: $brand-secondary;
+        text-shadow: none !important;
+    }
+
+    &.clear {
+        border: none;
+        background: none;
+    }
+
+    &-attach {
+        .btn:not(.context-link) {
+            border-top-right-radius: 0px;
+            border-bottom-right-radius: 0px;
+        }
+        .btn.context-link {
+            border-top-left-radius: 0px;
+            border-bottom-left-radius: 0px;
+            padding: 0;
+        }
+    }
+
+}
+
+.btn:after, button:after {
+    border-radius: $border-radius;
+}
+
+.btn-wrap {
+
+    display: flex;
+    height: $button-height;
+    border: 1px solid $bg-grey-1;
+    border-radius: $border-radius;
+    margin: 0 0.75em;
+
+    .btn {
+
+        flex: 1;
+        border:0;
+        border-right: 1px solid $bg-grey-1;
+        border-radius: 0;
+        margin: 0 !important;
+        position: relative;
+        height: "calc(%s - 2px)" % ($button-height);
+        background: none;
+
+        &.left-arrow {
+            flex: 0 0 30px;
+        }
+
+        &.right-arrow {
+            flex: 0 0 30px;
+        }
+
+        &:first-child {
+            border-top-left-radius: $border-radius;
+            border-bottom-left-radius: $border-radius;
+            &:after {
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+        }
+
+        &:last-child {
+            border-right:none;
+            border-top-right-radius: $border-radius;
+            border-bottom-right-radius: $border-radius;
+            &:after {
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+            }
+        }
+
+        &.is-today {
+            background-color: $brand-primary-light !important;
+            color: white;
+        }
+
+        &.isnt-today {
+
+        }
+
+    }
+
+    div.search-dropdown {
+        border-top-left-radius: $border-radius !important;
+        border-bottom-left-radius: $border-radius !important;
+        border-top-right-radius: 0px !important;
+        border-bottom-right-radius: 0px !important;
+        margin-top: -1px;
+        border-color: $bg-grey-1 !important;
+    }
+
+}

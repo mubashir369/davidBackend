@@ -1,0 +1,84 @@
+<div class="modal smallModal" app-show="view.modal == 'show_edit'" id="myid" anim="{'enter':'fade-in'}">
+
+    <div class="modal-body p-0 w-60 w-m-90" id="mbody" anim="{'enter':'move-up','duration':'0.2'}">
+
+        <div class="modal-header text-primary">
+            <div class="title">
+                Add Price and seats 
+            </div>
+            <div class="close">
+                 <span class="icon close white clickable" onclick="modalCloseAll()"></span> 
+
+                <!--<div class="btn-wrap">
+                    <button class="btn btn-left border mr-1 text-primary" app-click="view.tab = 'one'" app-class="{'active':view.tab == 'one'}">Details<span class="icon edit black right"></span></button>
+                    <button class="btn btn-right border text-primary" app-click="view.tab = 'two'" app-class="{'active':view.tab == 'two'}">Skills and Access<span class="icon stylist black right"></span></button>
+                </div>-->
+            </div>
+        </div>
+
+        <div class="modal-content p-2">
+
+            <div app-show="view.tab == 'one'">
+
+                <div class="grid col-1 gap-1">
+
+                    <div>
+
+                        <div class="grid col-1 mb-1">
+                            
+                            <div class="colspan-3 grid col-1 gap-1">
+
+                                <div app-hide="new._key">
+                                    <label>Repeat</label>
+                                    <select app-model="new.repeat" class="rounded">
+                                        <option value="">No repeat</option>
+                                        <option value="week">For current Week</option>
+                                        <option value="month">For current Month</option>
+                                    </select>
+                                </div>
+
+
+                                <div>
+                                    <label>Seats</label>
+                                    <input type="number" app-model="new.seats" id="mseats" placeholder="Add seats available" class="rounded">
+                                </div>
+                                <div>
+                                    <label>Price per seat</label>
+                                    <input type="text" app-model="new.price" id="mprice" placeholder="Price per seat" class="rounded">
+
+                                    <input class="mt-1 radius-50" type="hidden" app-model="new.date2" id="mydate"  />
+
+                                    <input class="mt-1 radius-50" type="text" app-model="new.date" style="display:none" />
+
+                                </div>
+                                
+
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                    
+
+                </div>
+            </div>
+
+           
+
+        </div>
+
+
+        <div class="modal-appointment-actions flex flex-middle-right">
+                <a class="dp-btn text-white bg-secondary" app-click="deleteSeat(new._key)" app-show="new._key"><span >Delete </span><span class="icon close right white"></span> </a>
+            <a class="dp-btn text-white bg-primary" app-click="saveSeats()">
+                <span app-show="new._key">Save <span class="icon tick white right"></span></span>
+                <span app-hide="new._key">Add  <span class="icon add white right"></span></span>
+            </a>
+        </div>
+
+    </div>
+
+</div>
+

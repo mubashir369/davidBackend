@@ -1,0 +1,119 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+
+    <div class="page px-2 p-s-0" app-init="get('customers','find_duplicates')">
+
+        <div class="px-2 pt-2 hidden hidden-m">
+            <input type="text" class="search colspan-2 border" placeholder="Search by name, number or email" app-model="view.search" onkeyup="scope.searchApi('customers',this.value)" spellcheck="false">
+        </div>
+
+        <div>
+
+            <div class="table">
+
+                <div class="row table-header">
+
+                    <div class="cell middle" style="width: 4em"></div>
+                    <div class="cell middle">Name</div>
+                    <div class="cell middle hidden-s" style="width: 10em">Number</div>
+                    <div class="cell middle hidden-s">Email</div>
+                    <div class="cell middle hidden-s" style="width: 5em">Gender</div>
+                    <div class="cell middle hidden-s" style="width: 5em">Notes</div>
+                    <div class="cell middle" style="width: 4em"></div>
+
+                </div>
+
+
+                <div class="row" app-for="client_list in customers">
+
+                    <div class="cell middle">
+                        <img app-src="client_list.avatar" src="/images/avatars/Profile_Placeholder.svg" class="icon avatar lg">
+                    </div>
+                    <div class="cell middle clickable text-weight-500 capitalise" app-click="goto('/dashboard/clients/',client_list._key)">
+                        <span app-bind="parseName(client_list.name)"></span>
+                        <div class="text-33-red" app-show="client_list.blocked">Blocked</div>
+                        <div class="text-33-red" app-bind="parseConfidence(client_list)"></div>
+                    </div>
+                    <div class="cell middle text-light hidden-s" app-bind="client_list.tel"></div>
+                    <div class="cell middle text-light hidden-s" app-bind="client_list.email"></div>
+                    <div class="cell middle text-light hidden-s" app-bind="client_list.gender"></div>
+                    <div class="cell middle text-light hidden-s clickable text-primary" app-click="viewClientNote(client_list)"><span app-show="client_list.notes">View</span></div>
+                    <div class="cell middle action-icons" app-attr="{id:'cell-'+client_list._key}">
+                        <div class="context-link btn border" app-click="toggleContext(client_list._key)">
+                            <span class="icon black arrowdown sm"></span>
+                        </div>
+                        <div class="context dropdown text-left" style="display: none" app-attr="{id:'context-'+client_list._key}">
+                            <div class="link" app-click="edit('customers',client_list)">
+                                <span class="icon left black edit"></span>
+                                Edit
+                            </div>
+                            <div class="link" app-click="edit('customers',client_list,'delete')">
+                                <span class="icon left black delete"></span>
+                                Delete
+                            </div>
+                            <div class="link" app-click="addNewEvent('customer_appointment',client_list._key)">
+                                <span class="icon left black calendar"></span>
+                                New Appointment
+                            </div>
+                            <div class="link" app-click="newTransaction(client_list._key)">
+                                <span class="icon left black transaction"></span>
+                                New Transaction
+                            </div>
+                            <div class="link" app-click="newNotification('customer_id',client_list)">
+                                <span class="icon left black bell"></span>
+                                Salon Notification
+                            </div>
+                            <div class="link" app-click="blockClient(client_list)">
+                                <span class="icon left black noshow"></span>
+                                <span app-hide="client_list.blocked">Block</span>
+                                <span app-show="client_list.blocked">Unblock</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+    <%- include('../../dashboard/partials/modal/client_profile.ejs') %>
+    <%- include('../../dashboard/partials/modal/client_notes.ejs') %>
+    <%- include('../../dashboard/partials/modal/new_notification.ejs') %>
+
+
+    <div class="modal" app-show="view.modal == 'show_delete'" anim="{'enter':'fade-in'}">
+
+        <div class="modal-body" anim="{'enter':'move-up','duration':'0.2'}">
+
+            <div class="grid col-2 pb-1 gap-1">
+                <div>
+                    <h4 class="text-light">
+                        Delete Client?
+                    </h4>
+                </div>
+                <div class="text-right">
+                    <h4 class="close-icon text-light clickable" onclick="modalCloseAll()">&times;</h4>
+                </div>
+
+                <div class="text-right pt-1">
+                    <a class="btn border w-100" app-click="modalCloseAll()">
+                        Cancel
+                    </a>
+                </div>
+
+                <div class="text-right pt-1">
+                    <a class="btn bg-secondary w-100" app-click="delete('customers',new._key)">
+                        Delete
+                        <span class="icon delete right white"></span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>

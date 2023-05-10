@@ -1,0 +1,440 @@
+<% layout('member.ejs') -%>
+
+    <%- include ../partials/header-member.ejs %>
+
+    <div  class="hidden" app-init="newAppointment('set_event_type','staff_appointment')"></div>
+    <div class="hidden" app-init="newStaffAppointment('set_opening_times')"></div>
+
+
+    <% if (member_slots[date]){ %>
+        <div class="hidden" app-init="newAppointment('get','<%- JSON.stringify(member_slots[date]) %>')"></div>
+    <% } %>
+   
+     
+        
+       
+
+    <div class="page h-100 overflow-y bg-light-grey p-1">
+        <div class="grid col-12 gap-2 mt-2">
+            <div class="bg-secondary  p-2  d-inline-block" style="align-self: baseline;">
+
+                <div class="grid col-12 gap-2 ">
+                    
+                <div class="colspan-12 layer-1 time-slots-table pt-0">
+                <div class="flex flex-middle-left">
+                    <p class="text-weight-600 d-block text-white">Select date first:</p>
+                </div>
+
+
+
+                <div class="">
+                    <% if(date){ %>
+                     
+                    <!-- <input type="date" class="datepicker2"  id="dateInputWithValue" 
+                    onchange="this.value && (window.location = '/member/slots?date='+this.value);"
+                    > -->
+                    <input type="text" class="datepicker2" placeholder="dd/mm/yyyy"  id="dateInputWithValue" 
+                  
+                    >
+                  
+                    <% }else { %>   
+                       
+                        <input type="text" placeholder="dd/mm/yyyy" class="datepicker2"  id="dateInput" >
+                        <% }%>
+                </div>
+
+                
+
+                
+                    <!-- <% if(member.orders){ %>
+                    <select onchange="this.options[this.selectedIndex].value && (window.location = '/member/slots?date='+this.options[this.selectedIndex].value);">
+                    <option value="">Select date</option>
+                    <% for(var i=0; i<dates.length; i++) { %>
+                        
+                        <option value='<%-dates[i].date%>' <%-dates[i].date==date?'selected':''%>><%-dates[i].date%></option>
+                
+                    <% } %>
+                    </select>
+                    <% } %> -->
+                </div>
+
+
+            </div>
+            <% if(date){ %>
+                <div class="divider mt-2"></div>
+                    <input type="hidden" app-model="new_appointment.date" value="<%-date%>">
+                    <div class="grid col-6  mt-1">
+                        <!-- <div class="colspan-4  flex flex-middle-left ">
+                            <p class="text-weight-600 text-white">Time Periods:</p>
+                        </div> -->
+                        <div class="colspan-8  layer-5">
+
+                            <div class="w-40 flex flex-middle-left w-100">
+
+                                <div class="relative flex-1 pr-1">
+
+                                    <div class="flex flex-middle-left">
+                                        <p class="text-weight-600 d-block text-white">Open Time:</p>
+                                    </div>
+                        
+                                        <% if(times_ara.length>0){ %>
+                                        <select app-model="new_appointment.start_time1">
+                                            <option value="">Select date</option>
+                                            <% for(var i=0; i<times_ara.length; i++) { %>                                        
+                                                <option value='<%-times_ara[i]%>'><%-times_ara[i]%></option>                                   
+                                            <% } %>
+                                        </select>
+                                        <% } %>
+
+                                    <!-- <div class="search-dropdown rounded border context-link" app-click="toggleContext('select_start_time')"><span class="icon time secondary left"></span><span app-bind="new_appointment.start_time"> Select start time...</span></div>
+                                    <div class="table search-select absolute context" id="context-select_start_time" app-show="view.select_start_time">
+                                        <div class="row clickable" app-for="hr in getHrs()" app-click="newAppointment('set_start',hr)" app-bind="hr">
+                                        </div>
+                                    </div> -->
+                                </div>
+                                <div class="relative flex-1 pl-1">
+
+                                    <div class="flex flex-middle-left">
+                                        <p class="text-weight-600 d-block text-white">Close Time:</p>
+                                    </div>
+                        
+                                        <% if(times_ara.length>0){ %>
+                                        <select app-model="new_appointment.end_time1">
+                                        <option value="">Select date</option>
+                                        <% for(var i=0; i<times_ara.length; i++) { %>                                        
+                                            <option value='<%-times_ara[i]%>'><%-times_ara[i]%></option>                                   
+                                        <% } %>
+                                        </select>
+                                        <% } %>
+
+
+                                    <!-- <div class="search-dropdown rounded border context-link" app-click="toggleContext('select_end_time')"><span class="icon time secondary left"></span><span app-bind="new_appointment.end_time"> Select end time...</span></div>
+                                    <div class="table search-select absolute context" id="context-select_end_time" app-show="view.select_end_time">
+                                        <div class="row clickable" app-for="hr in getHrs()" app-click="newAppointment('set_end',hr)" app-bind="hr">
+                                        </div>
+                                    </div> -->
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+    <% } %>
+            </div>
+            <% for (var i =0; i <=bookedDates.length-1;  i++ ) { %>
+                <br><%bookedDates[i]%>
+                 <input type="hidden" name="array[]" value="<%= bookedDates[i]%>">
+                 <%#  will output the numbers 1-10 %>
+                 <% } %>
+            <% if(date && member_slots['date_'+date.split('-').join('')]){ %>
+            
+            <div class="colspan-4 ">
+                <div class="grid col-12 gap-2 ">
+                    <div class="colspan-12 layer-1 ">
+                        <!-- <h2>Slots</h2> -->
+                        <table class="table app-parent-price mb-5 " style=" max-height: 500px; border: 1px solid #ddd;">
+                          
+                            
+                             
+                            <thead >
+                                <tr>      
+                                <th style="width: 60%; "> Time</th>
+                                <th style="width: 30%; ">Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody >
+                                <tr>
+                                    <td colspan="2" class="border-0 p-0">
+                                        <div class="dp-scroll@ v-scroll " style=" max-height: 400px;     overflow-y: scroll;">
+                                            <table>
+                                                <tbody>                                   
+                                            
+                                                    <% 
+                                        
+                                                    for(key in member_slots['date_'+date.split('-').join('')]) {
+                                        
+                                                    if(member_slots['date_'+date.split('-').join('')].hasOwnProperty(key)) {
+                                                    
+                                                    %>
+                                                    <tr><td style="width: 70%; text-align: left;"><%-member_slots['date_'+date.split('-').join('')][key]%></td>
+                                                        <% const today = new Date(); const splitDate = new Date(date.split('-'));
+                                                        if (splitDate < today) { %>
+                                                        <td style="width: 30%; "> <a app-click="deleteslot2()">
+                                                            <span class="icon left black delete"></span>
+                                                        </a></td>
+                                                        <% } else { %>
+                                                        
+                                                        <td style="width: 30%; "> <a app-click="deleteslot('<%-key%>','<%-user._key%>','<%-'date_' + date.split('-').join('')%>')">
+                                                            <!-- <span onclick="modalOpenAll()" class="icon left black delete"></span> -->
+                                                            <span onclick="" class="icon left black delete"></span>
+                                                        </a></td>
+                                                        <%
+                                                        }
+                                                        %>
+                                                    </tr>
+                                                    <% } } %>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <div class="mb-5"></div>
+
+    <div class="modal d-none"  id="viewModal">
+
+        <div class="modal-body p-0" >
+            <div class="modal-header text-primary">
+                <div class="title">
+                        Are You Sure Want To Delete? 
+                </div>
+                <div class="text-right">
+                    <h4 class="close-icon clickable" onclick="modalCloseAll()">&times;</h4>
+                </div>
+            </div>
+            <div class="modal-content flex justify-content-center p-1">
+                    <a class="btn border " onclick="modalCloseAll()">
+                        Cancel
+                    </a>
+                    <a class="btn bg-secondary ml-04" app-click="delete_banner()">
+                        Delete
+                        <span class="icon delete white right"></span>
+                    </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<% } %>
+
+
+
+
+                    <!--div class="flex flex-middle-left layer-4">
+                        <p class="text-weight-600">Closed:</p>
+                    </div>
+                    <div class="colspan-11 layer-4">
+
+                        <div class="w-40 flex flex-middle-left">
+
+                            <label><input type="checkbox" app-click="newAppointment('toggle_closed')"></label>
+
+                        </div>
+
+                    </div-->
+
+
+                    <!--div class="flex flex-middle-left">
+                        <p><span class="text-weight-600">Repeat:</span><br>(optional)</p>
+                    </div>
+                    <div class="colspan-11 flex flex-middle-left layer-2" style="overflow:visible">
+
+                        <div app-show="view.show_repeat">
+
+                            <span class="mr-05">Every</span>
+
+                            <div class="inline-block relative layer-5 mr-05" style="width: 8rem">
+                                <div class="search-dropdown thin border capitalise" app-bind="parseInterval(new_appointment.reoccurence_interval)" app-click="view.reoccurence_interval = !view.reoccurence_interval">Select...</div>
+                                <div class="table search-select absolute context" app-show="view.reoccurence_interval">
+                                    <div class="row clickable" app-click="newStaffAppointment('set_reoccurence_interval','days')">Day</div>
+                                    <div class="row clickable" app-click="newStaffAppointment('set_reoccurence_interval','weeks')">Week</div>
+                                    <div class="row clickable" app-click="newStaffAppointment('set_reoccurence_interval','months')">Month</div>
+                                </div>
+                            </div>
+                            <span class="mr-05">for</span>
+                            <input type="number" app-model="new_appointment.reoccurences" class="border inline mr-05 text-center" style="width: 2rem; padding-left:0; padding-right:0">
+                            <span>occurences</span>
+
+                        </div>
+
+                        <div app-hide="view.show_repeat" class="italic text-33-grey">
+                            Unavailable
+                        </div>
+                    </div>
+
+
+                    <div class="flex-top-left layer-1">
+                        <p><span class="text-weight-600">Note:</span><br>(optional)</p>
+                    </div>
+                    <div class="colspan-11 flex flex-middle-left layer-1" style="overflow:visible">
+                        <textarea class="border w-40 w-m-75 w-s-100" app-model="new_appointment.note" placeholder="Add a note""></textarea>
+                    </div-->
+
+                </div>
+
+            </div>
+            
+           
+
+        </div>
+
+        <section class="footer">
+        <% if (typeof appointment_key != 'undefined'){ %>
+            <button class="dp-btn bg-secondary" app-click="newAppointment('save','<%- appointment_key %>')">Update Booking <span class="icon tick right white"></span></button>
+        <% } else { %>
+            <!--button class="dp-btn bg-primary" app-click="storeNewAppointment('cancel')">Cancel <span class="icon close right black"></span></button-->
+            <button class="dp-btn bg-secondary" app-click="newAppointment('push','',<%-user._key%>)">Save <span class="icon tick right white"></span></button>
+        <% } %>
+        </section>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+        <script>
+            // function modalOpenAll (){
+            //     let viewModal =  document.getElementById("viewModal")
+            //     viewModal.style.display="flex"
+            // }
+
+            const dateInput = document.querySelector('#dateInput');
+  const display = document.querySelector('#display');
+  const dateInputWithValue=document.getElementById("dateInputWithValue")
+ const selectedDate=window.location.href?.split("=")?.pop()
+ const ddd=new Date(selectedDate)
+ function dateFormat(inputDate, format) {
+   
+    const date = new Date(inputDate);
+
+   
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();    
+
+  
+    format = format.replace("MM", month.toString().padStart(2,"0"));        
+
+ 
+    if (format.indexOf("yyyy") > -1) {
+        format = format.replace("yyyy", year.toString());
+    } else if (format.indexOf("yy") > -1) {
+        format = format.replace("yy", year.toString().substr(2,2));
+    }
+
+   
+    format = format.replace("dd", day.toString().padStart(2,"0"));
+
+    return format;
+}
+let isValidDate = Date.parse(dateFormat(ddd,'MM/dd/yyyy'));
+console.log(isValidDate);
+if (isNaN(isValidDate)) {
+  console.log("Not a valid date format.");
+}
+else{
+    console.log("Valid date format.");
+    let dat=new Date(selectedDate)
+let dd=dat.getDate()
+let mm=dat.getMonth()+1
+mm=mm<=9?`0${mm}`:mm
+let yyy=dat.getFullYear()
+  $(".datepicker2").val(`${dd}/${mm}/${yyy}`);
+    // dateInputWithValue.defaultValue=selectedDate
+}
+  
+
+//   dateInput.addEventListener('change', function() {
+//     const dateValue = new Date(dateInput.value);
+//     const display = document.querySelector('#display');
+//     display.textContent = dateValue.toLocaleDateString();
+//   });
+        </script>
+        <script>
+            function myFunction(s){
+              
+                window.location = '/member/slots?date='+s
+                // console.log("dddddddddddd",$("#dateInput").val);
+              
+                // console.log("dddddddddddddd",$("#dateInput").datepicker({dateFormat: 'dd-mm-yyyy'}));
+            }
+            function dateChanging(d){
+              
+            }
+             var k = []
+             var eventDates = {};
+             var input = document.getElementsByName('array[]');
+          
+             for (var i = 0; i < input.length; i++) {
+                var a = input[i];
+              
+                eventDates[ new Date( a.value )] = new Date( a.value );
+                k=[...k,a.value]
+                // k=k.push(a.value)
+                // k = k + "array[" + i + "].value= "
+                //                    + a.value + " ";
+            }
+          
+           
+
+    // eventDates[ new Date( '02/07/2023' )] = new Date( '02/07/2023' );
+    // eventDates[ new Date( '02/10/2023' )] = new Date( '02/10/2023' );
+    // eventDates[ new Date( '08/18/2016' )] = new Date( '08/18/2016' );
+    // eventDates[ new Date( '08/23/2016' )] = new Date( '08/23/2016' );
+        //     $('.datepicker2').datepicker({
+        //         onselect:function(d){
+        //             console.log("ddddddddddddddddddddddddddddddd");
+        //             alert(d)
+        //         },
+        //         beforeShowDay: function( date ) {
+        //     var highlight = eventDates[date];
+        //     if( highlight ) {
+        //          return [true, "event", 'Tooltip text'];
+        //     } else {
+        //          return [true, '', ''];
+        //     }
+        // }
+        //     })
+        $(".datepicker2").datepicker({
+            beforeShowDay: function( date ) {
+            var highlight = eventDates[date];
+            if( highlight ) {
+                 return [true, "event", 'You are booked on this Date'];
+            } else {
+                 return [true, '', ''];
+            }
+        },
+        showWeeks:true,
+        weekHeader: "wk",
+                onSelect: function (selectedDate1) {
+                    // alert(selectedDate);
+                    let newDate=selectedDate1.split("/")
+let dat=new Date(selectedDate1)
+dat=new Date(newDate[2],parseInt(newDate[1])-1,newDate[0])
+let dd=dat.getDate()
+let mm=dat.getMonth()+1
+mm=mm<=9?`0${mm}`:mm
+dd=dd<=9?`0${dd}`:dd
+let yyy=dat.getFullYear()
+
+// console.log("ddddddddddddd",newDate[2],parseInt(newDate[1])-1,newDate[0],`${yyy}-${mm}-${dd}`);
+                    window.location = '/member/slots?date='+`${yyy}-${mm}-${dd}`
+                  
+                },
+                dateFormat:'dd/mm/yy',
+               
+            });
+        </script>
+      
+    
+        <style>
+            #ui-datepicker-div{
+    z-index: 5 !important;
+}
+            .event a {
+    background-color: #5FBA7D !important;
+    color: #ffffff !important;
+}
+
+        </style>
+       
+
+    <%- include('../partials/modal/book_seat.ejs') %>
+       

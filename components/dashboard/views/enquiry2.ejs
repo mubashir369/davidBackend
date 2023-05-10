@@ -1,0 +1,131 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../partials/header.ejs %>
+    <style>
+        .center {
+          text-align: center;
+        }
+        
+        .pagination {
+          display: inline-block;
+        }
+        
+        body #paginationID a{
+            
+            color: black;
+            float: left;
+            padding: 8px 16px;
+            text-decoration: none;
+            transition: background-color .3s;
+            border: 1px solid #ddd;
+            margin: 0 4px;
+        }
+        .pagination a {
+          color: black;
+          float: left;
+          padding: 8px 16px;
+          text-decoration: none;
+          transition: background-color .3s;
+          border: 1px solid #ddd;
+          margin: 0 4px;
+        }
+        
+        .pagination a.active {
+          background-color: rgba(112,112,112,0.4);
+          color: white;
+          border: 1px solid rgba(112,112,112,0.4);
+        }
+        
+        .pagination a:hover:not(.active) {background-color: #ddd;}
+        </style>
+
+    <script>
+        
+          function viewDocument(data){
+            window.location.href=data
+           }
+
+          
+        function getPrev(page){
+            if(page>=0){
+                window.location.href=`http://localhost:9092/dashboard/enquiry?start=${page}`
+            }
+        }
+        function getNext(page,count){
+            if(page<count){
+            window.location.href=`http://localhost:9092/dashboard/enquiry?start=${page}`
+            }
+        }
+
+    </script>
+
+    <div class="page px-2 p-s-0" >
+
+        <div class="px-2 pt-2 pb-0 hidden hidden-m">
+            <input type="text" class="search colspan-2 border" placeholder="Search by name, number or email"   spellcheck="false">
+        </div>
+
+        <div>
+
+            <div class="table">
+
+                <div class="row table-header">
+
+                    <!-- <div class="cell middle" style="width: 4em"></div>     -->
+                    <div class="cell middle mobile-cell" style="width: 30%">Name</div>
+                    <div class="cell middle hidden-s" style="width: 20%">Email</div>
+                    <div class="cell middle hidden-s" style="width: 20%">Phone</div>
+                    <div class="cell middle hidden-s text-right" style="width: 35%">message</div>
+                    <!-- <div class="cell middle hidden-s" style="width: 5em">File</div> -->
+                    
+
+                </div>
+
+                
+
+                    <% for (var i=0; i< member.data.length; i++){ %>
+                        <div class="row" >
+                        <!-- <div class="cell middle" style="width: 4em"></div> -->
+                        <div class="cell middle clickable text-weight-500 capitalise mobile-cell" >
+                            <span ><%- member.data[i].name %></span>
+                            <div></div>
+                            <div class="text-33-red" ></div>
+                        </div>
+                        <div class="cell middle text-light hidden-s" ><%- member.data[i].email %></div>
+                        <div class="cell middle text-light hidden-s" ><%- member.data[i].phone %></div>
+                        <div class="cell middle text-light hidden-s text-right  " ><%- member.data[i].message %></div>
+                        <!-- <div class="cell middle text-light hidden-s clickable text-primary"  onclick="viewDocument('<%- member.data[i].file %>')" ><span >View</span></div> -->
+                        <!-- <div class="cell middle action-icons" app-attr="{id:'cell-'+client_list._key}">
+                            
+                            <div class="context dropdown text-left" style="display: none" app-attr="{id:'context-'+client_list._key}">
+                                
+                            </div>
+                        </div> -->
+                    </div>
+                    <% } %>
+                    
+
+                
+
+            </div>
+           
+
+        </div>
+       
+
+    </div>
+   <script>
+     function gotoPage(page){
+            page=10*(page-1)
+            window.location.href=`http://localhost:9092/dashboard/enquiry?start=${page}`
+            
+            document.getElementById("1").classList.add("active") 
+           
+           }
+    
+   </script>
+
+   
+
+
+    

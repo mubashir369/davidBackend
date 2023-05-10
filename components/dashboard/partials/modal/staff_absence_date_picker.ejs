@@ -1,0 +1,53 @@
+<div class="modal" app-show="view.modal == 'set_end'" anim="{'enter':'fade-in'}">
+
+    <div class="modal-body" anim="{'enter':'move-up','duration':'0.2'}">
+
+        <div class="grid col-2 pb-1">
+            <div>
+                <h4 class="text-light">Select a Date</h4>
+            </div>
+            <div class="text-right">
+                <h4 class="close-icon clickable" onclick="modalCloseAll()">&times;</h4>
+            </div>
+        </div>
+
+        <div class="mt-2">
+
+            <div class="grid col-2 mt-2 mb-1">
+                <p class="">Select the last day of the absence</p>
+                <div class="text-right">
+
+                </div>
+            </div>
+
+            <div class="colspan-3 layer-2 w-100 relative mb-2">
+                <%- include('../date-picker-simple.ejs',{type:'end',open:true}) %>
+            </div>
+
+            <div class="grid col-2 mt-2 mb-1">
+                <p>Select a time for the absence to end</p>
+                <div class="text-right">
+
+                </div>
+            </div>
+
+            <div class="relative layer-5">
+                <div class="search-dropdown border" app-click="view.select_end_time = !view.select_end_time"><span class="icon time left secondary"></span><span app-bind="selected_end_date.time"> Select time...</span></div>
+                <div class="table search-select context" app-show="view.select_end_time">
+                    <div class="row clickable" app-for="end_hr in getHrs()" app-click="selectDate(end_hr,'end','time')" app-bind="end_hr">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="grid col-2 mt-2">
+            <div>
+            </div>
+            <div class="text-right">
+                <button class="btn bg-secondary" onclick="modalCloseAll()">Ok <span class="icon tick right white"></span></button>
+            </div>
+        </div>
+    </div>
+
+</div>

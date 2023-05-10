@@ -1,0 +1,269 @@
+
+<div class="mb-2" app-show="selected_customer.name">
+    <div class="flex flex-middle-left">
+        <div class="relative">
+            <img src="/images/avatars/Profile_Placeholder.svg" app-src="selected_customer.avatar" class="avatar mr-1">
+            <div class="avatar-member" app-show="selected_customer.membership.membership_id"></div>
+        </div>
+        <div>
+            <h4 class=" text-weight-600">
+                <span app-bind="parseName(selected_customer.name)"></span>'s&nbsp;
+                <!-- <span>Items</span> -->
+            </h4>
+            <div class="">Account Credit: <span app-bind="parsePrice(selected_customer.balance.total)"></span></div>
+            <div app-show="selected_customer.balance.total">
+                <a class="text-secondary" app-hide="cart.payment.account" app-click="addToCart('account_credit',selected_customer._key,'<%- cart_id %>')">Use Credit</a>
+                <a class="text-secondary" app-show="cart.payment.account" app-click="addToCart('remove_account_credit',selected_customer._key,'<%- cart_id %>')">Don't Use Credit</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<h4 class="text-weight-700 " app-hide="selected_customer.name">Items</h4>
+<div class="divider mb-2 p-0"></div>
+
+
+<div class="table" >
+
+    <div class="row table-header">
+        <div class="cell middle text-left pl-1">
+            Item
+        </div>
+
+        <div class="cell middle text-center" style="width: 7em">
+            Price
+        </div>
+
+        <div class="cell middle text-center" style="width: 6em">
+            Qty
+        </div>
+
+        <% if (typeof user != 'undefined' && user.guard == 'admin' || typeof user != 'undefined' && parseInt(user.role) >= 1){ %>
+            <div class="cell middle text-center" style="width: 6em">
+                Adjust.
+            </div>
+
+            <% if (typeof cart.status != 'undefined' && cart.status == 'complete'){ %>
+                <div class="cell middle pl-2 text-center" style="width: 8em">
+                    Refund
+                </div>
+            <% } %>
+
+        <% } %>
+        <div class="cell middle text-center" style="width: 7em">
+            Total
+        </div>
+        <div class="cell middle text-right" style="width: 3em">
+
+        </div>
+    </div>
+</div>
+
+<div class="table d-block dp-scroll v-scroll pr-1" style="max-height: 450px;">
+
+    <div app-for="item in cart.items" class="row ">
+        <div class="cell middle py-05" style="display: table-cell">
+
+            <span class="text-weight-600 capitalise">
+
+                <% if (typeof user != 'undefined' && user.guard == 'admin' || typeof user != 'undefined' && parseInt(user.role) >= 1){ %>
+                    <a app-show="item.type == 'products'" app-click="goto('/dashboard/salon/products?search=',item._key)" class="text-primary">
+                        <span app-bind="item.brand" app-show="item.brand" class="mr-03"></span>
+                        <span app-bind="item.name"></span>
+                        <span app-show="item.size" class="ml-01">(<span app-bind="item.size"></span><span app-bind="item.size_units"></span>)
+                    </a>
+                    <span app-hide="item.type == 'products'">
+                        <span app-bind="item.brand" app-show="item.brand" class="mr-03"></span>
+                        <span app-bind="item.name"></span>
+                        <div app-show="item.promotion">Promotion: <span app-bind="item.description"></span></div>
+                        <span app-show="item.size" class="ml-01">(<span app-bind="item.size"></span><span app-bind="item.size_units"></span>)
+                    </span>
+
+                <% } else { %>
+
+                    <span app-bind="item.brand" app-show="item.brand" class="mr-03"></span>
+                    <span app-bind="item.name"></span>
+                    <span app-show="item.size" class="ml-01">(<span app-bind="item.size"></span><span app-bind="item.size_units"></span>)
+
+                <% } %>
+
+            </span>
+
+            <div class="text-secondary" app-show="match(item.type,'service|product')">
+                Stylist - <a class="inline text-secondary capitalise" app-click="addStylistService({{index}},'view')"><span app-show="item.staff_name" app-bind="item.staff_name"></span><span app-hide="item.staff_name">Select Stylist</span></a>
+            </div>
+
+            <div app-show="item.refund_value">Refund of £<span app-bind="item.refund_value"></span> processed on <span app-bind="parseISODate(item.refund_date,'DD/MM/YY HH:mm')"></span></div>
+
+        </div>
+
+        <div class="cell middle text-center" style="width: 7em">
+            <div app-hide="match(item.type,'account|petty_cash')">
+                £<span app-bind="item.price"></span>
+            </div>
+            <div app-show="match(item.type,'account|petty_cash')" class="flex flex-middle">
+                £<input type="number" app-model="item.price" class="ml-03 text-right">
+            </div>
+        </div>
+
+        <div class="cell middle text-center" style="width: 6em">
+            <input type="number" step="1" class="text-center" placeholder="Qty" app-model="item.quantity" app-hide="item.type == 'account'">
+        </div>
+
+        <% if (typeof user != 'undefined' && user.guard == 'admin' || typeof user != 'undefined' && parseInt(user.role) >= 1){ %>
+            <div class="cell middle" style="width: 6em">
+                <input type="text" app-model="item.adjustment" placeholder="Adjust" app-hide="item.type == 'account'">
+            </div>
+
+            <% if (typeof cart.status != 'undefined' && cart.status == 'complete'){ %>
+                <div class="cell middle pl-2" style="width: 8em">
+                    <input type="text" app-model="item.refund" placeholder="Refund">
+                </div>
+            <% } %>
+
+        <% } %>
+        <div class="cell middle text-center" style="width: 7em">
+            <div>
+                £<span app-bind="item.total"></span>
+            </div>
+        </div>
+        <div class="cell middle text-right" style="width: 3em">
+            <% if (typeof cart.status != 'undefined' && cart.status != 'complete'){ %>
+                <a app-click="addToCart('remove',item._key,'<%- cart_id %>')" class=""><span class="icon black close right"></span></a>
+            <% } %>
+        </div>
+    </div>
+
+</div>
+
+
+<% if (typeof cart.status != 'undefined' && cart.status != 'complete'){ %>
+
+    <div class="grid col-4 gap-2 mt-2">
+
+        <div class="colspan-4 relative layer-2">
+
+            <div class="flex input-wrap">
+
+                <div class="flex-1 relative" app-init="selectItemType('Product')">
+
+                    <div class="search-dropdown thin left context-link" app-bind="view.item_add_type" app-click="toggleContext('type')">Select type...</div>
+                    <div class="table search-select absolute context" id="context-type" style="margin-left:1.1rem">
+                        <div class="row clickable" app-click="selectItemType('Product')">
+                            <span class="icon black product left"></span>
+                            Product
+                        </div>
+                        <div class="row clickable" app-click="selectItemType('Service')">
+                            <span class="icon black services left"></span>
+                            Service
+                        </div>
+                        <div class="row clickable" app-click="newObj('vouchers')">
+                            <span class="icon black voucher left"></span>
+                            Purchase Voucher
+                        </div>
+                        <div class="row clickable" app-click="addToCart('account','Account Credit','<%- cart_id %>')">
+                            <span class="icon black client left"></span>
+                            Acount Credit
+                        </div>
+                        <div class="row clickable" app-click="selectItemType('Petty_Cash')">
+                            <span class="icon black sale left"></span>
+                            Petty Cash
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="flex-2">
+
+                    <div app-show="view.item_add_type == 'Product'" class="relative layer-2">
+
+                        <input type="text" class="search-dropdown thin right" placeholder="Search or Scan a Product..." onpaste="scope.pasted(this)" onkeyup="scope.searchApi('products',this.value,'product')" app-click="toggleContext('product_search_results','products')" spellcheck="false" autofocus>
+
+                        <div class="table search-select absolute context" id="context-product_search_results" app-show="view.product_search_results">
+                            <div class="row clickable flex" app-for="product in products" app-click="addToCart('products',product._key,'<%- cart_id %>')">
+                                <div class="flex-2 capitalise py-05">
+                                    <span class="text-weight-600" app-bind="product.name"></span><span app-show="product.size" class="ml-01">(<span app-bind="product.size"></span><span app-bind="product.size_units"></span>)</span>
+                                    <br>
+                                    <span class="capitalise" app-bind="parseString(product.category)"></span> > <span class="capitalise" app-bind="product.brand"></span>
+                                </div>
+                                <div class="text-33-red flex-1" app-show="product.stock <= 0">Not in stock</div>
+                                <div class="text-light text-right flex-1">£<span app-bind="product.price"></span></div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div app-show="view.item_add_type == 'Service'" class="relative layer-2">
+                        <div class="">
+                            <input type="text" class="search-dropdown thin right" placeholder="Search services..." app-model="view.search" app-click="toggleContext('search_results','services')" onkeyup="scope.searchApi('services',this.value)" spellcheck="false">
+                        </div>
+
+                        <div class="table search-select absolute context" id="context-search_results" app-show="view.search_results">
+                            <div class="row clickable flex" app-for="service in services" app-click="addToCart('services',service._key,'<%- cart_id %>')">
+                                <div class="flex-2 capitalise py-05">
+                                    <div class="text-weight-600" app-bind="service.name"></div>
+                                    <div class="text-light"><span app-bind="service.duration"></span>mins</div>
+                                </div>
+
+                                <div class="text-light text-right flex-1">From £<span app-bind="service.prices[0].value"></span></div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div app-show="view.item_add_type == 'Petty_Cash'" class="relative layer-2">
+                        <div class="">
+                            <input type="text" class="search-dropdown thin right" placeholder="Select option..." app-model="view.pc_search" app-click="view.pc_search_results = !view.pc_search_results" spellcheck="false">
+                        </div>
+
+                        <div class="table search-select absolute context" app-show="view.pc_search_results">
+                            <div class="row clickable flex" app-click="addToCart('petty_cash','Groceries','<%- cart_id %>')">
+                                <div class="text-bold flex-2 capitalise">Groceries</div>
+                            </div>
+                            <div class="row clickable flex" app-click="addToCart('petty_cash','Stock','<%- cart_id %>')">
+                                <div class="text-bold flex-2 capitalise">Stock</div>
+                            </div>
+                            <div class="row clickable flex" app-click="addToCart('petty_cash','Other','<%- cart_id %>')">
+                                <div class="text-bold flex-2 capitalise">Other</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+<% } %>
+
+
+
+<% if (typeof recommended_products != 'undefined' && recommended_products.length > 0){ %>
+
+    <h4 class="mt-4 mb-3">Recommended Products</h4>
+
+    <div class="">
+        <% for (var i in recommended_products){ %>
+            <% if (recommended_products[i]){ %>
+                <div class="grid col-5 bg-33-white px-1 py-1 rounded text-small">
+                    <div class="colspan-3 flex flex-middle-left flex-column">
+                        <div class="text-weight-600"><%- recommended_products[i].name %></div>
+                        <div><%- recommended_products[i].brand %></div>
+                        <% if (recommended_products[i].staff){ %><div class="text-small text-primary">Recommended By: <%- recommended_products[i].staff.name.first %> <%- recommended_products[i].staff.name.last %></div><% } %></div>
+                    <div class="flex flex-middle-right pr-1">£<%- recommended_products[i].price %></div>
+                    <div class="flex flex-middle-right">
+                        <button class="btn bg-secondary" app-click="addToCart('products','<%- recommended_products[i]._key %>','<%- cart_id %>')">
+                            Add <span class="icon add right white"></span>
+                        </button>
+                    </div>
+                </div>
+            <% } %>
+
+        <% } %>
+    </div>
+<% } %>

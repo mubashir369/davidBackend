@@ -1,0 +1,130 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+
+    <div class="page allReport" style="white-space: normal">
+
+        <div class="grid col-12 col-m-3 col-s-1 gap-1 allReport-cards">
+
+            <div class="colspan-4 bg-light-grey rounded p-1">
+                <div class="bg-grey p-1 radius-5">
+                    <h4 class="text-bold">Food Wallet</h4>
+                    <p>Available : £ <%=food%></p>
+                    <button class="dp-btn text-white bg-secondary" app-click="view.modal = 'show_modal2'">Redeem</button>
+                </div>
+            </div>
+            <div class="colspan-4 bg-light-grey rounded p-1">
+                <div class="bg-grey p-1 radius-5">
+                    <h4 class="text-bold">Product Wallet</h4>
+                    <p>Available : £ <%=product%></p>
+                    <button class="dp-btn text-white bg-secondary" app-click="">Redeem</button>
+                </div>
+            </div>
+
+
+            <div class="colspan-4 bg-light-grey rounded p-1">
+                <div class="bg-grey p-1 radius-5">
+                    <h4 class="text-bold">Service Wallet</h4>
+                    <p>Available : £ <%=service%></p>
+                    <button class="dp-btn text-white bg-secondary" app-click="">Redeem</button>
+                </div>            
+            </div>            
+
+        </div>
+
+      
+            <div class="table "  app-init="get('home_about_us','wallet_transactions')">
+
+                <div class="row table-header">
+
+                    <div class="cell middle" style="width: 1em"></div>
+                    <div class="cell middle mobile-cell">Type</div>
+                    <div class="cell middle mobile-cell">Service/Product Name</div>
+                    <div class="cell middle mobile-cell">Member Id</div>
+                    <div class="cell middle hidden-s" style="width: 10em">Amount </div>
+                   
+                    <div class="cell middle hidden-s">Credited To</div>
+                    <div class="cell middle hidden-s">Created on</div>
+                   
+                   
+
+                </div>
+
+                <div class="row" app-for="trans in home_about_us">
+
+                    <div class="cell middle">
+                        
+                    </div>
+                    
+                    <div class="cell middle text-light hidden-s" app-bind="trans.Remarks"></div>
+                    <div class="cell middle text-light hidden-s" app-bind="trans.name"></div>
+                    <div class="cell middle text-light hidden-s" app-bind="trans.member_id"></div>
+                    <div class="cell middle text-light hidden-s text-center" >
+                        <span app-show="trans.created_to=='admin'">+</span>
+                        <span app-hide="trans.created_to=='admin'">-</span>
+                        <span app-bind="parsePrice(trans.amount)" class="ml-01"></span>
+                    </div>
+                    <div class="cell middle text-light hidden-s" app-bind="trans.created_to"></div>
+                   
+                    <div class="cell middle text-light hidden-s" app-bind="parseISODate(trans._created,'Do MMMM YYYY')"></div>
+                    
+                    
+
+                </div>
+
+            </div>
+
+
+
+
+    </div>
+
+    <div class="modal" app-show="view.modal == 'show_modal'" anim="{'enter':'fade-in'}">
+
+        <div class="modal-body p-0" anim="{'enter':'move-up','duration':'0.2'}">
+            <div class="modal-header" >
+            <div class="title">
+                    <h4 class="text-black">
+                        <span>Run Report</span>
+                    </h4>
+                </div>
+                <div class="text-right">
+                    <h4 class="close-icon clickable" onclick="modalCloseAll()">&times;</h4>
+                </div>
+            </div>
+            <div class="modal-content p-2">
+            <div class="grid col-2 gap-1">
+
+                <div class="layer-5 w-100 relative" app-show="report_meta.from">
+                    <div class="mb-1">From: <span class="text-primary" app-bind="parseISODate(report_meta.from,'Do MMMM YYYY')"></span></div>
+                    <%- include(view.basedir+'/components/dashboard/partials/date-picker-simple.ejs',{open:true, type:'select',obj:'report_meta.from'}) %>
+                </div>
+                <div class="layer-5 w-100 relative" app-show="report_meta.to">
+                    <div class="mb-1">To: <span class="text-primary" app-bind="parseISODate(report_meta.to,'Do MMMM YYYY')"></span></div>
+                    <%- include(view.basedir+'/components/dashboard/partials/date-picker-simple.ejs',{open:true, type:'select_end',obj:'report_meta.to'}) %>
+                </div>
+
+                <div class="" app-for="input in report_inputs">
+                    <div app-hide="match(input.field,'date')">
+                        <label class="block text-small" app-bind="input.description"></label>
+                        <input type="text" app-model="input.value">
+                    </div>
+                </div>
+            </div>
+            </div>
+
+            <div class="modal-appointment-actions flex flex-middle-right p-1 text-right">
+               
+                <a class="dp-btn text-white bg-secondary m-0" app-click="runReport(view.report.slug,view.report.value,true)">
+                    Run Report<span class="icon tick right white"></span>
+                </a>
+            
+        </div>
+
+        </div>
+
+    </div>
+
+    <div id="results">
+
+        </div>

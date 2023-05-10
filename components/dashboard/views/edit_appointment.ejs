@@ -1,0 +1,36 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+
+    <div class="hidden" app-init="get('staff','all')"></div>
+    <div class="hidden" app-init="get('salon','54855602')"></div>
+    <div class="hidden" app-init="newAppointment('set_event_type','staff_appointment')"></div>
+    <div class="hidden" app-init="newAppointment('get','<%- appointment_key %>')"></div>
+
+    <div class="page h-100 overflow-hidden new-appointment bg-light-grey">
+
+        <div>
+            <h2 span app-bind="parseName(appointment.staff.name)"></h2>
+            <div class="grid col-2">
+
+                <div class="text-primary px-4">
+                    <span app-bind="parseISODate(appointment.appointments[0].date,'Do MMMM YYYY')"></span>
+                    <%- include('../../dashboard/partials/date-picker-simple.ejs',{type:'to',open:true}) %>
+                </div>
+                <div class="text-primary px-4">
+                    <span app-bind="parseISODate(appointment.appointments[0].end_date,'Do MMMM YYYY')"></span>
+                    <%- include('../../dashboard/partials/date-picker-simple.ejs',{type:'end',open:true}) %>
+                </div>
+
+            </div>
+
+            <div class="layer-5 w-100 relative">
+
+            </div>
+
+            <section class="footer">
+                <button class="btn bg-secondary" app-click="newAppointment('save','<%- appointment_key %>')">Update Booking</button>
+            </section>
+        </div>
+
+    </div>

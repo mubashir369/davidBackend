@@ -1,0 +1,70 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+
+
+    <div class="page px-2 p-s-0" app-init="get('/dashboard/clients/memberships','prices','prices')">
+
+        <div class=" bg-white p-2">
+
+            <div class="table">
+                <div class="row table-header">
+                    <div class="cell middle " style="width: 15%">Name</div>
+                    <div class="cell middle text-center" style="width: 15%">Active</div>
+                    <div class="cell middle text-center" style="width: 25%">Subscribers</div>
+                    <div class="cell middle" style="width: 15%">Amount</div>
+                    <div class="cell middle" style="width: 15%">Interval</div>
+                    <div class="cell middle  text-right" style="width: 15%">Action</div>
+                </div>
+                <div class="row" app-for="price in prices">
+                    <div class="cell middle text-weight-600 clickable" app-click="goto('/dashboard/clients/memberships/members/',price._key)" app-bind="price.name"></div>
+                    <div class="cell middle">
+                        <!-- <div class="text-center" app-hide="price.active == false"><span class="icon tick green"></span></div>
+                        <div class="text-center" app-show="price.active == false"><span class="icon close"></span></div> -->
+
+                        <div class="text-center" app-show="price.active =='false'" app-hide="price.active"><span class="icon close red"></div>
+                            <div class="text-center" app-show="price.active" ><span class="icon tick green"></div>
+                    </div>
+                    <!-- <div class="cell middle text-center" app-bind="price.subscribers ==0  1?'0':price.subscribers"></div> -->
+                    <div class="cell middle text-center mt-2" app-show="price.subscribers==0" app-bind="0"></div>
+                    <div class="cell middle text-center mt-2" app-show="price.subscribers" app-bind="price.subscribers"></div>
+                    <div class="cell middle" app-bind="parseDecimalPrice(price.unit_amount)"></div>
+                    <div class="cell middle capitalise" app-bind="parseInterval(price.recurring.interval)"></div>
+                    <div class="cell middle action-icons" app-attr="{id:'cell-'+price._key}">
+                        <div class="context-link btn border" app-click="toggleContext(price._key)">
+                            <span class="icon black arrowdown sm"></span>
+                        </div>
+                        <div class="context dropdown text-left" style="display: none" app-attr="{id:'context-'+price._key}">
+                            <div class="link" app-click="newMembership('edit',price)">
+                                <span class="icon left black edit"></span>
+                                Edit
+                            </div>
+                            <div class="link" app-click="goto('/dashboard/clients/memberships/members/',price._key)">
+                                <span class="icon left black client"></span>
+                                View Members
+                            </div>
+                            <div class="link" app-click="newMembership('delete',price._key)" app-show="price.active">
+                                <span class="icon left black close"></span>
+                                Deactivate
+                            </div>
+                            <div class="link" app-click="newMembership('activate',price._key)" app-hide="price.active">
+                                <span class="icon left black tick green"></span>
+                                Activate
+                            </div>
+
+                            <div class="link" app-click="opendel_pop(price._key)">
+                                <span class="icon left black delete"></span>
+                                Delete
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <%- include('../partials/modal/new_membership.ejs') %>

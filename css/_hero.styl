@@ -1,0 +1,72 @@
+.hero {
+
+    background-color: $brand-dark;
+    color: $text-light;
+    min-height: 37rem;
+    height: 37rem;
+    background-position: center;
+    background-size: cover;
+
+    @media small {
+        height: 95vh;
+        background-position: right -12.5rem center;
+    }
+
+    h1 {
+        font-size: 2rem;
+        letter-spacing: 3.2px;
+        line-height: 2.5rem
+        font-weight: 500;
+        border-bottom: 2px solid $brand-light;
+        padding: 0 7rem 2rem 0;
+    }
+
+    .contain {
+        @media small {
+            background: $bg-dark-gradient-transparent;
+            width: 100vw;
+            padding: 0 2rem;
+        }
+    }
+
+    .flex {
+
+        &:first-child {
+            text-align: left;
+            flex: 0 0 25.75rem;
+
+            @media small {
+                padding-top: 5rem;
+                flex: 0 0 100%;
+            }
+        }
+
+        blockquote {
+            position: relative;
+            margin: 3.563rem 0 0 0;
+            padding: 0 0 0 3.2rem;
+            font-size: 1.125rem;
+            vertical-align: 0;
+
+            &:before {
+                position: absolute;
+                top: 0;
+                left: 0;
+                margin-top: 1.8rem;
+                font-size: 5rem;
+                color: rgb(125,125,125);
+            }
+
+            p {
+                display: block;
+
+                &.customer {
+                    font-size: 0.875rem;
+                    color: rgb(125,125,125);
+                }
+            }
+        }
+
+    }
+
+}

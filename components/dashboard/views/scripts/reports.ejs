@@ -1,0 +1,179 @@
+
+<script>
+
+    extendedController = function(){
+
+        watch['report_meta.from'] = function(data){
+            scope.dates = getDaysArray(scope.selected_date.year,scope.selected_date.month)
+        }
+
+        watch['report_meta.to'] = function(data){
+            scope.dates = getDaysArray(scope.selected_date.year,scope.selected_date.month)
+        }
+
+        <% if (typeof result == 'object' && result.data){ %>
+
+            scope.filtered_products = <%- JSON.stringify(result.data) %>
+            scope.products = <%- JSON.stringify(result.data) %>
+
+        <% } %>
+
+        scope.runReport = function(slug, value, run){
+
+            if (scope.report_meta && scope.report_meta.from){
+                let from = moment(scope.report_meta.from)
+                if (from.isAfter(moment())){
+                    scope.notify('Date range must be in the past','error')
+                    return false
+                }
+            }
+
+            if (scope.report_meta && scope.report_meta.to){
+                let from = moment(scope.report_meta.to)
+                if (from.isAfter(moment())){
+                    scope.notify('Date range must be in the past','error')
+                    return false
+                }
+            }
+
+            if (slug){
+                scope.view.report.slug = slug
+            }
+
+            if (run){
+
+                var values = ''
+
+                if (scope.report_inputs && scope.report_inputs.length > 0){
+                    for (var i in scope.report_inputs){
+
+                        values += scope.report_inputs[i].field+'='+scope.report_inputs[i].value+'&'
+
+                        if (i >= scope.report_inputs.length-1){
+
+                            if (scope.report_meta.from && scope.report_meta.from.match(/Z$/)){
+                                values += 'from='+scope.report_meta.from+'&'
+                            }
+                            if (scope.report_meta.to && scope.report_meta.to.match(/Z$/)){
+                                values += 'to='+scope.report_meta.to
+                            }
+                            let report_url = '/dashboard/reports/'+slug+'?'+values.replace(/&$/,'')
+                            window.location.href = report_url
+
+                        }
+                    }
+                } else if (scope.report_meta && scope.report_meta.to && scope.report_meta.from){
+
+                    if (scope.report_meta.from && scope.report_meta.from.match(/Z$/)){
+                        values += 'from='+scope.report_meta.from+'&'
+                    }
+                    if (scope.report_meta.to && scope.report_meta.to.match(/Z$/)){
+                        values += 'to='+scope.report_meta.to
+                    }
+                    scope.view.modal = false
+                 //   scope.notify('Running report, please wait...','success',0,'fa-clock')
+
+                    // http('get','/dashboard/reports/'+slug+'?'+values.replace(/&$/,'')).then((report_data)=>{
+                    //     scope.notify('cancel')
+                    //     scope.view.modal = false
+                    //     document.querySelector('#results').innerHTML = report_data
+                    // }).catch((e)=>{
+                    //     scope.notify(e, 'error')
+                    // })
+
+                //    console.log('/dashboard/reports/'+slug+'?'+values.replace(/&$/,''))
+                //setTimeout(function(){
+                    let report_url = '/dashboard/reports/'+slug+'?'+values.replace(/&$/,'')
+                    window.location.href = report_url
+
+               // },500)
+
+
+                } else {
+                    scope.view.modal = false
+                    window.location.href = '/dashboard/reports/'+slug
+                }
+
+            } else {
+
+                scope.get('reports',slug+'?schema=true').then((data)=>{
+
+                    scope.report_meta = data.meta
+                    scope.report_inputs = data.inputs
+
+                    if (value == "true"){
+
+                        if (data.meta && data.meta.from && data.meta.to){
+                            scope.dates = getDaysArray(scope.selected_date.year,scope.selected_date.month)
+                        }
+
+                        scope.view.modal = 'show_modal'
+                    } else if (value){
+                        scope.view.report.value = value
+                    }
+                })
+            }
+
+        }
+
+
+        scope.searchProducts = function(str){
+
+            let re = new RegExp(str,'i')
+            scope.filtered_products = scope.products.filter((item)=>{
+
+                if (typeof item.brand == 'string' && item.brand.match(re) ||
+                    typeof item.name == 'string' && item.name.match(re) ||
+                    typeof item.category == 'string' && item.category.match(re)){
+                    return true
+                } else {
+                    return false
+                }
+
+            })
+
+        }
+
+        scope.editProduct = function(key){
+
+            scope.get('products',key,'new').then((prod_data)=>{
+                scope.new = prod_data[0]
+                scope.view.modal = 'show_edit'
+            }).catch(err => {
+                scope.notify(err, 'error')
+            })
+
+        }
+
+        scope.saveProduct = function(){
+            scope.post('products',scope.new).then((prod_data)=>{
+                window.location.reload()
+            }).catch(err => {
+                scope.notify(err, 'error')
+            })
+
+        }
+
+        scope.orderProduct = function(product){
+
+            scope.post('products/add_to_order',{_key:product._key, value:!product.on_order}).then((prod_data)=>{
+                scope.products = scope.products.map((item)=>{
+                    if (item._key == product._key){
+                        item = prod_data[0]
+                    }
+                    return item
+                })
+                scope.filtered_products = scope.filtered_products.map((item)=>{
+                    if (item._key == product._key){
+                        item = prod_data[0]
+                    }
+                    return item
+                })
+            }).catch(err => {
+                scope.notify(err, 'error')
+            })
+        }
+
+    }
+
+</script>

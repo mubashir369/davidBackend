@@ -1,0 +1,46 @@
+.main {
+
+    min-height: calc(100vh - 10rem);
+    margin-top: 3.5rem;
+
+    &-nav {
+        position: relative;
+        z-index: 500;
+        height:3.5rem;
+        background-color: white;
+        text-align: right;
+
+        a {
+            display: inline-flex;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
+            padding: 0 2em;
+        }
+
+    }
+
+    &.fullscreen {
+
+        margin-top:0;
+        height: 100vh;
+        height: -webkit-fill-available;
+        min-height: 100vh;
+        min-height: -webkit-fill-available;
+
+        .page {
+            height: 100vh;
+            height: -webkit-fill-available;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+
+            .grid {
+                width: 100%;
+            }
+        }
+
+    }
+
+}

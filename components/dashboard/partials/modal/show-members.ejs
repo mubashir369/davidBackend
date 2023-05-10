@@ -1,0 +1,83 @@
+<div class="modal smallModal showMember-modal" app-show="view.modal == 'show_mem'" id="mymem" anim="{'enter':'fade-in'}">
+
+    <div class="modal-body p-0 w-60 w-m-90" id="mbody" anim="{'enter':'move-up','duration':'0.2'}">
+
+        <div class="modal-header text-primary">
+            <div class="title">
+                <p class="m-0">
+                    List of Members who purchased
+                </p>
+            </div>
+            <div class="close">
+                 <span class="icon close white clickable" onclick="modalCloseAll()"></span> 
+
+                <!--<div class="btn-wrap">
+                    <button class="btn btn-left border mr-1 text-primary" app-click="view.tab = 'one'" app-class="{'active':view.tab == 'one'}">Details<span class="icon edit black right"></span></button>
+                    <button class="btn btn-right border text-primary" app-click="view.tab = 'two'" app-class="{'active':view.tab == 'two'}">Skills and Access<span class="icon stylist black right"></span></button>
+                </div>-->
+            </div>
+        </div>
+
+        <div class="modal-content px-2 pb-2 pt-0">
+
+            <div app-show="view.tab == 'one'">
+
+                <div>
+
+                    <div class="@table align-middle ">
+        
+                        <div class="row grid col-12 cell middle not-sortable  ">
+        
+                            <div class=" colspan-12 mobile-cell py-1" style="border-bottom: 1px solid #ddd;" >Member Name</div>
+                            <!-- <div class="cell middle colspan-4" style="width: 5rem"></div> -->
+                            <!-- <div class="cell middle">Category</div>
+                            <div class="cell middle text-right hidden-m">Barcode</div>
+                            <div class="cell middle text-right" style="width: 5rem;">RRP</div>
+                            <div class="cell middle text-right hidden-m" style="width: 5rem;">Online</div>
+                            <div class="cell middle text-right" style="width: 5rem;">Stock</div>
+                            <div class="cell middle" style="width: 5rem;">Action</div> -->
+        
+                        </div>
+                        <div class="showMember-modal-items dp-scroll">
+                            <div class="row grid col-12 not-sortable cell middle" app-for="member in members">
+            
+                                <div class=" colspan-2  list-item text-bold p-0 clickable" ><img class="py-01" app-src="member.member[0].image" src="/images/products/Product_placeholder.svg"></div>
+                                <div class=" colspan-10 list-item  text-weight-600 capitalise clickable flex align-items-center" app-bind="member.member[0].name"></div>
+                                
+                                <!-- <div class="cell middle text-right action-icons" app-attr="{id:'cell-'+product._key}">
+            
+                                    <div class="context-link btn border" app-click="toggleContext(product._key)">
+                                        <span class="icon black arrowdown sm"></span>
+                                    </div>
+                                    <div class="context dropdown text-left" style="display: none" app-attr="{id:'context-'+product._key}">
+                                        <div class="link" app-click="edit('cafeproducts',product)">
+                                            <span class="icon black edit left"></span>
+                                            Edit
+                                        </div>
+                                        <div class="link" app-click="edit('cafeproducts',product,'delete')">
+                                            <span class="icon black delete left"></span>
+                                            Delete
+                                        </div>
+                                    </div>
+            
+                                </div> -->
+            
+                            </div>
+                        </div>
+        
+                    </div>
+        
+                </div>
+            </div>
+
+           
+
+        </div>
+
+
+        
+
+    </div>
+
+</div>
+

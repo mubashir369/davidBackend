@@ -1,0 +1,51 @@
+
+<% if (typeof type == 'undefined'){ %>
+    <% var type = 'start'; %>
+    <div <% if (typeof open == 'undefined'){ %>app-show="view.datepicker_simple"<% } %> class="datepicker simple" style="position:<% if (typeof open == 'undefined' || !open){ %>position: absolute !important;<% } else if (open === true){ %>position: relative !important; box-shadow:none !important;<% } %> color:#444 !important">
+<% } else { %>
+    <div <% if (typeof open == 'undefined'){ %>app-show="view.datepicker_simple == '<%- type %>'" id="context-datepicker"<% } %> class="datepicker simple <% if (typeof open == 'undefined'){ %>context<% } %>" style="<% if (typeof open == 'undefined' || !open){ %>position: absolute !important;<% } else if (open === true){ %>position: relative !important; box-shadow:none !important;<% } %> !important; color:#444 !important">
+<% } %>
+
+    <div class="dates">
+
+        <% if (typeof open == 'undefined' || !open){ %>
+
+            <div class="text-right text-primary clickable">
+                <img src="/icons/Icon_ButtonX.svg" app-click="view.datepicker_simple = 'false'">
+            </div>
+
+        <% } %>
+
+        <div class="btn-wrap width-full">
+
+            <div class="btn left-arrow" app-click="chgMonth('prev','<%- type %>')">
+                  <span class="icon arrowleft light-grey"></span>
+            </div>
+
+            <div class="btn border">
+                <span app-bind="selected_date.month_name"></span>
+            </div>
+
+            <div class="btn right-arrow" app-click="chgMonth('next','<%- type %>')">
+                  <span class="icon arrowright light-grey"></span>
+            </div>
+
+        </div>
+
+        <div class="grid col-12 gap-1">
+
+            <div class="grid col-7 colspan-12">
+                <div app-for="date_<%- type %> in dates" class="cell clickable">
+                    <% if (typeof obj == 'undefined'){ %>
+                        <span app-bind="date_<%- type %>.date" app-class="datepickerClass(date_<%- type %>)" app-click="selectDate(date_<%- type %>.iso,'<%- type %>')"></span>
+                    <% } else { %>
+                        <span app-bind="date_<%- type %>.date" app-class="datepickerClass(date_<%- type %>,false,<%- obj %>)" app-click="<%- obj %> = date_<%- type %>.iso"></span>
+                    <% } %>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

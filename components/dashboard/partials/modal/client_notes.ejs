@@ -1,0 +1,31 @@
+<div class="modal" app-show="view.modal == 'show_notes'" anim="{'enter':'fade-in'}">
+
+    <div class="modal-body" anim="{'enter':'slide-up','duration':'0.2'}">
+
+        <div class="grid col-2 pb-1">
+            <div>
+                <h4 class="text-light">
+                    Client Notes
+                </h4>
+            </div>
+            <div class="text-right">
+                <h4 class="close-icon text-light clickable" onclick="modalCloseAll()">&times;</h4>
+            </div>
+        </div>
+
+        <div class="">
+
+            <textarea app-model='client.notes'></textarea>
+
+        </div>
+
+        <div class="text-right pt-1">
+            <a class="btn bg-secondary" app-click="saveClientNote()">
+                Save
+                <span class="icon add right white"></span>
+            </a>
+        </div>
+
+    </div>
+
+</div>

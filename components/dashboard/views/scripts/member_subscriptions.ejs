@@ -1,0 +1,216 @@
+<script>
+
+    extendedController = function(){
+
+        scope.toggleCats = function(data, reset){
+
+            let services_el = document.getElementById('select-services_categories'),
+                products_el = document.getElementById('select-products_categories')
+
+            if (products_el && services_el){
+                if (data && data == 'all'){
+                    products_el.style.display = 'grid'
+                    services_el.style.display = 'grid'
+                } else if (data && data == 'services'){
+                    services_el.style.display = 'grid'
+                    products_el.style.display = 'none'
+                } else if (data && data == 'products'){
+                    products_el.style.display = 'grid'
+                    services_el.style.display = 'none'
+                } else {
+                    products_el.style.display = 'none'
+                    services_el.style.display = 'none'
+                }
+            }
+
+        }
+
+        scope.toggleRewardsCats = function(data, reset){
+
+            let services_el = document.getElementById('rewards-services_categories'),
+                products_el = document.getElementById('rewards-products_categories')
+
+            if (products_el && services_el){
+                if (data && data == 'all'){
+                    products_el.style.display = 'grid'
+                    services_el.style.display = 'grid'
+                } else if (data && data == 'services'){
+                    services_el.style.display = 'grid'
+                    products_el.style.display = 'none'
+                } else if (data && data == 'products'){
+                    products_el.style.display = 'grid'
+                    services_el.style.display = 'none'
+                } else {
+                    products_el.style.display = 'none'
+                    services_el.style.display = 'none'
+                }
+            }
+
+        }
+
+
+        scope.newMembership = function(type, data){
+
+            if (type == 'new'){
+
+                scope.new_membership = {
+                    name:'',
+                    price:'',
+                    interval:'month',
+                    deposit_amount: 0,
+                    description:'',
+                    seats: 0,
+                    type: 'reoccuring',
+                    benefits: {
+                        discount:{
+                            type:'',
+                            amount:''
+                        },
+                        booking_discount:{
+                            length:'',
+                            amount:''
+                        },
+                        account:{
+                            gallery_images:''
+                        }
+                    }
+                }
+
+                scope.view.modal = 'new_membership'
+                scope.view.modal_tab = 'one'
+
+            } else if (type == 'edit' && data){
+
+                scope.new_membership = {
+                    _key: data._key,
+                    id: data._key,
+                    name: data.name,
+                    active: data.active,
+                    type: data.type,
+                    seats: data.seats,
+                    price: data.unit_amount/100,
+                    interval: data.recurring.interval,
+                    deposit_amount: data.deposit_amount,
+                    description:data.description,
+                    benefits: data.benefits
+                }
+
+                scope.view.modal = 'new_membership'
+                scope.view.modal_tab = 'one'
+
+                if (scope.new_membership.benefits.discount && scope.new_membership.benefits.discount.type){
+                    scope.toggleCats(scope.new_membership.benefits.discount.type)
+                } else {
+                    scope.toggleCats()
+                }
+
+                if (scope.new_membership.benefits.rewards && scope.new_membership.benefits.rewards.type){
+                    scope.toggleRewardsCats(scope.new_membership.benefits.rewards.type)
+                } else {
+                    scope.toggleRewardsCats()
+                }
+
+            } else if (type == 'delete'){
+                console.log("ddddddelete",data._key);
+                fetch(`/api/memberships/deleteOne?id=${data._key}`)
+  .then(response => response.json())
+  .then((data)=>{
+    modalCloseAll()
+                    scope.get('/dashboard/clients/subscriptions','prices','prices')
+                    scope.notify('Membership updated')
+  })
+  .catch((error)=>{
+    scope.notify(error,'error')
+  });
+                // scope.delete(`/dashboard/clients/subscriptions`,data.id).then((data)=>{
+
+                //     modalCloseAll()
+                //     scope.get('/dashboard/clients/subscriptions','prices','prices')
+                //     scope.notify('Membership updated')
+
+                // }).catch((err)=>{
+                //     scope.notify(err,'error')
+                // })
+
+            } else if (type == 'activate'){
+
+                let payload = {
+                    active: true
+                }
+
+                scope.put('/dashboard/clients/subscriptions',data,payload).then((data)=>{
+
+                    modalCloseAll()
+                    scope.get('/dashboard/clients/subscriptions','prices','prices')
+                    scope.notify('Membership updated')
+
+                }).catch((err)=>{
+                    scope.notify(err,'error')
+                })
+
+            } else if (type == 'update'){
+
+                //console.log(scope.new_membership); return false;
+
+                scope.put('/dashboard/clients/subscriptions',scope.new_membership.id,scope.new_membership).then((data)=>{
+
+                    modalCloseAll()
+                    scope.get('/dashboard/clients/subscriptions','prices','prices')
+                    scope.notify('Membership updated')
+
+                }).catch((err)=>{
+                    scope.notify(err,'error')
+                })
+
+            } else if (type == 'create'){
+
+            //alert('a');
+            //console.log(scope.new_membership,type);
+            //return false;
+
+                scope.post('/dashboard/clients/subscriptions/create',scope.new_membership).then((data)=>{
+
+                    modalCloseAll()
+                    scope.get('/dashboard/clients/subscriptions','prices','prices')
+                    scope.notify('Membership created')
+
+                }).catch((err)=>{
+                    scope.notify(err,'error')
+                })
+
+            }
+
+        }
+
+        <% if (typeof id != 'undefined'){ %>
+            scope.unsubscribe = function(client_key, subscription_id){
+
+                let payload = {
+                    client_key: client_key,
+                    subscription_id: subscription_id
+                }
+
+                scope.post('/dashboard/clients/subscriptions/unsubscribe',payload).then((data)=>{
+
+                    scope.get('/dashboard/clients/subscriptions','<%- id %>','members')
+                    scope.notify('Unsubscribed. The customer will not be charged again for the subscription')
+
+                }).catch((err)=>{
+
+                    scope.notify(err,'error')
+
+                })
+
+            }
+        <% } %>
+
+        scope.parseDecimalPrice = function(price){
+            return '£'+(parseFloat(price)/100).toFixed(2)
+        }
+
+        scope.parseInterval = function(interval){
+            return interval.replace(/day/i,'daiy').replace(/y$/,'')+'ly'
+        }
+
+    }
+</script>

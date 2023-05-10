@@ -1,0 +1,232 @@
+
+                                <% if (appointment.event_type == 'customer_appointment'){ %>
+
+                                    <div class="appointment-details context-link <%- appointment.status %><% if (appointment.duration == 15){ %> single-slot<% } else if (appointment.duration == 30){ %> double-slot<% } else if (appointment.duration == 45){ %> triple-slot<% } %>" app-click="edit('appointments','<%- appointment._key %>')">
+
+                                        <div class="info clickable">
+
+                                            <% if (appointment.note){ %>
+
+                                                <img src="/icons/Icon-ApptNote.svg" style="width:0.9rem; margin-right:0.5rem; top: -0.13rem" app-click="edit('appointments','<%- appointment._key %>')">
+
+                                            <% } %>
+
+                                                <img src="/icons/DR_Icon_3Dots.svg" app-click="toggleAppointment('<%- appointment._key %>')">
+
+                                        </div>
+
+                                        <div class="name clickable context-link capitalise">
+
+                                            <% if (appointment.customer && appointment.customer[0] && appointment.customer[0].name){ %>
+
+                                                <%- functions.parseName(appointment.customer[0].name) %>
+
+                                            <% } else if (appointment.customer && appointment.customer[0] && appointment.customer[0].email) { %>
+
+                                                <%- appointment.customer[0].email %>
+
+                                            <% } else { %>
+
+                                                Client not found
+
+                                            <% } %>
+                                        </div>
+
+                                        <div class="time clickable context-link"><%- appointment.start_time %> - <%- appointment.end_time %></div>
+                                        <div class="description context-link"><div id="<%- appointment._key %>-service_name"><%- appointment.service_name %></div></div>
+
+                                        <div class="links" id="context-<%- appointment._key %>">
+
+                                            <% if (appointment.status == 'salon_confirmation' || appointment.status == 'unconfirmed' || appointment.status == 'cancelled' || appointment.status == 'reschedule') {%>
+
+                                                <% if (appointment.status != 'cancelled') { %>
+                                                    <div class="link" app-click="updateAppointment('confirm','<%- appointment._key %>')">
+                                                        <img src="/icons/Edit_Icon.svg" class="icon">
+                                                        Mark as Confirmed
+                                                    </div>
+                                                <% } %>
+
+                                                <div class="link" app-click="updateAppointment('send_confirmation','<%- appointment._key %>')">
+                                                    <img src="/icons/Reschedule_Icon.svg" class="icon">
+                                                    <% if (appointment.status == 'cancelled'){%>
+                                                        Uncancel and Resend Confirmation
+                                                    <% } else { %>
+                                                        Request Client Confirmation
+                                                    <% } %>
+
+                                                </div>
+
+                                                <div class="spacer"></div>
+
+                                            <% } %>
+
+                                            <% if (appointment.status != 'paid') {%>
+
+                                                <% if (functions.isToday(appointment.date) && appointment.status.match(/confirmed|checked_in/)) {%>
+                                                    <div class="check-in link" app-click="updateAppointment('check_in','<%- appointment._key %>','<%- appointment.status %><% if (appointment.prev_status){ %>|<%- appointment.prev_status %><% } %>')">
+
+                                                        <% if (appointment.status == 'checked_in') {%>
+                                                            <img src="/icons/DR_Icon_UnmarkAsCheckedIn.svg" class="icon">
+                                                            <span class="text">Unmark Check In</span>
+                                                        <% } else { %>
+                                                            <img src="/icons/DR_Icon_CheckIn.svg" class="icon">
+                                                            <span class="text">Check In</span>
+                                                        <% } %>
+                                                    </div>
+
+                                                    <div class="spacer"></div>
+
+                                                    <div class="link" app-click="updateAppointment('resend','<%- appointment._key %>')">
+                                                        <img src="/icons/Reschedule_Icon.svg" class="icon">
+                                                        Send Reminder
+                                                    </div>
+
+                                                <% } %>
+
+                                                <% if (functions.isToday(appointment.date)){ %>
+                                                    <div class="link" app-click="updateAppointment('no_show','<%- appointment._key %>',true)">
+                                                        <img src="/icons/DR_Icon_UnmarkAsCheckedIn.svg" class="icon">
+                                                        Client No Show
+                                                    </div>
+                                                <% } %>
+
+
+                                                <div class="link" app-click="reschedule('<%- appointment._key %>','<%- appointment.start_time %>','<%- appointment.duration %>')">
+                                                    <img src="/icons/Edit_Icon.svg" class="icon">
+                                                    Move
+                                                </div>
+                                                <div class="link" app-click="edit('appointments','<%- appointment._key %>','delete')">
+                                                    <img src="/icons/Delete_Icon.svg" class="icon">
+
+                                                    <% if (appointment.status == 'cancelled') {%>
+                                                        Confirm Cancellation
+                                                    <% } else { %>
+                                                        Delete
+                                                    <% } %>
+
+                                                </div>
+                                                <% if (appointment.customer && appointment.customer[0]){ %>
+                                                    <div class="link" app-click="goto('/dashboard/clients/','<%- appointment.customer[0]._key %>')">
+                                                        <img src="/icons/Client_Icon.svg" class="icon">
+                                                        Go to Client Card
+                                                    </div>
+                                                <% } %>
+                                            <% } %>
+
+                                            <% if (appointment.status == 'paid' && appointment.customer && appointment.customer[0] && appointment.customer[0]._key) {%>
+                                                <div class="link" app-click="reschedule('<%- appointment._key %>','<%- appointment.start_time %>','<%- appointment.duration %>')">
+                                                    <img src="/icons/Edit_Icon.svg" class="icon">
+                                                    Move
+                                                </div>
+                                                <a class="link" href="/dashboard/calendar/new-appointment?client_id=<%- appointment.customer[0]._key %>&&staff_id=<%- appointment.staff_id %>">
+                                                    <img src="/icons/Reschedule_Icon.svg" class="icon">
+                                                    Rebook
+                                                </a>
+                                                <div class="link" app-click="goto('/dashboard/clients/','<%- appointment.customer[0]._key %>')">
+                                                    <img src="/icons/Client_Icon.svg" class="icon">
+                                                    Go to Client Card
+                                                </div>
+                                            <% } %>
+
+                                        </div>
+
+                                    </div>
+
+
+                                <% } else if (appointment.event_type == 'staff_appointment') { %>
+
+                                    <div class="appointment-details staff context-link <%- appointment.status %><% if (appointment.duration <= 15) {%> single-slot<% } %>" app-click="toggleAppointment('<%- appointment._key %>')">
+
+                                        <div class="name context-link capitalise">Off - <%- appointment.description %></div>
+                                        <div class="time within-slot clickable context-link"><%- functions.getStaffAppointmentTimes(appointment, selected_date) %></div>
+                                        <div class="links" id="context-<%- appointment._key %>">
+
+                                            <div class="link" app-click="reschedule('<%- appointment._key %>','<%- appointment.start_time %>','<%- appointment.duration %>')">
+                                                <img src="/icons/Edit_Icon.svg" class="icon">
+                                                Edit
+                                            </div>
+                                            <!-- <div class="link" app-click="goto('/dashboard/calendar/new-staff-appointment/','<%- appointment._key %>')">
+                                                <img src="/icons/Edit_Icon.svg" class="icon">
+                                                Edit
+                                            </div> -->
+                                            <div class="link" app-click="edit('appointments','<%- appointment._key %>','delete')">
+                                                <img src="/icons/Delete_Icon.svg" class="icon">
+                                                Delete
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+
+                                <% } else if (appointment.event_type == 'memo') { %>
+
+                                    <div class="appointment-details memo context-link <%- appointment.status %><% if (appointment.duration <= 15) {%> single-slot<% } %>" app-click="toggleAppointment('<%- appointment._key %>')">
+
+                                        <span class="name context-link"><%- appointment.description %></span>
+                                        <div class="links" id="context-<%- appointment._key %>">
+
+                                            <% if (appointment.description && !appointment.description.match(/^start|end/)) { %>
+                                                <div class="link" app-click="reschedule('<%- appointment._key %>','<%- appointment.start_time %>','<%- appointment.duration %>')">
+                                                    <img src="/icons/Edit_Icon.svg" class="icon">
+                                                    Move
+                                                </div>
+                                            <% } %>
+                                            <div class="link" app-click="edit('appointments','<%- appointment._key %>','delete')">
+                                                <img src="/icons/Delete_Icon.svg" class="icon">
+                                                Delete
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                <% } else if (appointment.event_type == 'target_bookings') { %>
+
+                                    <div class="appointment-details memo context-link <%- appointment.status %><% if (appointment.duration <= 15) {%> single-slot<% } %>" app-click="toggleAppointment('<%- appointment._key %>')">
+
+                                        <span class="name context-link"><%- appointment.description %></span>
+                                        <div class="links" id="context-<%- appointment._key %>">
+
+                                            <% if (appointment.description && !appointment.description.match(/^start|end/)) { %>
+                                                <div class="link" app-click="reschedule('<%- appointment._key %>','<%- appointment.start_time %>','<%- appointment.duration %>')">
+                                                    <img src="/icons/Edit_Icon.svg" class="icon">
+                                                    Move
+                                                </div>
+                                            <% } %>
+                                            <div class="link" app-click="edit('appointments','<%- appointment._key %>','delete')">
+                                                <img src="/icons/Delete_Icon.svg" class="icon">
+                                                Delete
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                <% } else if (appointment.event_type == 'slot_promotion') { %>
+
+                                    <div class="appointment-details memo context-link <%- appointment.status %><% if (appointment.duration <= 15) {%> single-slot<% } %>" app-click="toggleAppointment('<%- appointment._key %>')">
+
+                                        <span class="name context-link"><%- appointment.description %></span>
+                                        <div class="links" id="context-<%- appointment._key %>">
+
+                                            <% if (appointment.description && !appointment.description.match(/^start|end/)) { %>
+                                                <div class="link" app-click="reschedule('<%- appointment._key %>','<%- appointment.start_time %>','<%- appointment.duration %>')">
+                                                    <img src="/icons/Edit_Icon.svg" class="icon">
+                                                    Move
+                                                </div>
+                                            <% } %>
+                                            <div class="link" app-click="edit('appointments','<%- appointment._key %>','delete')">
+                                                <img src="/icons/Delete_Icon.svg" class="icon">
+                                                Delete
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                <% } %>
+
+                            </div>
+
+                        <% }) %>
+
+                    <% } %>
+
+                

@@ -1,0 +1,495 @@
+<% layout('member.ejs') -%>
+
+<% layout('customer-page.ejs') -%>
+
+
+<div class=" mb-2 mt-4 flex flex-middle dp-loginStyle dp-loginStyle-signup">
+    <div class="grid col-12 px-1 align-items-center">
+        <div class="colspan-5 colspan-s-12 @vw-40 @vw-s-100 px-s-1 text-left ">
+            <h1><%- cms_data.heading %></h1>
+            <div class="dp-loginStyle-descrip dp-scroll">
+                <%- cms_data.desc%>
+            </div>
+            <button class="bg-secondary " app-click="openSignupModal()" >Call Back form</button>
+        </div>
+        <div class="colspan-2"></div>
+        <div class="colspan-5 colspan-s-12 @vw-30 @vw-s-100 px-s-2 text-center dp-loginStyle-box">
+            <h2 class="mb-2 capitalise">Apply as a member</h2>
+            <form method="post" id="sampleForm" action="/member/signup" class="grid col-1 gap-1 common-form common-form-border">
+                <div class="dp-loginStyle-signup-col">
+                    <label class="text-black" for="memberPassword">Name</label>
+                    <input type="text" id="memberPassword" name="name" placeholder="Full Name" value="<%- typeof name != 'undefined'?name:'' %>" onkeyup="this.value = this.value.replace(/[^a-zA-Z. ]/g, '').replace(/(\..*)\./g, '$1');">
+                    <% if (typeof error != 'undefined' && error.name){ %>
+                        <div class="text-33-red" style="text-align: left;"><%- error.name %></div>
+                    <% } %>
+    
+    
+                </div>
+    
+    
+                <div class="dp-loginStyle-signup-col">
+                    <label class="text-black" for="memberEmail">Email</label>
+                    <input id="memberEmail" type="text" name="email" placeholder="Email Address"  value="<%- typeof email != 'undefined'?email:'' %>">
+    
+                    <% if (typeof error != 'undefined' && error.email){ %>
+                        <div class="text-33-red" style="text-align: left;"><%- error.email %></div>
+                    <% } %>
+    
+    
+                </div>
+                <div class="dp-loginStyle-signup-col">
+                    <label class="text-black" for="signUpPassword"> Password</label>
+                    <div class="iconInput">
+                        <input id="signUpPassword" type="password" name="password" placeholder="Password" value="<%- typeof password != 'undefined'?password:'' %>" onBlur="onkeyupFun()" onKeyUp="onkeyupFun()" onFocus="onkeyupFun()" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" >
+                        <div class="iconInputIcon" onclick="showHideFun()"><i class="fa fa-eye" aria-hidden="true"></i></div>
+                    </div>
+    
+                    
+    
+    
+                    <% if (typeof error != 'undefined' && error.password){ %>
+                        <div class="text-33-red" style="text-align: left;"><%- error.password %></div>
+                    <% } %>
+                </div>
+    
+    
+                  <div class="dp-loginStyle-signup-col">
+                    <label class="text-black" for="memberConfirmPassword">Confirm Password</label>
+                    <div class="iconInput">
+                    <input id="memberConfirmPassword" type="password" name="cpassword" placeholder="Confirm Password" value="<%- typeof cpassword != 'undefined'?cpassword:'' %>">
+                    <div class="iconInputIcon" onclick="showHideChangeFun()"><i class="fa fa-eye" aria-hidden="true"></i></div>
+                </div>
+                    <% if (typeof error != 'undefined' && error.cpassword){ %>
+                        <div class="text-33-red" style="text-align: left;"><%- error.cpassword %></div>
+                    <% } %>
+                </div>
+                    <div id="dp-loginStyle-signup-coldp-message mt-0" style="display:none;width:100%">
+                        <p id="letter" class="indp-valid"> <b>lowercase</b> letter</p>
+                        <p id="capital" class="indp-valid"> <b>capital (uppercase)</b> letter</p>
+                        <p id="number" class="indp-valid"><b>number</b></p>
+                        <p id="specialChar" class="indp-valid"> <b>Special characters</b></p>
+                         <p id="lengthh" class="indp-valid">Minimum <b>8 characters</b></p> 
+                    </div>
+    
+                <div class="dp-loginStyle-signup-col">
+                    <label class="text-black" for="memberPhone">Phone Number</label>
+                    <input id="memberPhone" type="text"  name="phone" placeholder="Phone Number" value="<%- typeof phone != 'undefined'?phone:'' %>" onkeyup="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');">
+                    <% if (typeof error != 'undefined' && error.phone){ %>
+                        <div class="text-33-red" style="text-align: left;"><%- error.phone %></div>
+                    <% } %>
+    
+    
+                    <input id="passwordValid" type="hidden" name="passwordValid" value="1" />
+    
+    
+                </div>
+                <div class="dp-loginStyle-signup-col memberChooseService">
+                    <div onclick="memberChoose()" class="memberChooseService-ico">
+                    </div>
+    
+                <label class="text-black" for="selectServCat"> Tell us the your service category</label>                            
+                <select id ="selectServCat" class="select2" name="mem_services_cat[]" multiple>
+                    <option value="">What services are you offering?</option>
+                    <% if (servicesCat.length>0){ %>
+                        <% servicesCat.forEach((item,i)=>{ %>
+                            <option value="<%-item.key %>" <% if(typeof mem_services_cat != 'undefined' && mem_services_cat.includes(item.key)){ %> selected="selected" <% } %>><%-item.name %></option>
+                        <% }) %>
+                    <% } %>
+                </select>
+    
+                <% if (typeof error != 'undefined' && error.serviceCat){ %>
+                        <div class="text-33-red" style="text-align: left;"><%- error.serviceCat %></div>
+                    <% } %>
+      
+                        
+                </div>
+    
+                <div class="dp-loginStyle-signup-col memberChooseService">
+                    <div onclick="memberChoose()" class="memberChooseService-ico">
+                    </div>
+    
+                <label class="text-black" for="selectServEle"> Tell us the service you provide</label>                            
+                <select id ="selectServEle" class="select2" name="mem_services[]" multiple>
+                    <option value="">What services are you offering?</option>
+                    <% if (services.length>0){ %>
+                        <% services.forEach((item,i)=>{ %>
+                            <option value="<%-item._key %>" <% if(typeof mem_services != 'undefined' && mem_services.includes(item._key)){ %> selected="selected" <% } %>><%-item.name %></option>
+                        <% }) %>
+                    <% } %>
+                </select>
+    
+                <% if (typeof error != 'undefined' && error.service){ %>
+                        <div class="text-33-red" style="text-align: left;"><%- error.service %></div>
+                    <% } %>
+      
+                        
+                </div>
+                <div class="dp-loginStyle-signup-colfileUpload text-left">
+                    <label class=" dp-btn sm-btn text-white bg-secondary cv text-left" for="cv">Upload CV</label>
+                    
+                    <div class="position-relative ">
+                        <input id="cv" type="file" name="cv" onchange="getImageName()" >
+                        <input id="cvDoc" style="border: none !important;" type="hidden" disabled value="sdsdsadsad" name="cvDoc" >
+                    </div>
+                   
+                </div>
+                <div class="dp-loginStyle-signup-colnotes">
+                    <label class="text-black" for="notes">Notes</label>
+                    <div class="position-relative ">
+                        <textarea id="notes" placeholder="Notes" type="text" name="notes" ></textarea>
+                        
+                    </div>
+                   
+                </div>
+    
+    
+                <div>
+                    <a class="dp-btn text-white bg-secondary width-full" value="Signup" onclick="checkSubmitStatus();">Apply</a>
+                </div>
+    
+            
+    
+    
+               
+    
+    
+            </form>
+            <!-- <div class="my-2" style="background-color: #b6975b; height: 2px"></div> -->
+           
+                <div class="text-center mt-1">
+                    <a class="text-white bg-primary dp-btn outline w-100" href="/login/member">Member Login?</a>
+                </div>
+           
+        </div>
+        
+    </div>
+    <!-- <div class="vw-20 "></div> -->
+    
+</div>
+<div class="modal" id="modal" app-show="view.modal == 'show_show_signUp'" anim="{'enter':'fade-in','exit':'fade-out'}">
+
+    <div class="modal-body p-0" anim="{'enter':'move-up','duration':'0.2'}">
+
+            <div class="modal-header text-primary" style="border: 0;">
+                <div class="title">
+                    <h4 class="text-light text-bold">
+                        Call Back form <span ></span>
+                    </h4>
+                </div>
+                
+                <!-- <div class="text-right">
+                    <h4 class="close-icon clickable" onclick="modalCloseAll()">&times;dddd</h4>
+                </div> -->
+            </div>
+            <div style="padding: 40px;">
+                <form >
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Name</label>
+                        <input  type="text" class="form-control" id="modalName" aria-describedby="emailHelp" placeholder="Enter Name">
+                       
+                      </div>
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">Email address</label>
+                      <input type="email" class="form-control" id="modalEmail" aria-describedby="emailHelp" placeholder="Enter email">
+                     
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Phone</label>
+                        <input type="text" class="form-control" id="modalPhone" aria-describedby="emailHelp" placeholder="Enter Phone">
+                       
+                      </div>
+                       <div class="form-group">
+                        <label for="exampleInputEmail1">Message</label>
+                       
+                        <textarea  class="form-control" id="modalMessage" placeholder="Notes" type="text" name="notes" ></textarea>
+
+                       
+                      </div>
+                    
+                    
+                  </form>
+            </div>
+           
+            <div class="modal-appointment-actions flex flex-middle-right">
+                <div class="text-right ">
+                    <a class="btn border w-100" onclick="modalCloseAll()"  app-click="modalCloseAll()">
+                        Cancel
+                    </a>
+                </div>
+
+                <div class="text-right ml-1">
+                    <a class="btn bg-secondary w-100" onclick="submitModalForm()" >
+                        Submit
+                       
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+<% if (typeof success != 'undefined'){ %>
+   
+    <div class="notification signupThanks-msg" ><%- success %> 
+        <a class="" onclick="modalClose()"> <span class="icon close black right"></span></a>
+    </div>
+<% } %>
+<div id="memberInquieryModal" style="display: none;" class="notification signupThanks-msg" >Your details are received, we will contact back in next 24-48 hours.
+    <a class="" onclick="modalClose()"> <span class="icon close black right"></span></a>
+</div>
+<script>
+    function submitModalForm(){
+       
+      let name=  document.getElementById("modalName")
+      let email=  document.getElementById("modalEmail")
+      let phone=  document.getElementById("modalPhone")
+      let message=  document.getElementById("modalMessage")
+        // let modal=document.getElementById("memberInquieryModal")
+        
+      let body={
+        name:name.value,
+        email:email.value,
+        phone:phone.value,
+        message:message.value
+
+      }
+      console.log(body);
+      if(!name&&!email&&!phone&&!message){
+       return alert('Please fill all Field')
+      }
+      let post_data = {
+        method: 'POST',
+        headers: {
+    'Content-Type': 'application/json'
+  },
+        body:JSON.stringify(body) ,
+  }
+  try {
+    fetch('/api/members/memberInquiery',post_data)
+.then(response => response.json()).then((data)=>{
+    // document.getElementById('modal').style.display="none"
+    scope.view.modal = false
+    // modalCloseAll()
+    name.value=""
+    email.value=""
+    phone.value=""
+    message.value=""
+}).then(()=>{ 
+    document.getElementById("memberInquieryModal").style.display="block"
+    // modal.style.display = "block";
+})
+  } catch (error) {
+    
+  }
+  
+      
+    }
+    
+     function modalClose (){
+        let popUp = document.querySelector(".signupThanks-msg")
+        console.log(popUp)
+        popUp.style.display = "none";
+    }
+
+function  checkSubmitStatus (e) {
+
+
+const cv = document.getElementById("cv");
+
+var pp='';
+let flag=0;
+let formData = new FormData();
+if( cv.files.length>0){
+    // console.log(cv.files)
+    var fileToLoad = cv.files[0];
+     pp = fileToLoad
+     formData.append('image', pp);
+    let post_data = {
+        method: 'POST',
+        body: formData,
+  }
+//   console.log(formData)
+  fetch('/image-upload',post_data)
+.then(response => response.json())
+.then((data) => {
+    document.getElementById("cvDoc").value=data.data.url
+    let form = document.getElementById("sampleForm");
+  form.submit();
+})
+return;
+}
+else{
+    document.getElementById("cv").remove();
+    let form = document.getElementById("sampleForm");
+  form.submit();
+}
+return ;
+
+
+}
+
+function showHideFun() {
+  var x = document.getElementById("signUpPassword");
+  if (x.type === "password") {
+    x.type = "text";
+  } else {
+    x.type = "password";
+  }
+}
+</script>
+<script>
+    function showHideChangeFun() {
+  var x = document.getElementById("memberConfirmPassword");
+  if (x.type === "password") {
+    x.type = "text";
+  } else {
+    x.type = "password";
+  }
+}
+
+
+
+
+var signUpPasswordInput = document.getElementById("signUpPassword");
+    var letter = document.getElementById("letter");
+    var capital = document.getElementById("capital");
+    var number = document.getElementById("number");
+    var specialChar = document.getElementById("specialChar");
+    var lengthh = document.getElementById("lengthh");
+
+    function myInput(){
+        document.getElementById("dp-message").style.display = "block";
+
+    }
+    function  myInputBlur(){
+        document.getElementById("dp-message").style.display = "none";
+    }
+    function onkeyupFun(){
+        // alert("djdjdj")
+        let truee = 0;
+        var lowerCaseLetters = /[a-z]/g;
+        if (signUpPasswordInput.value.match(lowerCaseLetters)) {
+            letter.classList.remove("indp-valid");
+            letter.classList.add("dp-valid");
+        } else {
+            letter.classList.remove("dp-valid");
+            letter.classList.add("indp-valid");
+            truee++
+        }
+
+        var upperCaseLetters = /[A-Z]/g;
+        if (signUpPasswordInput.value.match(upperCaseLetters)) {
+            capital.classList.remove("indp-valid");
+            capital.classList.add("dp-valid");
+        } else {
+            capital.classList.remove("dp-valid");
+            capital.classList.add("indp-valid");
+            truee++
+        }
+
+
+        var specialLetters = /[!@#$%^&*]/g;
+        if (signUpPasswordInput.value.match(specialLetters)) {
+            specialChar.classList.remove("indp-valid");
+            specialChar.classList.add("dp-valid");
+        } else {
+            specialChar.classList.remove("dp-valid");
+            specialChar.classList.add("indp-valid");
+            truee++
+        }
+
+        /*----*/
+        var numbers = /[0-9]/g;
+        if (signUpPasswordInput.value.match(numbers)) {
+            number.classList.remove("indp-valid");
+            number.classList.add("dp-valid");
+        } else {
+            number.classList.remove("dp-valid");
+            number.classList.add("indp-valid");
+            truee++
+        }
+
+        if (signUpPasswordInput.value.length>7) {
+            lengthh.classList.remove("indp-valid");
+            lengthh.classList.add("dp-valid");
+        } else {
+            lengthh.classList.remove("dp-valid");
+            lengthh.classList.add("indp-valid");
+            truee++
+        }
+        console.log(truee)
+        if(truee==0){
+        document.getElementById("dp-message").style.display = "none";
+        document.getElementById("passwordValid").value = 1;
+            //alert('rigth')
+            //setCheckPass(true)
+        }else {            
+        document.getElementById("dp-message").style.display = "block";
+        document.getElementById("passwordValid").value = 0;
+            //setCheckPass(false)
+        }
+    }
+const getImageName=()=>{
+    const cv = document.getElementById("cv");
+    const cvText= document.getElementById("cvDoc")
+    if(cv.files.length>0){
+       cvText.type="text"
+       cvText.value=cv.files[0].name
+    }else{
+        cvText.type="hidden"
+    }
+}
+
+</script>
+
+<style>
+.contain.relative{
+    width: auto;
+}
+
+#dp-message {
+display:none;
+color: #000;
+position: relative;
+/* margin-top: 5px; */
+align-items: center;
+flex-wrap: wrap;
+}
+
+#dp-message p {
+    padding: 0;
+    font-size: 10px;
+    margin: 0;
+    float: left;
+    font-size: 12px;
+}
+
+/* Add a green text color and a checkmark when the requirements are right */
+.dp-valid {
+color: green;
+}
+
+.dp-valid:before {
+position: relative;
+left: 0;
+content: "✔";
+}
+.dp-valid:after {
+content: "|";
+color: #000;
+padding: 0 10px;
+}
+.dp-valid:last-child::after{
+display: none;
+}
+/* Add a red text color and an "x" when the requirements are wrong */
+.indp-valid {
+color: red;
+}
+
+.indp-valid:before {
+position: relative;
+left: 0;
+content: "✖";
+}
+
+</style>

@@ -1,0 +1,142 @@
+<% layout('member.ejs') -%>
+
+<%- include ../partials/header-member.ejs %>
+
+    
+
+    <div class="page bookAppointmen-calender">
+
+    <% if(slots=='' && defaultDate!==''){ %>
+    <div class="page h-100 overflow-y bg-light-grey p-1">
+      <h3 style="color:red"> Please add slots first for this date</h3>
+    </div>
+    <h1>
+
+    <% } else { %>
+        <div id='calendar' class="bookAppointmen-calenderGrid"></div> 
+        <% } %>
+    </div>
+
+    
+
+<script>
+
+console.log('User','<%-user._key%>')
+
+ var events2 = []
+ var dates = []
+ var slots = []
+ var allslots = <%-JSON.stringify(allslots)%>
+ var appointmentsss = <%-JSON.stringify(appointments)%>
+ console.log('allslots',allslots)
+ console.log('appointmentsss',appointmentsss)
+  <% if(member.orders){
+  for(var i=0; i<member.orders.length; i++) { %>
+    <% for(var j=0; j<member.orders[i].order.length;j++) { %>
+    events2.push({title: 'Book Appointment',
+          groupId: '<%-member.orders[i].order[j].date%>',
+          start: '<%-member.orders[i].order[j].date%>',
+          end: '<%-member.orders[i].order[j].date%>'})
+          dates.push('<%-member.orders[i].order[j].date%>')
+
+    events2.push({title: `View Appointment`,
+          groupId: '<%-member.orders[i].order[j].date%>',
+          start: '<%-member.orders[i].order[j].date%>',
+          end: '<%-member.orders[i].order[j].date%>'})
+          dates.push('<%-member.orders[i].order[j].date%>')
+  <% } %>
+ <% } 
+
+ } %>
+
+
+//  <% for(var i=0; i<appointments.length; i++) { %>
+
+//         events2.push({title: '<%-appointments[i].customer.length>0 && appointments[i].customer[0].first?appointments[i].customer[0].first+' '+appointments[i].customer[0].last:''%>',
+//           groupId: '<%-appointments[i].date%>',
+//           start: '<%-appointments[i].date%>',
+//           end: '<%-appointments[i].end_date%>'}),
+
+//  <% } %>
+
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      timeZone: 'IST',
+      height: '100%',
+      expandRows: true,
+      slotLabelInterval: '00:30:00',
+      <% if(slots!==''){ %>
+        slotMinTime: '<%-Object.keys(slots)[0]%>',  /*<--%-Object.keys(slots)[0]%-->*/
+        slotMaxTime: '<%-Object.keys(slots).length==1?slots[Object.keys(slots)[0]].split(' - ')[1]:slots[Object.keys(slots)[Object.keys(slots).length-1]].split(' - ')[1]%>', /*<--%-Object.keys(slots)[Object.keys(slots).length-1]%-->*/
+      <% } else { %>
+        slotMinTime: '09:00',
+        slotMaxTime: '18:00',
+      <% } %>
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth'
+      },
+      
+      initialView: '<%-defaultDate!==''?'timeGridDay':'dayGridMonth'%>',
+      navLinks: true, // can click day/week names to navigate views
+      nowIndicator: true,
+      navLinkDayClick: function(date, jsEvent) {
+        console.log('day', date.toISOString());
+        console.log('coords', jsEvent.pageX, jsEvent.pageY);
+        console.log(dates,date,date.toISOString().split('T')[0].toString())
+
+        if(dates.includes(date.toISOString().split('T')[0].toString())){
+          //calendar.changeView( 'timeGridDay' )
+          //calendar.gotoDate( date )
+          window.location.href = '/member/book-appointments?date='+date.toISOString().split('T')[0].toString()
+        }else return false;          
+
+      },
+
+
+      dateClick: function(info) {       
+
+        //if(info.dateStr!="") document.getElementById("mydate").value = info.dateStr;
+        //alert('Clicked on: ' + info.dateStr);
+        //scope.newSeat()
+      },
+      events: events2,
+      eventColor: '',
+      eventClick: function(info) {
+        console.log(info.event, allslots)
+        //scope.viewSeat(info.event.groupId,'<%=user._key%>')
+
+        //calendar.changeView( 'timeGridDay' )
+        //calendar.gotoDate( info.event.groupId )
+
+        let dattt = 'date_'+info.event.groupId.split('T')[0].toString().split('-').join('');
+        //alert(dattt)
+        if(allslots && allslots[dattt]){
+          window.location.href = '/member/book-appointments?date='+info.event.groupId.split('T')[0].toString()
+
+        }else alert('Please add slots for this date')
+
+      },
+      selectable: true,
+      select: function(start, end, allDay, jsEvent, view) {
+          //alert('you have clicked on this slot');
+          console.log('allDay',start.startStr, end, allDay)
+          if(start.startStr.split('T').length>1 && dates.includes(start.startStr.split('T')[0].toString())) window.location.href = '/member/new-appointment/?date='+start.startStr+'.000Z'
+      }
+      
+    });
+    <% if(defaultDate!==''){ %>
+      calendar.gotoDate('<%-defaultDate%>')
+    <% } %>
+    
+    calendar.render();
+  });
+
+</script>
+<link href="/js/calendar-lib/main.css" rel='stylesheet' />
+
+<%- include('../partials/modal/book_seat.ejs') %>
+<%- include('../partials/modal/pay_seats.ejs') %>

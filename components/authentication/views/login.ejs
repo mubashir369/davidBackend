@@ -1,0 +1,59 @@
+<% layout('customer-page.ejs') -%>
+
+<% if (guard == 'staff'){ %>
+    <div class="hidden" app-init="get('staff','all')"></div>
+<% } %>
+
+<div class="vh-80 flex flex-middle dp-loginStyle">
+    <div class="vw-30 vw-s-100 px-s-2 text-center dp-loginStyle-box">
+        <h2 class="mb-1 capitalise"><% if (guard == 'customer'){ %>Client<% } else { %><%- guard %><% } %> Login</h2>
+        <form method="post" action="/login/<%- guard %>" class="grid col-1 gap-1 common-form common-form-border">
+            <div class="">
+                <input type="text" name="email" placeholder="Email Address">
+            </div>
+            <div class="iconInput">
+                <input id="memberPassword" type="password" name="password" placeholder="Password">
+                <div class="iconInputIcon" onclick="myFunction()"><i class="fa fa-eye" aria-hidden="true"></i></div>
+            </div>
+            <% if (typeof error != 'undefined'){ %>
+                <div class="text-33-red"><%- error %></div>
+            <% } %>
+            <div>
+                <input type="submit" class="text-white dp-btn d-block bg-primary text-small w-100" value="Login">
+            </div>
+
+            <% if (guard == 'member'){ %>
+                <div class="text-center">
+                    <a class="text-white dp-btn d-block bg-secondary text-small" href="/<%- guard %>/signup">Sign up?</a>
+                </div>
+            <% } %>
+
+
+            <% if (guard != 'customer'){ %>
+                <div class="text-center">
+                    <a class="text-primary text-small" href="/login/<%- guard %>/reset">Forgot password?</a>
+                </div>
+            <% } %>
+           
+
+
+        </form>
+        <!-- <div class="my-2" style="background-color: #b6975b; height: 2px"></div> -->
+        <% if (guard == 'customer'){ %>
+            <div class="text-center mt-3">
+                <a class="text-primary btn outline w-100" href="/login/new-account">Problems logging in?</a>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<script>
+    function myFunction() {
+  var x = document.getElementById("memberPassword");
+  if (x.type === "password") {
+    x.type = "text";
+  } else {
+    x.type = "password";
+  }
+}
+</script>

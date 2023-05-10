@@ -1,0 +1,56 @@
+
+
+<div class="link base-option view" app-click="viewEdit('<%- appointment._key %>')">
+    <span class="icon left black edit"></span>
+    View / Edit
+</div>
+
+<div class="link status-option confirm" app-click="updateAppointment('send_confirmation','<%- appointment._key %>')">
+    <span class="icon left black reminder"></span>
+    Confirm with Client
+</div>
+
+<div class="link status-option mark-confirm" app-click="updateAppointment('confirm','<%- appointment._key %>')">
+    <span class="icon left black confirm"></span>
+    Mark as Confirmed
+</div>
+
+<div class="link status-option check-in" app-click="updateAppointment('check_in','<%- appointment._key %>','<%- appointment.status %><% if (appointment.prev_status){ %>|<%- appointment.prev_status %><% } %>')">
+    <span class="icon left black checkin"></span>
+    Check In
+</div>
+
+<div class="link status-option undo-check-in" app-click="updateAppointment('check_in','<%- appointment._key %>','<%- appointment.status %><% if (appointment.prev_status){ %>|<%- appointment.prev_status %><% } %>')">
+    <span class="icon left black undocheckin"></span>
+    Undo Check In
+</div>
+
+<div class="link status-option no-show" app-click="updateAppointment('no_show','<%- appointment._key %>',true)">
+    <span class="icon left black noshow"></span>
+    Client No Show
+</div>
+
+<a class="link status-option rebook" href="/dashboard/calendar/new-appointment?client_id=<% if (typeof appointment.customer != "undefined" && appointment.customer[0] && appointment.customer[0]._key){ %><%- appointment.customer[0]._key %><% } else { %>na<% } %>&&staff_id=<%- appointment.staff_id %>">
+    <span class="icon left black rebook"></span>
+    Rebook
+</a>
+
+<div class="link base-option" app-click="reschedule('<%- appointment._key %>')">
+    <span class="icon left black move"></span>
+    Quick Edit
+</div>
+
+<div class="link status-option delete" app-click="edit('appointments','<%- appointment._key %>','delete')">
+    <span class="icon left black delete"></span>
+    Delete
+</div>
+
+<div class="link status-option transaction" app-click="goto('/dashboard/checkout/','<% if (typeof appointment.link_id != "undefined"){ %><%- appointment.link_id %><% } else { %><% } %>')">
+    <span class="icon left black sale"></span>
+    Go to Transaction
+</div>
+
+<div class="link base-option client-card" app-click="goto('/dashboard/clients/','<% if (typeof appointment.customer != "undefined" && appointment.customer[0] && appointment.customer[0]._key){ %><%- appointment.customer[0]._key %><% } else { %>na<% } %>')">
+    <span class="icon left black client"></span>
+    Go to Client Card
+</div>

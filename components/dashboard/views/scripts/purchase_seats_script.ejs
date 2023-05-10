@@ -1,0 +1,722 @@
+
+<script>
+
+    extendedController = function(){
+
+        scope.view.send_conf = false
+
+        scope.viewSeat = function(key,user){
+            
+            console.log(key,user)
+
+            scope.new = {}
+            scope.get('seats',key).then((appt_data)=>{
+
+                scope.new = appt_data
+                scope.user = user
+               
+                //console.log('seatdata',appt_data, scope.user)
+                scope.view.modal = 'show_edit'               
+
+            }).catch((err)=>{
+                scope.notify(err,'error',10,'fa-exclamation-circle')
+            })
+
+        }
+
+        scope.addPercentage = function(){
+            //alert(scope.new.amount)
+
+            scope.post('about_member/addpercentage',scope.home_CMS).then((appt_data)=>{               
+                     
+                    scope.notify('Percentage added successfully!!','success')      
+
+                }).catch((err)=>{
+                    scope.notify(err,'error',10,'fa-exclamation-circle')
+                })
+
+        }
+
+        
+        scope.show_pop_del = function(key){
+            console.log(key)
+            scope.new = key
+
+            scope.view.modal = 'show_delete'
+        }
+
+       
+
+        scope.delete_port = function(){
+            console.log(scope.del)
+
+            scope.post('portfolio/delete',scope.del).then((appt_data)=>{
+
+                
+                scope.view.modal = false       
+                scope.notify('Portfolio item deteled!!','success')      
+
+            }).catch((err)=>{
+                scope.notify(err,'error',10,'fa-exclamation-circle')
+            })
+
+        }
+
+        scope.savePortfolio = function(){
+            console.log(scope.editt)
+            console.log(scope.del)
+
+            //return;
+
+            scope.editt = {...scope.editt, ...scope.del}
+
+            scope.post('portfolio/update',scope.editt).then((appt_data)=>{
+
+                scope.view.modal = false       
+                scope.notify('Portfolio item updated!!','success')      
+
+            }).catch((err)=>{
+                scope.notify(err,'error',10,'fa-exclamation-circle')
+            })
+
+        }
+
+        scope.saveBanner = function(){
+            console.log(scope.editt)
+            console.log(scope.del)
+
+            //return;
+
+            scope.editt = {...scope.editt, ...scope.del}
+
+            scope.post('banner/update',scope.editt).then((appt_data)=>{
+
+                scope.view.modal = false       
+                scope.notify('banner updated!!','success')      
+
+            }).catch((err)=>{
+                scope.notify(err,'error',10,'fa-exclamation-circle')
+            })
+
+        }
+
+
+        
+
+        scope.show_cms_port_edit = function(key,value){
+            console.log(key,value)
+            scope.del = {}
+
+            scope.del.key = parseInt(key)
+
+            scope.del.member_id = value
+
+            //scope.view.modal = 'show_edit_port'
+
+
+            scope.post('portfolio/getSingle',scope.del).then((appt_data)=>{
+
+            scope.editt = appt_data
+
+
+            scope.view.modal = 'show_edit_port'
+                
+                    
+
+            }).catch((err)=>{
+                scope.notify(err,'error',10,'fa-exclamation-circle')
+            })
+
+
+        }
+
+        
+
+        scope.show_cms_port_del = function(key,member_id){          
+            scope.del = {}
+            scope.del.key = key
+            scope.del.member_id = member_id
+            scope.view.modal = 'show_delete_port'
+        }
+
+        
+
+        scope.show_cms_service_edit = function(key){
+            console.log(key,"keeeeeeeeeeee")
+            scope.del = {}
+
+            scope.del.key = parseInt(key)
+
+        
+
+            //scope.view.modal = 'show_edit_port'
+
+
+            scope.post('home_services/getSingle',scope.del).then((appt_data)=>{
+
+            scope.editt = appt_data
+
+            console.log(scope.editt,"dededeeded");
+            scope.view.modal = 'show_edit_service'
+                
+                    
+
+            }).catch((err)=>{
+                scope.notify(err,'error',10,'fa-exclamation-circle')
+            })
+
+
+        }
+
+        scope.saveServices = function(key){
+            console.log(scope.editt,"eeeeeeeeeeeeeeeeeeee")
+            console.log(scope.del,"deeeeeeeeeeeeeeeeeeeee")
+
+            //return;
+            console.log(key,"keyyyyyyyyyyyyyyyyyy")
+            scope.editt = {...scope.editt,...scope.del}
+            console.log(scope.editt,"edddddd");
+            scope.post('home_services/update',scope.editt).then((appt_data)=>{
+
+                scope.view.modal = false       
+                scope.notify('service item updated!!','success')      
+                window.location.reload()
+
+            }).catch((err)=>{
+                scope.notify(err,'error',10,'fa-exclamation-circle')
+            })
+
+        }
+        scope.show_cms_service_del = function(key,member_id){          
+            scope.del = {}
+            scope.del.key = key
+            scope.del.member_id = member_id
+            scope.view.modal = 'show_delete_service'
+        }
+
+        scope.delete_service = function(){
+            console.log(scope.del)
+
+            scope.post('home_services/delete',scope.del).then((appt_data)=>{
+
+                
+                scope.view.modal = false   
+                window.location.reload()
+                scope.notify('service item deteled!!','success')      
+
+            }).catch((err)=>{
+                scope.notify(err,'error',10,'fa-exclamation-circle')
+            })
+
+        }
+
+        scope.show_cms_slider_edit = function(key){
+            console.log(key,"keeeeeeeeeeee")
+            scope.del = {}
+
+            scope.del.key = parseInt(key)
+
+        
+
+            //scope.view.modal = 'show_edit_port'
+
+
+            scope.post('home_slider/getSingle',scope.del).then((appt_data)=>{
+
+            scope.editt = appt_data
+
+            console.log(scope.editt,"dededeeded");
+            scope.view.modal = 'show_edit_slider'
+                
+                    
+
+            }).catch((err)=>{
+                scope.notify(err,'error',10,'fa-exclamation-circle')
+            })
+
+
+        }
+        scope.saveSlider = function(key){
+            console.log(scope.editt,"eeeeeeeeeeeeeeeeeeee")
+            console.log(scope.del,"deeeeeeeeeeeeeeeeeeeee")
+
+            //return;
+            console.log(key,"keyyyyyyyyyyyyyyyyyy")
+            scope.editt = {...scope.editt,...scope.del}
+            console.log(scope.editt,"edddddd");
+            scope.post('home_slider/update',scope.editt).then((appt_data)=>{
+
+                scope.view.modal = false       
+                scope.notify('service item updated!!','success')      
+                window.location.reload()
+
+            }).catch((err)=>{
+                scope.notify(err,'error',10,'fa-exclamation-circle')
+            })
+
+        }
+
+        scope.show_cms_slider_del = function(key,member_id){          
+            scope.del = {}
+            scope.del.key = key
+            scope.del.member_id = member_id
+            scope.view.modal = 'show_delete_slider'
+        }
+
+        scope.delete_slider = function(){
+            console.log(scope.del)
+
+            scope.post('home_slider/delete',scope.del).then((appt_data)=>{
+
+                
+                scope.view.modal = false   
+                window.location.reload()
+                scope.notify('service item deteled!!','success')      
+
+            }).catch((err)=>{
+                scope.notify(err,'error',10,'fa-exclamation-circle')
+            })
+
+        }
+
+        scope.show_cms_about_us_edit = function(){
+            console.log("inside purchase script");
+        
+            scope.view.modal = 'show_edit_about_us'
+
+
+            scope.post('home_about_us/getAbout').then((appt_data)=>{
+
+            scope.editt = appt_data
+
+            console.log(scope.editt,"dededeeded");
+            scope.view.modal = 'show_edit_about_us'
+                
+                    
+
+            }).catch((err)=>{
+                scope.notify(err,'error',10,'fa-exclamation-circle')
+            })
+
+
+        }
+        scope.saveAboutUs = function(){
+            console.log(scope.editt,"eeeeeeeeeeeeeeeeeeee")
+            console.log(scope.del,"deeeeeeeeeeeeeeeeeeeee")
+
+            //return;
+         
+            console.log(scope.editt,"edddddd");
+            scope.post('home_about_us/update',scope.editt).then((appt_data)=>{
+
+                scope.view.modal = false       
+                scope.notify('about details updated!!','success')      
+                setTimeout(()=>{ window.location.reload(); }, 2000)
+
+            }).catch((err)=>{
+                scope.notify(err,'error',10,'fa-exclamation-circle')
+            })
+
+        }
+    
+        scope.show_cms_why_us_edit = function(){
+            console.log("inside purchase script");
+        
+            scope.view.modal = 'show_why_us'
+
+
+            scope.post('whyChooseUs/getwhyChooseUs').then((appt_data)=>{
+
+            scope.editt = appt_data
+
+            console.log(scope.editt,"dededeeded");
+            scope.view.modal = 'show_why_us'
+                
+                    
+
+            }).catch((err)=>{
+                scope.notify(err,'error',10,'fa-exclamation-circle')
+            })
+
+
+        }
+
+        scope.show_cms_banner_edit = function(key,value){
+            console.log(key,value)
+            scope.del = {}
+
+            scope.del.key = parseInt(key)
+
+            scope.del.member_id = value
+
+            //scope.view.modal = 'show_edit_port'
+
+
+            scope.post('banner/getSingle',scope.del).then((appt_data)=>{
+
+            scope.editt = appt_data
+
+
+            scope.view.modal = 'show_edit_banner'
+                
+                    
+
+            }).catch((err)=>{
+                scope.notify(err,'error',10,'fa-exclamation-circle')
+            })
+
+
+        }
+
+
+
+        scope.show_cms_banner_del = function(key,member_id){          
+            scope.del = {}
+            scope.del.key = key
+            scope.del.member_id = member_id
+            scope.view.modal = 'show_delete_banner'
+        }
+
+        scope.delete_banner = function(){
+            console.log(scope.del)
+
+            scope.post('banner/delete',scope.del).then((appt_data)=>{
+
+                
+                scope.view.modal = false       
+                scope.notify('Banner deteled!!','success')     
+
+            }).catch((err)=>{
+                scope.notify(err,'error',10,'fa-exclamation-circle')
+            })
+
+        }
+        
+
+        scope.cancel_appointment = function(){
+            console.log(scope.new)
+
+
+            scope.post('appointments/chgstatus',scope.new).then((appt_data)=>{
+
+                
+                scope.view.modal = false       
+                scope.notify('Your appointment cancelled','success')      
+                setTimeout(()=>{ window.location.reload(); }, 2000)
+
+            }).catch((err)=>{
+                scope.notify(err,'error',10,'fa-exclamation-circle')
+            })
+
+
+
+
+        }
+
+
+        scope.payPopup = function(user,price){
+                scope.new = {}
+
+                console.log(price)
+                scope.loading = 'false'
+
+                //let jsonn = JSON.parse(localStorage.getItem("selected_seats")) || []
+
+                scope.user = user              
+                scope.new.price = parseFloat(price)              
+
+                scope.view.modal = 'show_pay'          
+
+        }
+
+        scope.paySubscribe = async function(){
+
+            scope.loading = 'true'
+            //console.log(scope.new.loading)
+
+            if(!scope.new.holdername || !scope.new.cardnumber || !scope.new.expdate || !scope.new.cvv){
+
+                scope.notify("Please enter card details!!",'error')
+                                scope.loading = 'false'
+
+            }else {
+
+                    let ymonth = scope.new.expdate.split('/')
+                    let genCard = {
+                      'cardnumber': scope.new.cardnumber,
+                      'exp_month': ymonth[0],
+                      'exp_year': ymonth[1],
+                      'cvv': scope.new.cvv,
+                      'price': scope.new.price,
+                      'subscription_id': scope.new.subscription_id,
+                      'member_id': scope.user
+                    }
+
+                    return new Promise( async (resolve, reject) => {
+
+                            
+                            scope.post('member_subscriptions/stripPayment',genCard).then((camp_data)=>{
+                                if(camp_data.id){
+                                    //localStorage.setItem("selected_seats", JSON.stringify([]));
+                                    scope.view.modal = false
+                                    scope.notify('Your order has been processed successfully!!')                                           
+                                    setTimeout(()=>{ window.location.reload(); }, 2000)
+                                }else {
+                                    scope.notify('Something wrong','error')
+                                }
+                                scope.loading = 'false'
+                               
+
+                            }).catch(err => {
+                                scope.notify(err,'error')
+                                scope.loading = 'false'
+                            })
+
+                        })
+
+                }
+
+
+        }
+
+        scope.payNow = async function(){
+
+            scope.loading = 'true'
+            //console.log(scope.new.loading)
+
+            if(!scope.new.holdername || !scope.new.cardnumber || !scope.new.expdate || !scope.new.cvv){
+
+                scope.notify("Please enter card details!!",'error')
+                                scope.loading = 'false'
+
+            }else {
+
+                    let ymonth = scope.new.expdate.split('/')
+                    let genCard = {
+                      'cardnumber': scope.new.cardnumber,
+                      'exp_month': ymonth[0],
+                      'exp_year': ymonth[1],
+                      'cvv': scope.new.cvv,
+                      'items': JSON.parse(localStorage.getItem("selected_seats")) || [],
+                      'price': scope.new.price,
+                      'member_id': scope.user
+                    }
+
+                    return new Promise( async (resolve, reject) => {
+
+                            
+                            scope.post('seats/stripPayment',genCard).then((camp_data)=>{
+                                if(camp_data.id){
+                                    localStorage.setItem("selected_seats", JSON.stringify([]));
+                                    scope.view.modal = false
+                                    scope.notify('Your order has been processed successfully!!')                                           
+                                    setTimeout(()=>{ window.location.reload(); }, 2000)
+                                }else {
+                                    scope.notify('Something wrong','error')
+                                }
+                                scope.loading = 'false'
+                               
+
+                            }).catch(err => {
+                                scope.notify(err,'error')
+                                scope.loading = 'false'
+                            })
+
+                        })
+
+                }
+
+
+        }
+
+        scope.deletecart = function(key,userid){
+
+            console.log(key)
+            if(confirm('Are you sure want to delete this item?')){
+
+                return new Promise( async (resolve, reject) => {
+
+                    let jsonn = JSON.parse(localStorage.getItem("selected_seats")) || []
+
+                    let new_items = jsonn.filter(item=> key !== item._key)                   
+                    localStorage.setItem("selected_seats", JSON.stringify(new_items));
+                    
+
+                    scope.post('members/addtocart',{'selected_seats':new_items,'member_id':userid}).then((camp_data)=>{
+
+                        scope.notify('Seat deleted from cart successfully!!')       
+                        setTimeout(()=>{ window.location.reload(); }, 2000)
+
+                    }).catch(err => {
+                        scope.notify(err,'error')
+                    })
+
+                })
+
+            }
+
+        }
+
+        scope.addtocart = function(){
+
+        return new Promise( async (resolve, reject) => {
+
+            console.log(scope.new,scope.user)
+
+            if(parseInt(scope.new.addseat)>parseInt(scope.new.seats)){
+                scope.notify('Seats can not be greater than available seats!','error')
+            } else{
+
+                let jsonn = JSON.parse(localStorage.getItem("selected_seats")) || []
+
+                let existed_item= jsonn.find(item=> scope.new._key === item._key)
+
+                console.log(existed_item,scope.new._key)
+
+                if(existed_item){
+                    let new_items = jsonn.filter(item=> scope.new._key !== item._key)
+
+                    let newitem = {}
+                    newitem['_key'] = scope.new._key
+                    newitem['date'] = scope.new.date
+                    newitem['seats'] = scope.new.seats
+                    newitem['addseat'] = scope.new.addseat
+                    newitem['price'] = scope.new.price
+                    localStorage.setItem("selected_seats", JSON.stringify([...new_items, newitem]));
+
+                 }else {
+
+                    let newitem = {}
+                    newitem['_key'] = scope.new._key
+                    newitem['date'] = scope.new.date
+                    newitem['seats'] = scope.new.seats
+                    newitem['addseat'] = scope.new.addseat
+                    newitem['price'] = scope.new.price
+                    localStorage.setItem("selected_seats", JSON.stringify([...jsonn, newitem]));
+
+                 }
+
+                
+
+             scope.post('members/addtocart',{'selected_seats':JSON.parse(localStorage.getItem("selected_seats")) || [],'member_id':scope.user}).then((camp_data)=>{
+
+                                scope.notify('Seats added into cart successfully!!')
+                                scope.view.modal = false
+
+                                setTimeout(()=>{ window.location.reload(); }, 2000)
+
+                            }).catch(err => {
+                                scope.notify(err,'error')
+                            })
+
+
+
+            } 
+
+         })
+
+            
+
+        }
+
+
+
+        scope.saveCampaign = function(keep_open){
+
+            return new Promise( async (resolve, reject) => {
+
+                delete scope.new.recipient
+
+                let content = document.querySelector('#content')
+
+                if (content){
+                    let content_html = content.innerHTML.replace(/\&lt\;/g,"<").replace(/\&gt\;/g,">")
+
+                    if (content_html.length != scope.new.content.length){
+                        scope.new.tested = false
+                    }
+                    scope.new.content = content_html
+                }
+
+                scope.post('marketing_campaigns',scope.new).then((camp_data)=>{
+
+                    if (!keep_open){
+                        scope.view.modal = false
+                        scope.new = {}
+                        scope.notify('Saved')
+                    }
+
+                    resolve()
+
+                }).catch(err => {
+                    reject(err)
+                })
+
+            })
+
+        }
+
+    var length1 = Number('<%- typeof data1 !== "undefined" && data1.length>0 && data1.services?data1.services.length:0 %>')
+    scope.click11 = function(){
+
+    const data={}
+    data.heading=document.getElementById("heading").value;
+    data.description1=document.getElementById("description1").value;
+    data.description2=document.getElementById("description2").value;
+    var arr= []
+    var pp=document.getElementById('servicesDIv').getElementsByTagName('input')
+    for(var i =0;i<pp.length;i++){
+        arr.push(pp[i].value)
+    }
+    data.services=arr
+    data.type="whoWeAre"
+    console.log(data)
+    scope.post('home_about_us/updateAbout1',data).then((camp_data)=>{
+        scope.notify('Items Updated Successfully!!')
+                                setTimeout(()=>{ window.location.reload(); }, 2000)
+    })
+    
+    }
+
+    const getBase64FromUrl = async (file) => {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onloadend = () => {
+                const base64data = reader.result;
+                resolve(base64data);
+            }
+        });
+    }
+
+
+    scope.submitTimeline = async function(){
+        console.log(length2)
+    var arr= []
+    const data={}
+    data.type="timeline"
+    for(let i=0;i<length2;i++){
+        let data1={}
+        data1.title=document.getElementById(`title_${i}`).value;
+        data1.description=document.getElementById(`description_${i}`).value;
+        var file = ''
+        if(document.getElementById(`img${i}`).src !==''){
+            file=document.getElementById(`img${i}`).src;
+        }
+        else{
+        file=document.getElementById(`file${i}`).files[0];
+        file=await getBase64FromUrl(file);
+        }
+        data1.icon=file
+        arr.push(data1)
+    }
+    data.data=arr;
+    scope.post('home_about_us/updateAbout1',data).then((camp_data)=>{
+        scope.notify('Items Updated Successfully!!')
+                                setTimeout(()=>{ window.location.reload(); }, 2000)
+    })    
+    }
+       
+    }
+
+</script>

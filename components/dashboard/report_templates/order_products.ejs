@@ -1,0 +1,80 @@
+<% if (typeof result == 'object' && result.data && result.data.length > 0){ %>
+
+    <div class="flex w-100 px-2">
+        <div class="flex-3">
+            <input type="text" class="border rounded" onkeyup="scope.searchProducts(this.value)" placeholder="Search Products...">
+        </div>
+        <div class="flex-1 text-right">
+            <a href="/dashboard/reports/order_products_download" class="btn bg-secondary">Generate Order Sheet<span class="icon arrowright white right"></span></a>
+        </div>
+    </div>
+
+    <div class="p-2">
+        <div class="table">
+
+            <div class="row table-header">
+                <div class="cell middle">
+                    Order
+                </div>
+                <div class="cell middle">
+                    Brand
+                </div>
+                <div class="cell middle" style="width: 50%">
+                    Name
+                </div>
+                <div class="cell middle text-right">
+                    Current Stock
+                </div>
+                <div class="cell middle text-right">
+                    Reorder Threshold
+                </div>
+                <div class="cell middle text-right">
+                    Reorder Amount
+                </div>
+                <div class="cell middle text-right action-icons">
+                </div>
+            </div>
+
+            <div class="row" app-for="product in filtered_products">
+                <div class="cell middle" app-click="orderProduct(product)">
+                    <input type="checkbox" class="border" app-show="product.on_order" checked>
+                    <input type="checkbox" class="border" app-hide="product.on_order">
+                </div>
+                <div class="cell middle" app-bind="product.brand">
+                </div>
+                <div class="cell middle" style="width: 50%" app-bind="product.name">
+                </div>
+                <div class="cell middle text-right" app-bind="product.stock">
+                </div>
+                <div class="cell middle text-right" app-bind="product.re_order_threshold">
+                </div>
+                <div class="cell middle text-right" app-bind="product.re_order">
+                </div>
+                <div class="cell middle text-right action-icons" app-attr="{'id':'cell-'+product._key}">
+
+                    <div class="context-link btn border" app-click="toggleContext(product._key)">
+                        <span class="icon black arrowdown sm"></span>
+                    </div>
+                    <div class="context dropdown text-left" style="display: none" app-attr="{'id':'context-'+product._key}">
+                        <div class="link" app-click="editProduct(product._key)">
+                            <span class="icon black edit left"></span>
+                            Edit
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <%- include('../../dashboard/partials/modal/new_product.ejs') %>
+
+<% } else if (typeof result == 'object' && result.data && result.data.length == 0){ %>
+
+    <h4 class="text-light mb-1">Report Complete</h4>
+    <p class="mb-1">All stock up to date</p>
+
+<% } else { %>
+    No file generated: <%- error %>
+<% } %>

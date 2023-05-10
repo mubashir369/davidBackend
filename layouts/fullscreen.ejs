@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <%- include partials/html_head.ejs %>
+
+</head>
+
+        <body class="bg-light-grey">
+
+            <% if (typeof view.site.platform == 'undefined' || view.site.platform == 'live'){ %>
+                <!-- Google Tag Manager (noscript) -->
+                <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P2X7LCK"
+                height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+                <!-- End Google Tag Manager (noscript) -->
+            <% } %>
+
+        <section class="main fullscreen client-facing">
+
+            <div app-show="view.notification.msg" class="notification flex flex-middle fixed top left" app-class="view.notification.type">
+                <div app-bind="view.notification.msg" class="text-left pr-2"></div>
+                <div class="text-right"><i class="fas" app-class="view.notification.icon"></i></div>
+            </div>
+
+            <%- body -%>
+
+        </section>
+
+        <%- include partials/scripts.ejs %>
+        <script src="/js/dashboard-controller.js?v=1.1.19"></script>
+        <script src="/js/dashboard-functions.js?v=1.0.2"></script>
+
+        <% if (typeof include_scripts != 'undefined') { %>
+
+            <% include_scripts.forEach((script,i)=>{ %>
+                <% if (fs.existsSync(view.basedir+'/components/'+script)) { %>
+                    <%- include(view.basedir+'/components/'+script) %>
+                <% } %>
+            <% }) %>
+
+        <% } %>
+
+    </body>
+</html>

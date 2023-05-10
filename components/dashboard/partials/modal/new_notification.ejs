@@ -1,0 +1,35 @@
+<div class="modal" app-show="view.modal == 'new_notification'" anim="{'enter':'fade-in'}">
+
+    <div class="modal-body p-0" anim="{'enter':'slide-up','duration':'0.2'}">
+
+        <div class="modal-header text-primary">
+                <h4 class="title">
+                    New Notification
+                </h4>
+                <div class="text-right">
+                    <h4 class="close-icon text-light clickable" onclick="modalCloseAll()">&times;</h4>
+                </div>
+        </div>
+
+        <div class="modal-content p-2">
+
+            <label>Subject</label>
+            <input type="text" app-model="new_notification.type" placeholder="Subject">
+            <label class="mt-1">Message</label>
+            <textarea app-model="new_notification.msg"></textarea>
+
+            <label class="mt-1">Link</label>
+            <input type="text" app-model="new_notification.data.url" placeholder="Add a link">
+
+        </div>
+
+        <div class="modal-appointment-actions flex flex-middle-right">
+            <a class="btn bg-secondary" app-click="newNotification('send')">
+                Send
+                <span class="icon tick right white"></span>
+            </a>
+        </div>
+
+    </div>
+
+</div>

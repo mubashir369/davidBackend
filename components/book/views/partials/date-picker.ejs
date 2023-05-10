@@ -1,0 +1,30 @@
+
+<div class="datepicker relative">
+
+    <div class="dates" style="border: none">
+
+        <div class="btn-wrap width-full">
+
+            <div class="btn left-arrow" app-click="chgMonth('prev')">
+                  <span class="icon arrowleft secondary"></span>
+            </div>
+
+            <div class="btn month">
+                <span app-bind="selected_date.month_name_year"></span>
+            </div>
+
+            <div class="btn right-arrow" app-click="chgMonth('next')">
+                  <span class="icon arrowright secondary"></span>
+            </div>
+
+        </div>
+
+        <div class="grid col-7 text-center">
+            <div app-for="date in dates" class="cell clickable">
+                <span app-bind="date.date" app-class="date.type" app-click="selectDate(date.iso,{{index}},'true')"></span>
+            </div>
+        </div>
+
+    </div>
+
+</div>

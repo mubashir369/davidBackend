@@ -1,0 +1,973 @@
+
+.calendar {
+
+    .appointment {
+
+        display: none;
+        position: absolute;
+        overflow: visible;
+        width: calc(13em + 1px);
+        padding:0;
+        z-index: 2;
+        cursor: pointer;
+        transition: box-shadow 0.3s, padding 0.3s, height 0.3s;
+
+        &.deleted {
+            display: none;
+        }
+
+        &.overlap {
+
+            background:none;
+            z-index: 500 !important;
+            // margin-left: 7rem;
+
+            .appointment-details {
+
+                animation: $pulse
+            }
+
+            &.open {
+                .appointment-details {
+                    min-width:13rem !important;
+                }
+            }
+        }
+
+        &.memo {
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            min-width: auto;
+            max-width: auto;
+            transform: translate(3px,-3px);
+            .appointment-details {
+                padding: 0.5rem
+                float: right;
+            }
+        }
+
+        &.highlight {
+
+            z-index:3;
+
+            .appointment-details {
+                animation: $goLarge;
+            }
+
+        }
+
+        &-timeline {
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            background-color: $brand-pink;
+            display: none;
+            margin: 0 0 0 2.8rem;
+        }
+
+        &-closed {
+            position: absolute;
+            width: 100%;
+            display: none;
+            background-color: rgba(0,0,0,0.03);
+            z-index: -1;
+
+            &.open {
+                top: 0.7rem;
+                height: 100%;
+            }
+
+            &.close {
+                bottom: -10px;
+                height: 0px;
+            }
+        }
+
+        .icons .note {
+            display: none;
+        }
+
+        &-details {
+
+            position: relative;
+            background-color: $confirmed;
+            -webkit-box-shadow: inset 0px 0px 0px 0.08rem rgba(255,255,255,1);
+            -moz-box-shadow: inset 0px 0px 0px 0.08rem rgba(255,255,255,1);
+            box-shadow: inset 0px 0px 0px 0.08rem rgba(255,255,255,1);
+            color: white;
+            font-size: 0.9rem;
+            border-radius:$appt-radius;
+            padding: 0.65rem 0.85rem;
+            // padding: 1rem 0.65rem 0 0.65rem;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+
+
+            @media small {
+                font-size: 1rem;
+            }
+
+            .icons {
+                position: absolute;
+                right: 0.85rem;
+                opacity: 0.8;
+                padding-left: 2rem;
+            }
+
+            & div {
+                line-height: 1.25em;
+            }
+
+            .name {
+                font-size: 0.8rem;
+                font-weight: 600;
+                text-transform: capitalize;
+                width: calc(100% - 2rem);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            div.time, .date {
+                margin-top: 0.2rem;
+
+                &.within-slot {
+                    margin-top: 0.4rem;
+                }
+            }
+
+            .description {
+                margin-top: 0.2rem;
+                line-height: 1rem;
+                width: 100%;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .description > div {
+                width: 100%;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            & > *:not(.name){
+                font-size: 0.75rem;
+            }
+
+            .lower {
+                display: none;
+                background-color: white;
+                color: $text-dark;
+                margin: 0.75rem -0.85rem -1rem -0.85rem;
+
+                font-size: 0.8rem
+                // border: 1px solid #f2f2f2;
+                // border-width: 0px 1px 1px 1px;
+
+                border-bottom-right-radius: $appt-radius;
+                border-bottom-left-radius: $appt-radius;
+
+                .icon {
+                    font-size: 0.85rem
+                }
+
+                .info {
+
+                    background-color: $bg-light-grey;
+                    padding: 0.85rem;
+
+                    .grid .service {
+                        width: 100%;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+
+                }
+
+                .links {
+
+                    padding: 0.4rem 0.85rem;
+
+                    .link {
+                        display:block;
+                        cursor: pointer;
+                        font-size: 0.875rem !important;
+                        padding: 0.6rem 0;
+                        color: $brand-black;
+
+                        &:hover {
+                            .icon {
+                                background-color: $brand-secondary;
+                            }
+                        }
+
+                        &:last-child {
+                            margin-bottom: 0;
+                        }
+
+                        &.status-option {
+                            display: none;
+                        }
+
+                        span.icon {
+                            margin-top: -2px
+                        }
+                    }
+
+                }
+
+            }
+
+            // &.staff {
+            //
+            //     color: #505050;
+            //     border-radius: 0px;
+            //     box-shadow: none !important;
+            //     padding-top:0.2rem;
+            //     .name {
+            //         background: none !important;
+            //     }
+            //
+            //     .salon_confirmation {
+            //         background: none !important;
+            //     }
+            //
+            //     .available {
+            //         background-color: white !important;
+            //     }
+            // }
+
+            &.slot {
+                background-color: $bg-light-grey;
+                color: $brand-black;
+
+                div.time {
+                    margin-top:0;
+                    font-size: 0.8em;
+                    font-weight: 600;
+                }
+
+                .name {
+                    font-weight: normal;
+                    margin-top: 0.2rem;
+                }
+            }
+
+            &.memo {
+
+                color: $brand-primary;
+                // line-height: 1.4em;
+                line-height: 1em;
+
+                background-color: rgb(219, 199, 166);
+                width: 2rem;
+                height: 2rem;
+
+                .name {
+                    display:none;
+                    width: 90%;
+                  white-space: nowrap;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                }
+            }
+
+            &.single-slot .context-link {
+                top: 0.05rem;
+            }
+
+            &.single-slot {
+
+                padding: 0.2rem 0.85rem;
+
+                .icons {
+                    position: absolute;
+                    right: 0.85rem;
+                    top: 0.1rem;
+                    padding-left: 2rem;
+                }
+
+                div.time, .description {
+                    display: none;
+                }
+
+            }
+
+            &.double-slot {
+                div.time, .description {
+                    display: none;
+                }
+            }
+
+            &.triple-slot {
+                .description {
+                    display: none;
+                }
+            }
+
+
+        }
+
+        &.open {
+
+            padding-left: 0;
+            box-shadow: $shadow-large;
+            background: none;
+            border-bottom-right-radius: $appt-radius;
+            border-bottom-left-radius: $appt-radius;
+
+            .appointment-details {
+
+                box-shadow: none !important;
+                overflow: visible;
+
+                .lower {
+                    display: block;
+                }
+
+                &.single-slot {
+
+                    .icons {
+                        top: 0.8rem;
+                    }
+
+                    div.time, .description {
+                        display: block;
+                    }
+
+                }
+
+                &.double-slot {
+                    div.time, .description {
+                        display: block;
+                    }
+                }
+
+                &.triple-slot {
+                    .description {
+                        display: block;
+                    }
+                }
+
+            }
+
+            .appointment-details.single-slot {
+                padding: 0.5rem 0.85rem !important;
+            }
+
+            &.memo {
+                width: auto !important;
+                height: auto !important;
+                min-width: 200px;
+                max-width: 300px;
+
+                .appointment-details {
+                    width: auto;
+                    height: auto;
+                    float: none;
+                    padding: 1rem;
+
+                    span.icon.note {
+                        display: none
+                    }
+
+                    .name {
+                        display: block;
+                        white-space: normal;
+                        line-height: 1rem;
+                    }
+
+                }
+
+            }
+
+        }
+
+        &[data-note="true"]{
+            .icons .note {
+                display: inline-block;
+            }
+        }
+
+        &[data-status="salon_confirmation"]{
+
+            .appointment-details {
+
+                background-color: $salon_confirmation;
+                color: $brand-black;
+                -webkit-box-shadow: inset 0px 0px 0px 0.08rem rgba(255,255,255,1), inset 0.015rem 0px 0px 0.15rem $bg-grey;
+                -moz-box-shadow: inset 0px 0px 0px 0.08rem rgba(255,255,255,1), inset 0.015rem 0px 0px 0.15rem $bg-grey;
+                box-shadow: inset 0px 0px 0px 0.08rem rgba(255,255,255,1), inset 0.015rem 0px 0px 0.15rem $bg-grey;
+
+                span.icon {
+                    background-color: $brand-black;
+                }
+
+                .lower .status .grid {
+                    display: none;
+                }
+
+                .lower .status .grid.salon-confirmation {
+                    display: grid;
+                }
+
+                .lower .links .link.status-option {
+                    display: none;
+                }
+
+                .lower .links .link.confirm {
+                    display: block
+                }
+
+                .lower .links .link.mark-confirm {
+                    display: block
+                }
+
+            }
+
+            &.slot_promotion {
+                .appointment-details {
+                    color: $brand-secondary
+                    span.icon {
+                        background-color: $brand-secondary;
+                    }
+                }
+            }
+
+            &.target_bookings {
+                .appointment-details {
+                    line-height: 1em;
+                    color: $brand-secondary
+                    span.icon {
+                        background-color: $brand-secondary;
+                    }
+                }
+            }
+
+        }
+
+        &[data-status="unconfirmed"]{
+
+            .appointment-details {
+
+                background-color: $unconfirmed;
+                color: $text-grey;
+                // -webkit-box-shadow: inset 0px 0px 0px 0.08rem rgba(255,255,255,1), inset 0.015rem 0px 0px 0.15rem $bg-grey;
+                // -moz-box-shadow: inset 0px 0px 0px 0.08rem rgba(255,255,255,1), inset 0.015rem 0px 0px 0.15rem $bg-grey;
+                // box-shadow: inset 0px 0px 0px 0.08rem rgba(255,255,255,1), inset 0.015rem 0px 0px 0.15rem $bg-grey;
+
+                span.icon {
+                    background-color: $brand-black;
+                }
+
+                .lower .status .grid {
+                    display: none;
+                }
+
+                .lower .status .grid.unconfirmed {
+                    display: grid;
+                }
+
+                .lower .links .link.status-option {
+                    display: none;
+                }
+
+                .lower .links .link.confirm {
+                    display: block
+                }
+
+                .lower .links .link.mark-confirm {
+                    display: block
+                }
+
+                .lower .links .link.reminder {
+                    display: block
+                }
+            }
+
+        }
+
+        &[data-status="confirmed"]{
+
+            .appointment-details {
+
+                .lower .status .grid {
+                    display: none;
+                }
+
+                .lower .status .grid.confirmed {
+                    display: grid;
+                }
+
+                .lower .links .link.status-option {
+                    display: none;
+                }
+
+                .lower .links .link.check-in {
+                    display: block
+                }
+
+                .lower .links .link.reminder {
+                    display: block
+                }
+
+
+            }
+
+        }
+
+        &[data-status="checked_in"]{
+
+            .appointment-details {
+
+                background-color: $checked_in
+
+                .lower .status .grid {
+                    display: none;
+                }
+
+                .lower .status .grid.checked-in {
+                    display: grid;
+                }
+
+                .lower .links .link.status-option {
+                    display: none;
+                }
+                .lower .links .link.status-option.transaction {
+                    display: block
+                }
+
+                .lower .links .link.undo-check-in {
+                    display: block
+                }
+
+            }
+
+        }
+
+        &[data-status="paid"]{
+
+            .appointment-details {
+
+                background-color: $paid
+
+                .lower .status .grid {
+                    display: none;
+                }
+
+                .lower .status .grid.paid {
+                    display: grid;
+                }
+
+                .lower .links .link.status-option, .lower .links .link.base-option {
+                    display: none;
+                }
+
+                .lower .links .link.base-option.view {
+                    display: block
+                }
+
+                .lower .links .link.rebook {
+                    display: block
+                }
+
+                .lower .links .link.client-card {
+                    display: block
+                }
+
+            }
+
+        }
+
+        &[data-status="cancelled"]{
+
+            .appointment-details {
+
+                background-color: $cancelled
+
+                .lower .status .grid {
+                    display: none;
+                }
+
+                .lower .status .grid.cancelled {
+                    display: grid;
+                }
+
+                .lower .links .link.status-option {
+                    display: none;
+                }
+
+                .lower .links .link.client-card {
+                    display: block
+                }
+
+            }
+
+        }
+
+        &[data-status="reschedule"]{
+
+            .appointment-details {
+
+                background-color: $cancelled
+
+                .lower .status .grid {
+                    display: none;
+                }
+
+                .lower .status .grid.reschedule {
+                    display: grid;
+                }
+
+                .lower .links .link.status-option {
+                    display: none;
+                }
+
+                .lower .links .link.status-option.mark-confirm {
+                    display: block;
+                }
+
+                .lower .links .link.status-option.confirm {
+                    display: block;
+                }
+
+            }
+
+        }
+
+        &[data-status="no_show"]{
+
+            .appointment-details {
+
+                background-color: $no_show;
+
+                .lower .status .grid {
+                    display: none;
+                }
+
+                .lower .status .grid.no-show {
+                    display: grid;
+                }
+
+                .lower .links .link.status-option {
+                    display: none;
+                }
+
+            }
+
+        }
+
+        &[data-status="deleted"]{
+
+            .appointment-details {
+
+                background-color: $deleted;
+
+                .lower .links .link.status-option {
+                    display: none;
+                }
+
+            }
+
+        }
+
+        &.staff_appointment {
+
+            .appointment-details {
+                background: $bg-light-grey;
+                color: $brand-black;
+                border: 1px solid $bg-grey-2;
+                border-width: 1px 0;
+                box-shadow: none;
+                border-radius: 0px
+
+            }
+
+            &[data-staff_appointment="available"]{
+
+                z-index:0
+
+                .appointment-details {
+                    background: white;
+                }
+
+            }
+
+        }
+
+
+    }
+
+    .day.overview {
+
+        .appointment {
+
+            .appointment-details {
+
+                    .icons {
+                        display: none;
+                    }
+
+                    .name {
+                        display: none;
+                    }
+
+                    div.time, .date {
+                        display: none;
+                    }
+
+                    .description {
+                        display: none;
+                    }
+
+                }
+
+
+            &.open {
+
+                .appointment-details {
+
+
+                        .icons {
+                            display: block;
+                        }
+
+                        .name {
+                            display: block;
+                        }
+
+                        div.time, .date {
+                            display: block;
+                        }
+
+                        .description {
+                            display: block;
+                        }
+
+                    }
+
+                }
+
+
+        }
+
+
+    }
+
+}
+
+.client {
+
+    .appointment-wrap {
+
+        background-color: white;
+        border-radius: 5px;
+        padding: 1.75em;
+
+        h4 {
+            margin-top: 1.5em;
+        }
+
+        h4:first-child {
+            margin-top: 0;
+        }
+
+    }
+
+    .appointment {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        justify-content: flex-start;
+        position: relative;
+        flex-direction: row;
+        padding-top: 1.6em;
+        margin-top: 1.6em;
+        border-top: 1px solid #EBEBEB;
+
+        &:first-child {
+            border: none;
+            padding-top: 0;
+            margin-top: 0;
+        }
+
+        & > .date {
+            margin-top: 0.3rem;
+            flex: 0 0 4em;
+            display: flex;
+            height: 4em;
+            line-height: 1.4em;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            border-radius: 4px;
+            padding-bottom: 0.3em;
+        }
+
+        & > .date .date {
+            font-size: 1.5em;
+            font-weight: 500;
+        }
+
+        & > .icons {
+            flex: 2;
+            padding-left: 1.2em;
+
+            @media small {
+                flex-basis: 60%;
+            }
+        }
+
+        & > .action {
+            flex: 1;
+            text-align: right;
+            @media small {
+                margin-top: 1rem;
+                flex-basis: 100%;
+            }
+        }
+
+        .info {
+            flex: 1;
+            padding-left: 1.6rem;
+        }
+
+        &.cancelled, &.reschedule {
+            & > .date {
+                background-color: $cancelled
+            }
+        }
+
+        &.salon_confirmation {
+            & > .date {
+                background-color: $salon_confirmation;
+                color: $brand-black;
+                -webkit-box-shadow: inset 0px 0px 0px 0.08rem rgba(255,255,255,1), inset 0.015rem 0px 0px 0.15rem $bg-grey;
+                -moz-box-shadow: inset 0px 0px 0px 0.08rem rgba(255,255,255,1), inset 0.015rem 0px 0px 0.15rem $bg-grey;
+                box-shadow: inset 0px 0px 0px 0.08rem rgba(255,255,255,1), inset 0.015rem 0px 0px 0.15rem $bg-grey;
+            }
+        }
+
+        &.confirmed {
+            & > .date {
+                background-color: $confirmed;
+                color: white;
+            }
+        }
+
+        &.unconfirmed {
+            & > .date {
+                background-color: $unconfirmed;
+                color: $text-grey;
+            }
+        }
+
+        &.checked_in {
+            & > .date {
+                background-color: $checked_in;
+                color: white;
+            }
+        }
+
+        &.paid {
+            & > .date {
+                background-color: $paid;
+                color: white;
+            }
+        }
+
+        &.deleted {
+            opacity: 0.5
+            & > .date {
+                background-color: $deleted
+            }
+        }
+
+    }
+}
+
+.new-appointment {
+
+    .appointment {
+
+        &-data {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 3.750em);
+        }
+
+        &-client {
+            flex: 0 0 10em;
+        }
+
+        &-wrap {
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        &-actions {
+            flex: 0 0 10em;
+        }
+    }
+
+}
+
+.appt-wrap {
+
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+
+
+    .appt {
+
+        position: relative;
+        font-size: 0.7rem;
+        border-radius:$appt-radius;
+        padding: 0.65rem 0.85rem;
+        line-height: 1rem;
+        height: 100%;
+
+        .viewing {
+            background-color: $brand-secondary;
+            position: absolute;
+            top: -0.25rem;
+            right: -0.25rem;
+            height: 1.5rem;
+            width: 1.5rem;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: $shadow-medium;
+        }
+
+
+        &.confirmed {
+            background-color: $confirmed;
+            color: white;
+        }
+        &.unconfirmed {
+            background-color: $unconfirmed;
+        }
+        &.checked_in {
+            background-color: $checked_in;
+            color: white;
+        }
+        &.salon_confirmation {
+            background-color: $salon_confirmation;
+        }
+        &.paid {
+            background-color: $paid;
+        }
+        &.cancelled, &.reschedule, &.no_show {
+            background-color: $bg-error;
+        }
+    }
+
+}

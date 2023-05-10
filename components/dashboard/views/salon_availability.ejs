@@ -1,0 +1,88 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+
+    <div class="page px-2">
+
+        <div>
+
+            <div class="table" app-init="get('staff','all_bookings','staff_bookings')">
+
+                <div class="row table-header text-left">
+
+                    <div class="cell middle">Name</div>
+                    <div class="cell middle">Reason</div>
+                    <div class="cell middle">Start Date</div>
+                    <div class="cell middle">End Date</div>
+                    <div class="cell middle">Status</div>
+                    <div class="cell middle">Authorised By</div>
+                    <div class="cell middle">Authorised On</div>
+                    <div class="cell middle"></div>
+
+                </div>
+
+                <div class="row" app-for="booking in staff_bookings">
+
+                    <div class="cell middle clickable text-bold" app-bind="parseName(booking.staff.name)"></div>
+                    <div class="cell middle text-light" app-bind="booking.description"></div>
+                    <div class="cell middle text-light" app-bind="parseISODate(booking.date)"></div>
+                    <div class="cell middle text-light" app-bind="parseISODate(booking.end_date)"></div>
+                    <div class="cell middle text-light" app-bind="booking.status"></div>
+                    <div class="cell middle text-light" app-bind="booking.approved_by"></div>
+                    <div class="cell middle text-light" app-bind="parseISODate(booking._updated)"></div>
+
+                    <div class="cell middle action-icons" app-attr="{id:'cell-'+booking._key}">
+
+                        <div class="context-link btn border" app-click="toggleContext(booking._key)">
+                            <img src="/icons/down-arrow.svg" class="icon">
+                        </div>
+                        <div class="context dropdown text-left" style="display: none" app-attr="{id:'context-'+booking._key}">
+                            <div class="link" app-click="approveAbsence(booking._key,'confirmed')">
+                                <img src="/icons/Edit_Icon.svg" class="icon">
+                                Approve
+                            </div>
+                            <div class="link" app-click="approveAbsence(booking._key,'denied')">
+                                <img src="/icons/Delete_Icon.svg" class="icon">
+                                Deny
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="modal" app-show="view.modal == 'show_edit'" anim="{'enter':'fade-in'}">
+
+        <div class="modal-body" anim="{'enter':'move-up','duration':'0.2'}">
+
+            <div class="grid col-2 pb-1">
+                <div>
+                    <h4 class="text-light">
+                        <span app-show="new._key">Edit</span>
+                        <span app-hide="new._key">Add New</span>
+                    </h4>
+                </div>
+                <div class="text-right">
+                    <h4 class="close-icon clickable" onclick="modalCloseAll()">&times;</h4>
+                </div>
+            </div>
+
+            <div class="grid gap-1 col-12 pb-1">
+
+
+
+                <div class="colspan-12 text-right">
+                    <a class="btn bg-secondary" app-click="post('staff/booking',new)"><img src="/icons/add.svg" class="icon"> Add</a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>

@@ -1,0 +1,171 @@
+<script>
+  extendedController = function () {
+    scope.getAllProduct = () => {
+      let body = {
+        limit: 10,
+        page: 0,
+      };
+      let url = `/api/cafeproducts/getAllProductWithPage`;
+      http("post", url, body).then((data) => {
+        data = JSON.parse(data);
+        scope.cafeproducts = data.data;
+        console.log("dara", data, "limit", body.limit);
+        document.addEventListener(
+          "DOMContentLoaded",
+          init(parseInt(data.count / body.limit)),
+          false
+        );
+      });
+    };
+    scope.catOnChange = function (product) {
+      changed(product);
+    };
+    scope.saveCafe = (cafe) => {
+      console.log("sssasa", cafe);
+      let url = `/api/cafeproducts/saveCafeTime`;
+      http("post", url, cafe)
+        .then((data) => {
+          scope.cafe = JSON.parse(data);
+          scope.notify("Saved");
+          modalCloseAll();
+        })
+        .catch((err) => {
+          scope.notify(err);
+        });
+    };
+    scope.cafe_sorting = function (val) {
+      let url = `/api/cafeproducts/getAllProductWithPage`;
+      let body = {
+        sortby: val,
+        limit: 10,
+        page: 0,
+      };
+      http("post", url, body).then((data) => {
+        data = JSON.parse(data);
+        scope.cafeproducts = data.data;
+        scope.cafeProductSortValue = val;
+        document.addEventListener(
+          "DOMContentLoaded",
+          init(parseInt(data.count / body.limit)),
+          false
+        );
+      });
+    };
+    scope.changepage = function (p) {
+      let limit = 10;
+      let page = p || 1;
+      let url = `/api/cafeproducts/getAllProductWithPage`;
+      let body = {};
+      if (scope.cafeProductSortValue) {
+        body = {
+          sortby: scope.cafeProductSortValue,
+          limit: limit,
+          page: page,
+        };
+      } else {
+        body = {
+          limit: limit,
+          page: page - 1,
+        };
+      }
+      http("post", url, body).then((data) => {
+        console.log("ddddatt", JSON.parse(data), body);
+        data = JSON.parse(data);
+        scope.cafeproducts = data.data;
+      });
+    };
+
+    scope.new.variants = [];
+    scope.variant = {
+      name: "",
+      price: "",
+      DainingVat: "",
+      TakeAwayVat: "",
+      Discount: "",
+    };
+    // Add variants
+    scope.addVariant = () => {
+      const variantNameInput = document.getElementById("variant-name");
+      const variantPriceInput = document.getElementById("variant-price");
+      const variantDainingVatInput =
+        document.getElementById("variant-dining-vat");
+      const variantTakeAwayVatInput = document.getElementById(
+        "variant-take-away-vat"
+      );
+      const variantDiscountInput = document.getElementById("variant-discount");
+      const variantName = variantNameInput.value;
+      const variantPrice = variantPriceInput.value;
+      let variantDainingVat = variantDainingVatInput.value;
+      let variantTakeAwayVat = variantTakeAwayVatInput.value;
+      let variantDiscount = variantDiscountInput.value;
+      if (!variantDainingVat) {
+        variantDainingVat = 0;
+      }
+      if (!variantTakeAwayVat) {
+        variantTakeAwayVat = 0;
+      }
+      if (!variantDiscount) {
+        variantDiscount = 0;
+      }
+      if (variantName && variantPrice) {
+        const variant = {
+          name: variantName,
+          price: variantPrice,
+          DainingVat: variantDainingVat,
+          TakeAwayVat: variantTakeAwayVat,
+          Discount: variantDiscount,
+        };
+        if (!Array.isArray(scope.new.variants)) {
+          scope.new.variants = [];
+        }
+        scope.new.variants.push(variant);
+        // clear input fields
+        variantNameInput.value = "";
+        variantPriceInput.value = "";
+        variantDainingVatInput.value = "";
+        variantTakeAwayVatInput.value = "";
+        variantDiscountInput.value = "";
+        // display variants
+        // scope.displayVariants();
+      }
+    };
+    scope.removeVariant = (name) => {
+      if (name) {
+        name = name.split(" ").join("");
+        scope.new.variants = scope.variants.filter((obj) => {
+          let Objname = obj.name.split(" ").join("");
+          return Objname != name;
+        });
+      }
+    };
+    scope.addExecutive = () => {
+      console.log("newExData", scope.new);
+      let url = `/api/cafeproducts/createExecutiveStamp`;
+      http("post", url, scope.new)
+        .then((data) => {
+          scope.notify("Saved");
+        })
+        .then(() => {
+          modalCloseAll()
+          scope.getExecutiveStamp()
+        })
+        .catch((err) => {});
+    };
+    scope.getExecutiveStamp = () => {
+      let url = `/api/cafeproducts/getAllExecutiveStamp`;
+      http("get", url).then((data) => {
+       
+        scope.executive=JSON.parse(data)
+      });
+    };
+    scope.executiveDelete=(key)=>{
+      let url=`/api/cafeproducts/removeExecutiveStamp`
+      http('post',url,{key:key}).then((data)=>{
+        modalCloseAll()
+       
+        scope.getExecutiveStamp()
+        scope.notify("Deleted");
+      })
+    }
+  };
+</script>

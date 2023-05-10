@@ -1,0 +1,170 @@
+
+<script>
+
+    extendedController = function(){
+
+        <% if (typeof salon == 'object'){ %>
+            scope.salon = <%- JSON.stringify(salon) %>
+        <% } else { %>
+            scope.salon = {}
+        <% } %>
+
+        scope.saveSalon = function(salon){
+            scope.post('salon',salon).then((data)=>{
+                scope.notify('Saved')
+                modalCloseAll()
+            }).catch((err)=>{
+                scope.notify(err)
+            })
+        }
+
+        scope.saveProduct = function(){
+
+            if(parseInt(scope.new.rating)>5 || parseInt(scope.new.rating)<1){
+                scope.notify('Rating should be between 1 to 5 number')
+            }else{
+
+                scope.new.discounted = scope.new.price - (parseFloat(scope.new.price) * scope.new.discount/100)
+
+                scope.post('products',scope.new).then((product_data)=>{
+
+                    scope.view.modal = false
+                    // scope.new = {}
+                    scope.notify('Saved')
+
+                })
+
+            }
+            
+
+        }
+
+        scope.saveTestimonial = function(){
+
+            scope.post('testimonials',scope.new).then((testi_data)=>{
+
+                scope.view.modal = false
+                scope.new = {}
+                scope.notify('Saved')
+
+            })
+
+        }
+
+
+        scope.saveMember = function(){
+
+            scope.post('members',scope.new).then((mem_data)=>{
+
+                scope.view.modal = false
+                scope.new = {}
+                scope.notify('Saved')
+
+            })
+
+        }
+
+        scope.toggleSellOnline = function(){
+
+            scope.new.sell_online = !scope.new.sell_online
+            // scope.post('products',scope.new).then((product_data)=>{
+            //     scope.notify('Saved')
+            // })
+
+        }
+
+        scope.parseProductCategory = function(idx){
+
+            if (scope.salon.product_categories && scope.salon.product_categories[idx] && scope.salon.product_categories[idx].name){
+                return scope.salon.product_categories[idx].name
+            } else {
+                return ''
+            }
+
+        }
+
+        scope.orderProduct = function(product){
+
+            product.on_order = !product.on_order
+            let payload = {
+                _key: product._key,
+                value: product.on_order
+            }
+
+            scope.post('products/add_to_order',payload).then((prod_data)=>{
+                scope.new = prod_data[0]
+            }).catch(err => {
+                scope.notify(err, 'error')
+            })
+
+        }
+
+        scope.getFilters = function(type){
+
+            scope.get(type+'/init/get_filters').then((data)=>{
+                scope.filterCategories = data
+            })
+
+        }
+
+        scope.applyFilter = function(type, filter, get){
+
+            if (get){
+
+                if (filter == scope.current_filter_value){
+
+                    scope.current_filter_value = ''
+                    scope.get(type)
+
+                } else {
+
+                    scope.current_filter_value = filter
+
+                    let filter_data = {
+                        field: scope.current_filter,
+                        value: filter
+                    }
+
+                    if (filter == 'fb.value'){
+                        delete filter_data.value
+                    }
+                    scope.post(type+'/filter', filter_data).then((data)=>{
+                        scope[type] = data
+                    })
+
+                }
+
+            } else {
+
+                if (filter == scope.current_filter){
+
+                    scope.view.filters = false
+                    scope.current_filter = ''
+
+                    scope.get(type)
+
+                } else {
+
+                    scope.view.filters = true
+                    scope.current_filter = filter
+
+                    scope.get(type+'/'+filter+'/get_filters').then((data)=>{
+
+                        scope.filterButtons = data.map((filter)=>{
+
+                            if (!filter.type){
+                                filter.type = 'none'
+                            }
+                            return {value: filter.value, text: filter.type, count: filter.count}
+                        })
+                    })
+
+                }
+
+            }
+
+        }
+
+    }
+
+</script>

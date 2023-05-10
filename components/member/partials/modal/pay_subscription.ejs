@@ -1,0 +1,156 @@
+<div class="modal smallModal" app-show="view.modal == 'show_pay'" anim="{'enter':'fade-in'}">
+
+    <div class="modal-body p-0 w-60 w-m-90" id="mbody" anim="{'enter':'move-up','duration':'0.2'}">
+
+        <div class="modal-header text-primary">
+            <div class="title">
+                <p class="m-0">
+                    Enter your card details for payment
+                </p>
+            </div>
+            <div class="close">
+                 <span class="icon close white clickable" onclick="modalCloseAll()"></span>               
+            </div>
+        </div>
+
+        <div class="modal-content p-2">
+
+            <div app-show="view.tab == 'one'">
+
+                <div class="grid col-1 gap-1">
+
+                    <div>
+
+                        <div class="grid col-1 mb-1 common-form common-form-border">                            
+                            <div class="colspan-3 grid col-1 gap-1">
+
+                            <div>   <label>Card Holder Name</label>
+                                    <input type="text" app-model="new.holdername" id="mseats" placeholder="Card Holder Name" class="rounded" > 
+                                </div>
+
+
+
+                                <div>
+                                    <label>Card Number</label>
+                                    <input type="text" app-model="new.cardnumber" id="carnumber" onkeyup="return handleChangeCard(this)" placeholder="Card Number" class="rounded" > 
+                                </div>
+
+                                 <div>
+                                    <label>Expiry date</label>
+                                    <input type="text" app-model="new.expdate" id="expdate" placeholder="01/22" class="rounded" onkeyup="return handleChangeDate(this)"> 
+                                </div>
+
+
+                                 <div>
+                                    <label>CVV</label>
+                                    <input type="number" app-model="new.cvv" id="cvv" onkeyup="return handleChangeCVV(this)" placeholder="CVV" class="rounded" > 
+                                </div>
+
+
+                                <div>
+                                   
+                                    <input type="text" app-model="new.date" style="visibility:hidden" />
+                                    <input type="text" app-model="new.addseat" value="1" style="visibility:hidden" />
+                                    <input type="text" app-model="new.member_id" value="<%=member._key%>" style="visibility:hidden" />
+                                    <input type="text" app-model="new.subscription_id" value="<%=member_subscription_id%>" style="visibility:hidden" />
+                                    <input type="text" app-model="new.price"  style="visibility:hidden" />
+
+                                </div>
+                                
+
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                    
+
+                </div>
+            </div>
+
+           
+
+        </div>
+
+
+        <div class="modal-appointment-actions flex flex-middle-right">               
+            <a class="dp-btn text-white bg-secondary" app-click="paySubscribe()">
+                
+                <span app-hide="loading == 'false'">Loading...</span>
+                <span app-show="loading == 'false'">Pay Now  <span class="icon tick white right"></span></span>
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+function handleChangeCVV(value) {
+    value = value.value
+    if(/^[\d ]*$/.test(value) == false) {
+        document.getElementById('cvv').value = ""
+    } else if(value.length>3){
+        document.getElementById('cvv').value = value.substr(0,4)
+    }
+
+
+  }
+
+
+  function handleChangeDate(value) {
+    value = value.value
+    if(/^[\d/]*$/.test(value) == false) {
+        document.getElementById('expdate').value = ""
+    } else if(value.length>5){
+        document.getElementById('expdate').value = ""
+    }else{
+
+        if(value.length == 2){
+            value += '/'
+          }
+
+        document.getElementById('expdate').value = value
+
+    }
+
+
+  }
+
+
+  
+  function handleChangeCard(value) {
+
+    value = value.value
+
+    if(/^[\d ]*$/.test(value) == false){
+        document.getElementById('carnumber').value = ""
+    } else if(parseInt(value.length)<=16) {
+
+        console.log(value.length)
+        var v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '')
+        var matches = v.match(/\d{4,16}/g);
+        var match = matches && matches[0] || ''
+        var parts = []
+
+        for (let i=0, len=match.length; i<len; i+=4) {
+            parts.push(match.substring(i, i+4))
+        }
+
+        if (parts.length) {
+            value = parts.join(' ')
+        } 
+        document.getElementById('carnumber').value = value
+
+    } else {
+        document.getElementById('carnumber').value = value.substr(0,19)
+    }
+   
+
+    
+  }
+
+</script>

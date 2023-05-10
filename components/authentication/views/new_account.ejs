@@ -1,0 +1,42 @@
+<% layout('customer-page.ejs') -%>
+
+<div class="contain px-6 px-s-0">
+    <div class="text-left py-6">
+
+        <% if (typeof sent == 'undefined'){ %>
+
+            <div class="grid col-2 col-s-1 gap-2">
+                <div class="px-2">
+                    <h2 class="mb-1 capitalise">Already made an appointment?</h2>
+                    <p class="mb-2">If you have booked with us before, it's likely you'll have an account. Enter your email address below and if you have an account, we'll send you a link so you can log in.</p>
+                    <form method="post" action="/login/customer" class="grid col-1 gap-1 relative">
+                        <div class="">
+                            <input type="text" name="email" placeholder="Email Address">
+                            <input type="hidden" name="new_account" value="new_account">
+                        </div>
+                        <div>
+                            <input type="submit" class="btn bg-secondary width-full" value="Submit">
+                        </div>
+                        <% if (typeof error != 'undefined'){ %>
+                            <div class="colspan-2 text-33-red"><%- error %></div>
+                        <% } %>
+                    </form>
+                </div>
+                <div class="px-2">
+
+                    <h2 class="mb-1 capitalise">Haven't made an appointment yet?</h2>
+                    <p class="mb-2">If you haven't visited us before, you can create an account by booking your first appointment</p>
+                    <a class="btn outline w-100" href="/book">Book Now</a>
+
+                </div>
+
+        <% } else { %>
+
+            <img src="/icons/DR_Icon_EmailSent.svg" class="mb-2 icon xxl">
+            <h2 class="mb-1">We've sent you an email</h2>
+            <p class="mb-2">To access your account and view your appointments, simply click the link in the email to create a new password</p>
+
+        <% } %>
+
+    </div>
+</div>

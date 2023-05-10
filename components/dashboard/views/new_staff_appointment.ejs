@@ -1,0 +1,127 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+
+    <div class="hidden" app-init="newAppointment('set_event_type','staff_appointment')"></div>
+    <div class="hidden" app-init="newStaffAppointment('set_end_date')"></div>
+
+    <% if (typeof availability != 'undefined'){ %>
+        <div class="hidden" app-init="newStaffAppointment('get')"></div>
+    <% } %>
+
+    <div class="page h-100 overflow-y bg-light-grey p-1">
+
+        <div>
+            <div class="grid col-12 gap-2">
+                    <div class="colspan-4">
+                        <p class="text-italic">To book a staff absence, use one of the options below, which will block out the calendar for the time period you set. If you need to mark this staff member as available, use the shift start/end functions on the calendar</p>
+                    </div>
+                    <div class="colspan-8">
+                    </div>
+                    <div class="flex flex-middle-left" style="width: 10rem;">
+                        <p class="text-weight-600">Reason:</p>
+                    </div>
+                    <div class="colspan-11 flex flex-middle-left">
+
+                        <% if (typeof salon.absence != 'undefined' && salon.absence.length > 0){ %>
+                            <!-- <button class="btn border capitalise mr-05 my-05" app-click="newStaffAppointment('set_reason','available')" app-class="{'bg-secondary':new_appointment.description == 'available'}">Available</button> -->
+
+                            <% if (typeof availability == 'object' && availability.length > 0){ %>
+                                <button class="btn border capitalise mr-05 my-05" app-click="newStaffAppointment('set_reason','not_available')" app-class="{'bg-secondary':new_appointment.description == 'not_available'}">Not Available</button>
+                            <% } %>
+
+                            <% salon.absence.forEach((absence) => { %>
+                                <button class="btn border capitalise mr-05 my-05" app-click="newStaffAppointment('set_reason','<%- absence.name %>')" app-class="{'bg-secondary':new_appointment.description == '<%- absence.name %>'}"><%- absence.name %></button>
+                            <% }) %>
+                        <% } else { %>
+                            <div class="bg-warn text-white p-1"><i class="fas fa-exclamation-circle"></i> Please add reasons for absence in <a class="text-primary" href="/dashboard/salon">Staff Settings</a></div>
+                        <% } %>
+
+                    </div>
+
+
+
+                    <div class="flex flex-middle-left" app-hide="new_appointment.description == 'not_available'">
+                        <p class="text-weight-600">Duraton:</p>
+                    </div>
+                    <div class="colspan-11 flex flex-middle-left" app-hide="new_appointment.description == 'not_available'">
+
+                        <button class="btn border mr-05 my-05" app-click="newStaffAppointment('set_end','30')" app-class="{'bg-secondary':new_appointment.end_time == '30'}">30 Mins</button>
+                        <button class="btn border mr-05 my-05" app-click="newStaffAppointment('set_end','60')" app-class="{'bg-secondary':new_appointment.end_time == '60'}">1 Hour</button>
+                        <button class="btn border mr-05 my-05" app-click="newStaffAppointment('set_end','90')" app-class="{'bg-secondary':new_appointment.end_time == '90'}">1.5 Hours</button>
+                        <button class="btn border mr-05 my-05" app-click="newStaffAppointment('set_end','120')" app-class="{'bg-secondary':new_appointment.end_time == '120'}">2 Hours</button>
+                        <button class="btn border mr-05 my-05" app-click="newStaffAppointment('set_end','150')" app-class="{'bg-secondary':new_appointment.end_time == '150'}">2.5 Hours</button>
+                        <button class="btn border mr-05 my-05" app-click="newStaffAppointment('set_end','180')" app-class="{'bg-secondary':new_appointment.end_time == '180'}">3 Hours</button>
+                        <button class="btn border mr-05 my-05" app-click="newStaffAppointment('set_end','18:00')" app-class="{'bg-secondary':new_appointment.end_time == '18:00'}" app-show="view.salon_close">Until Close</button>
+                        <button class="btn border mr-05 my-05" app-click="newStaffAppointment('full_day')" app-class="{'bg-secondary':new_appointment.end == 'full_day'}" app-show="view.salon_close">Full Day</button>
+
+                    </div>
+
+
+
+                    <div class="flex flex-middle-left" app-hide="new_appointment.description == 'not_available'">
+                        <p class="text-weight-600">Period:</p>
+                    </div>
+                    <div class="colspan-11 flex flex-middle-left" app-hide="new_appointment.description == 'not_available'">
+
+                        From: <span app-bind="selected_date.date_string_time" class="text-weight-600 ml-05 mr-2"></span>Until: <span app-bind="selected_end_date.date_string_time" class="text-weight-600 ml-05"></span><a app-click="newStaffAppointment('show_end_date')"><span class="icon calendar secondary right" style="margin-top: -2px"></span></a>
+
+                    </div>
+
+
+
+                    <div class="flex flex-middle-left">
+                        <p class="text-weight-600">Repeat:</p>
+                    </div>
+                    <div class="colspan-11 flex flex-middle-left layer-2" style="overflow:visible">
+
+                        <div app-show="view.show_repeat">
+
+                            <span class="mr-05">Every</span>
+                            <input type="number" app-model="new_appointment.reoccurence" class="border inline mr-1 text-center" style="width: 2rem; padding-left:0; padding-right:0">
+                            <div class="inline-block relative layer-5 mr-2" style="width: 8rem">
+                                <div class="search-dropdown thin border capitalise" app-bind="parseInterval(new_appointment.reoccurence_interval)" app-click="view.reoccurence_interval = !view.reoccurence_interval">Select...</div>
+                                <div class="table search-select absolute context" app-show="view.reoccurence_interval">
+                                    <div class="row clickable" app-click="newStaffAppointment('set_reoccurence_interval','days')">Day(s)</div>
+                                    <div class="row clickable" app-click="newStaffAppointment('set_reoccurence_interval','weeks')">Week(s)</div>
+                                    <div class="row clickable" app-click="newStaffAppointment('set_reoccurence_interval','months')">Month(s)</div>
+                                </div>
+                            </div>
+                            <span class="mr-05">End after</span>
+                            <input type="number" app-model="new_appointment.reoccurences" class="border inline mr-05 text-center" style="width: 2rem; padding-left:0; padding-right:0">
+                            <span>occurences</span>
+
+                        </div>
+
+                        <div app-hide="view.show_repeat" class="italic text-33-grey">
+                            Unavailable
+                        </div>
+                    </div>
+
+
+                    <div class="flex-top-left layer-1">
+                        <p><span class="text-weight-600">Note:</span><br>(optional)</p>
+                    </div>
+                    <div class="colspan-11 flex flex-middle-left layer-1" style="overflow:visible">
+                        <textarea class="border w-40 w-m-75 w-s-100" app-model="new_appointment.note" placeholder="Add a note""></textarea>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <section class="footer">
+        <% if (typeof appointment_key != 'undefined'){ %>
+            <button class="btn bg-secondary" app-click="newAppointment('save','<%- appointment_key %>')">Update Booking <span class="icon tick right white"></span></button>
+        <% } else { %>
+            <button class="btn border" app-click="storeNewAppointment('cancel')">Cancel <span class="icon close right black"></span></button>
+            <button class="btn bg-secondary" app-click="newAppointment('push')">Save <span class="icon tick right white"></span></button>
+        <% } %>
+        </section>
+
+
+        <%- include('../../dashboard/partials/modal/staff_absence_date_picker.ejs') %>
+
+        <%- include('../../dashboard/partials/modal/staff_absence_confirm.ejs') %>

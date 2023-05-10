@@ -1,0 +1,462 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+
+    <div class="page grid col-12 col-s-1 client overflow-hidden">
+
+        <div class="colspan-4 bg-grey text-small overflow-y">
+
+            <!-- <a class="clickable block" app-click="view.tab = 'one'" app-class="{'active':view.tab == 'one'}">Today</a> -->
+
+            <div class="msg" app-class="{'active':view.tab == 'one'}" app-click="view.tab = 'one'">
+                <div class="flex-6 pl-2">
+                    <div class="text-weight-600">Incomplete</div>
+                    <div class="">Shows attempted online appointments, which haven't been completed</div>
+                </div>
+            </div>
+
+            <div class="msg" app-class="{'active':view.tab == 'two'}" app-click="view.tab = 'two'">
+                <div class="flex-6 pl-2">
+                    <div class="text-weight-600">Unconfirmed</div>
+                    <div class="">Appointments which haven't been confirmed by the client</div>
+                </div>
+            </div>
+
+            <div class="msg" app-class="{'active':view.tab == 'five'}" app-click="view.tab = 'five'">
+                <div class="flex-6 pl-2">
+                    <div class="text-weight-600">Cancelled</div>
+                    <div class="">Appointments which are waiting to be cancelled</div>
+                </div>
+            </div>
+
+            <div class="msg" app-class="{'active':view.tab == 'six'}" app-click="view.tab = 'six'">
+                <div class="flex-6 pl-2">
+                    <div class="text-weight-600">Rescheduled</div>
+                    <div class="">Appointments which are waiting to be moved</div>
+                </div>
+            </div>
+
+            <div class="msg" app-class="{'active':view.tab == 'three'}" app-click="view.tab = 'three'">
+                <div class="flex-6 pl-2">
+                    <div class="text-weight-600">Pending</div>
+                    <div class="">Appointments which are waiting for Salon confirmation</div>
+                </div>
+            </div>
+
+            <!-- <div class="msg" app-class="{'active':view.tab == 'four'}" app-click="view.tab = 'four'">
+                <div class="flex-6 pl-2">
+                    <div class="text-weight-600">Covid Cancellations</div>
+                    <div class="">Appointmnts which have been cancelled due to lockdown</div>
+                </div>
+            </div> -->
+
+        </div>
+
+        <div class="colspan-8 bg-light-grey p-2 overflow-y">
+
+            <div app-show="view.tab == 'today'" class="overflow-y pb-5">
+
+                <h4 class="text-primary mb-2">Today's Appointments</h4>
+
+                <div class="appointment-wrap">
+
+                    <% appointments.forEach((appointment) => { %>
+
+                        <% if (functions.isToday(appointment.date)) { %>
+
+                            <div class="appointment <%- appointment.status %>">
+                                <div class="date">
+                                    <div class="day"><%- functions.getDay(appointment.date) %></div>
+                                    <div class="date"><%- functions.getDate(appointment.date) %></div>
+                                </div>
+                                <div class="info">
+                                    <div class="text-bold"><%- functions.getStart(appointment.date) %></div>
+                                    <% if (appointment.customer.name){ %>
+                                        <div><%- appointment.customer.name.first %> <%- appointment.customer.name.last %> - <%- appointment.service_name %></div>
+                                    <% } else { %>
+                                        <div><%- appointment.customer.email %></div>
+                                    <% } %>
+                                    <div class="text-bold capitalise">With <%- appointment.staff.name.first %> <%- appointment.staff.name.last %></div>
+                                </div>
+                                <div class="action">
+                                    <a href="/dashboard/calendar/<%- functions.parseCalendarLink(appointment.date) %>?appointment_id=<%- appointment._key %>" class="btn border">View</a>
+                                </div>
+                            </div>
+
+                        <% } %>
+
+                    <% }) %>
+
+                </div>
+
+            </div>
+
+
+            <div app-show="view.tab == 'two'" class="overflow-y pb-5">
+
+                <h4 class="text-primary mb-2">Unconfirmed Appointments</h4>
+
+                <div class="appointment-wrap">
+
+                    <% var month_curr, month_prev %>
+
+                    <% unconfirmed_appointments.forEach((appointment) => { %>
+
+                        <% if (functions.isToday(appointment.date)) { %>
+
+                            <% month_curr = functions.getMonth(appointment.date) %>
+
+                            <% if (month_curr != month_prev){ %>
+                                <h4><%- month_curr %></h4>
+                            <% } %>
+
+
+                            <div class="appointment <%- appointment.status %>">
+                                <div class="date">
+                                    <div class="day"><%- functions.getDay(appointment.date) %></div>
+                                    <div class="date"><%- functions.getDate(appointment.date) %></div>
+                                </div>
+                                <div class="info flex-4 flex">
+                                    <div class="flex-1 pr-3">
+                                        <div class="text-weight-600"><%- functions.getStart(appointment.date) %></div>
+                                        <div class="text-small"><%- appointment.service_name %> with <%- appointment.staff.name.first %> <%- appointment.staff.name.last %></div>
+                                        <div class="text-small text-grey italic">
+                                            <% if (appointment.confirmation_sent){ %>
+                                                Confirmation sent <%- moment(appointment.confirmation_sent).fromNow() %>
+                                            <% } else { %>
+                                                Unable to contact client
+                                            <% } %>
+                                        </div>
+
+                                    </div>
+                                    <div class="flex-1">
+                                        <% if (appointment.customer.name){ %>
+                                            <div class="text-weight-600"><a class="clickable" href="/dashboard/clients/<%- appointment.customer._key %>"><%- appointment.customer.name.first %> <%- appointment.customer.name.last %></a></div>
+                                        <% } %>
+                                        <% if (appointment.customer.email){ %>
+                                            <div class="text-small"><a class="clickable" href="/dashboard/clients/<%- appointment.customer._key %>"><%- appointment.customer.email %></a></div>
+                                        <% } %>
+                                        <% if (appointment.customer.tel){ %>
+                                            <div class="text-small"><a class="clickable" href="tel:<%- appointment.customer.tel %>"><%- appointment.customer.tel %></a></div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                                <div class="action">
+                                    <a href="/dashboard/calendar/<%- functions.parseCalendarLink(appointment.date) %>?appointment_id=<%- appointment._key %>" class="btn border">View</a>
+                                </div>
+                            </div>
+
+                            <% month_prev = month_curr %>
+
+                        <% } %>
+
+                    <% }) %>
+
+                </div>
+
+            </div>
+
+            <div app-show="view.tab == 'three'" class="overflow-y pb-5">
+
+                <h4 class="text-primary mb-2">Pending Appointments</h4>
+
+                <div class="appointment-wrap">
+
+                    <% var pmonth_curr, pmonth_prev %>
+
+                    <% pending_appointments.forEach((appointment) => { %>
+
+                        <% if (functions.isToday(appointment.date)) { %>
+
+                            <% pmonth_curr = functions.getMonth(appointment.date) %>
+
+                            <% if (pmonth_curr != pmonth_prev){ %>
+                                <h4><%- pmonth_curr %></h4>
+                            <% } %>
+
+
+                            <div class="appointment <%- appointment.status %>">
+                                <div class="date">
+                                    <div class="day"><%- functions.getDay(appointment.date) %></div>
+                                    <div class="date"><%- functions.getDate(appointment.date) %></div>
+                                </div>
+                                <div class="info flex-4 flex">
+                                    <div class="flex-1 pr-3">
+                                        <div class="text-weight-600"><%- functions.getStart(appointment.date) %></div>
+                                        <div class="text-small"><%- appointment.service_name %> with <%- appointment.staff.name.first %> <%- appointment.staff.name.last %></div>
+                                        <div class="text-small text-grey italic"><%- appointment.source %> <%- moment(appointment._created).fromNow() %></div>
+                                    </div>
+                                    <div class="flex-1">
+                                        <% if (appointment.customer.name){ %>
+                                            <div class="text-weight-600"><a class="clickable" href="/dashboard/clients/<%- appointment.customer._key %>"><%- appointment.customer.name.first %> <%- appointment.customer.name.last %></a></div>
+                                        <% } %>
+                                        <% if (appointment.customer.email){ %>
+                                            <div class="text-small"><a class="clickable" href="/dashboard/clients/<%- appointment.customer._key %>"><%- appointment.customer.email %></a></div>
+                                        <% } %>
+                                        <% if (appointment.customer.tel){ %>
+                                            <div class="text-small"><a class="clickable" href="tel:<%- appointment.customer.tel %>"><%- appointment.customer.tel %></a></div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                                <div class="action">
+                                    <a href="/dashboard/calendar/<%- functions.parseCalendarLink(appointment.date) %>?appointment_id=<%- appointment._key %>" class="btn border">View</a>
+                                </div>
+                            </div>
+
+                            <% pmonth_prev = pmonth_curr %>
+
+                        <% } %>
+
+                    <% }) %>
+
+                </div>
+
+            </div>
+
+            <div app-show="view.tab == 'five'" class="overflow-y pb-5">
+
+                <h4 class="text-primary mb-2">Cancelled Appointments</h4>
+
+                <div class="appointment-wrap">
+
+                    <% var pmonth_curr, pmonth_prev %>
+
+                    <% cancelled_appointments.forEach((appointment) => { %>
+
+                        <% if (functions.isToday(appointment.date)) { %>
+
+                            <% pmonth_curr = functions.getMonth(appointment.date) %>
+
+                            <% if (pmonth_curr != pmonth_prev){ %>
+                                <h4><%- pmonth_curr %></h4>
+                            <% } %>
+
+
+                            <div class="appointment <%- appointment.status %>">
+                                <div class="date">
+                                    <div class="day"><%- functions.getDay(appointment.date) %></div>
+                                    <div class="date"><%- functions.getDate(appointment.date) %></div>
+                                </div>
+                                <div class="info flex-4 flex">
+                                    <div class="flex-1 pr-3">
+                                        <div class="text-weight-600"><%- functions.getStart(appointment.date) %></div>
+                                        <div class="text-small"><%- appointment.service_name %> with <%- appointment.staff.name.first %> <%- appointment.staff.name.last %></div>
+                                        <div class="text-small text-grey italic"><%- appointment.source %> <%- moment(appointment._created).fromNow() %></div>
+                                    </div>
+                                    <div class="flex-1">
+                                        <% if (appointment.customer.name){ %>
+                                            <div class="text-weight-600"><a class="clickable" href="/dashboard/clients/<%- appointment.customer._key %>"><%- appointment.customer.name.first %> <%- appointment.customer.name.last %></a></div>
+                                        <% } %>
+                                        <% if (appointment.customer.email){ %>
+                                            <div class="text-small"><a class="clickable" href="/dashboard/clients/<%- appointment.customer._key %>"><%- appointment.customer.email %></a></div>
+                                        <% } %>
+                                        <% if (appointment.customer.tel){ %>
+                                            <div class="text-small"><a class="clickable" href="tel:<%- appointment.customer.tel %>"><%- appointment.customer.tel %></a></div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                                <div class="action">
+                                    <a href="/dashboard/calendar/<%- functions.parseCalendarLink(appointment.date) %>?appointment_id=<%- appointment._key %>" class="btn border">View</a>
+                                </div>
+                            </div>
+
+                            <% pmonth_prev = pmonth_curr %>
+
+                        <% } %>
+
+                    <% }) %>
+
+                </div>
+
+            </div>
+
+            <div app-show="view.tab == 'six'" class="overflow-y pb-5">
+
+                <h4 class="text-primary mb-2">Rescheduled Appointments</h4>
+
+                <div class="appointment-wrap">
+
+                    <% var pmonth_curr, pmonth_prev %>
+
+                    <% rescheduled_appointments.forEach((appointment) => { %>
+
+                        <% if (functions.isToday(appointment.date)) { %>
+
+                            <% pmonth_curr = functions.getMonth(appointment.date) %>
+
+                            <% if (pmonth_curr != pmonth_prev){ %>
+                                <h4><%- pmonth_curr %></h4>
+                            <% } %>
+
+
+                            <div class="appointment <%- appointment.status %>">
+                                <div class="date">
+                                    <div class="day"><%- functions.getDay(appointment.date) %></div>
+                                    <div class="date"><%- functions.getDate(appointment.date) %></div>
+                                </div>
+                                <div class="info flex-4 flex">
+                                    <div class="flex-1 pr-3">
+                                        <div class="text-weight-600"><%- functions.getStart(appointment.date) %></div>
+                                        <div class="text-small"><%- appointment.service_name %> with <%- appointment.staff.name.first %> <%- appointment.staff.name.last %></div>
+                                        <div class="text-small text-grey italic"><%- appointment.source %> <%- moment(appointment._created).fromNow() %></div>
+                                    </div>
+                                    <div class="flex-1">
+                                        <% if (appointment.customer.name){ %>
+                                            <div class="text-weight-600"><a class="clickable" href="/dashboard/clients/<%- appointment.customer._key %>"><%- appointment.customer.name.first %> <%- appointment.customer.name.last %></a></div>
+                                        <% } %>
+                                        <% if (appointment.customer.email){ %>
+                                            <div class="text-small"><a class="clickable" href="/dashboard/clients/<%- appointment.customer._key %>"><%- appointment.customer.email %></a></div>
+                                        <% } %>
+                                        <% if (appointment.customer.tel){ %>
+                                            <div class="text-small"><a class="clickable" href="tel:<%- appointment.customer.tel %>"><%- appointment.customer.tel %></a></div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                                <div class="action">
+                                    <a href="/dashboard/calendar/<%- functions.parseCalendarLink(appointment.date) %>?appointment_id=<%- appointment._key %>" class="btn border">View</a>
+                                </div>
+                            </div>
+
+                            <% pmonth_prev = pmonth_curr %>
+
+                        <% } %>
+
+                    <% }) %>
+
+                </div>
+
+            </div>
+
+            <div app-show="view.tab == 'one'" class="overflow-y pb-5">
+
+                <h4 class="text-primary mb-2">Incomplete Appointments</h4>
+
+                <div class="">
+
+                    <% incomplete_appointments.forEach((client) => { %>
+                <div class=" bg-white p-2 mb-05" >
+                        <div class="flex mb-05" id="<%- client._key %>">
+
+                            <div class="flex-2 flex">
+
+                                <div class="flex-2">
+                                    <% if (client.name){ %>
+                                        <div class="text-weight-600 capitalise"><a class="clickable" href="/dashboard/clients/<%- client._key %>"><%- client.name.first %> <%- client.name.last %></a></div>
+                                    <% } %>
+                                    <% if (client.email){ %>
+                                        <div class="text-small"><a class="clickable" href="/dashboard/clients/<%- client._key %>"><%- client.email %></a></div>
+                                    <% } %>
+                                    <% if (client.tel){ %>
+                                        <div class="text-small"><a class="clickable" href="tel:<%- client.tel %>"><%- client.tel %></a></div>
+                                    <% } %>
+                                </div>
+
+                                <div class="flex-2 text-small">
+
+                                    <% var day_curr, day_prev %>
+                                    <% client.new_appointment.forEach((appointment) => { %>
+
+                                        <% day_curr = moment(appointment.date).format('DD/MM/YY') %>
+                                        <% if (day_curr != day_prev){ %>
+                                            <p class="text-weight-600"><%- moment(appointment.date).format('ddd Do MMM YY') %></p>
+                                        <% } %>
+
+                                        <div class="grid col-5 gap-1">
+                                            <div><%- moment(appointment.date).format('h:mma') %></div>
+                                            <div class="capitalise colspan-2"><%- appointment.type.replace(/\_/g,' ') %></div>
+                                            <div class="colspan-2"><% if (appointment.type == 'select_date'){ %>
+                                                    <%- moment(appointment.data).format('ddd Do MMM YYYY') %>
+                                                <% } else { %>
+                                                    <%- appointment.data %>
+                                                <% } %>
+                                            </div>
+                                        </div>
+
+                                        <% day_prev = day_curr %>
+
+                                    <% }) %>
+
+                                </div>
+
+                                
+                            </div>
+                        </div>
+                        <div class="divider mb-1"></div>
+                        <div class="flex-1 ">
+                            <button app-click="clearIncomplete('<%- client._key %>')" class="dp-btn text-white bg-secondary">Clear <span class="icon tick white right"></span></button>
+                        </div>
+
+                        </div>
+
+                    <% }) %>
+
+                </div>
+
+            </div>
+
+            <div app-show="view.tab == 'four'" class="overflow-y pb-5">
+
+                <h4 class="text-primary mb-2">Covid Cancelled Appointments</h4>
+
+                <div class="appointment-wrap">
+
+                    <% var month_curr, month_prev %>
+
+                    <% covid_appointments.forEach((appointment) => { %>
+
+                        <% if (functions.isToday(appointment.date)) { %>
+
+                            <% month_curr = functions.getMonth(appointment.date) %>
+
+                            <% if (month_curr != month_prev){ %>
+                                <h4><%- month_curr %></h4>
+                            <% } %>
+
+
+                            <div class="appointment <%- appointment.covid_cancel %>">
+                                <div class="date">
+                                    <div class="day"><%- functions.getDay(appointment.date) %></div>
+                                    <div class="date"><%- functions.getDate(appointment.date) %></div>
+                                </div>
+                                <div class="info flex-4 flex">
+                                    <div class="flex-1 pr-3">
+                                        <div class="text-weight-600"><%- functions.getStart(appointment.date) %></div>
+                                        <div class="text-small"><%- appointment.service_name %> with <%- appointment.staff.name.first %> <%- appointment.staff.name.last %></div>
+                                        <div class="text-small text-grey italic">
+                                            <% if (appointment.confirmation_sent){ %>
+                                                Previous Status <%- appointment.covid_cancel %>
+                                            <% } %>
+                                        </div>
+
+                                    </div>
+                                    <div class="flex-1">
+                                        <% if (appointment.customer.name){ %>
+                                            <div class="text-weight-600"><a class="clickable" href="/dashboard/clients/<%- appointment.customer._key %>"><%- appointment.customer.name.first %> <%- appointment.customer.name.last %></a></div>
+                                        <% } %>
+                                        <% if (appointment.customer.email){ %>
+                                            <div class="text-small"><a class="clickable" href="/dashboard/clients/<%- appointment.customer._key %>"><%- appointment.customer.email %></a></div>
+                                        <% } %>
+                                        <% if (appointment.customer.tel){ %>
+                                            <div class="text-small"><a class="clickable" href="tel:<%- appointment.customer.tel %>"><%- appointment.customer.tel %></a></div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                                <div class="action">
+                                    <a href="/dashboard/calendar/<%- functions.parseCalendarLink(appointment.date) %>?appointment_id=<%- appointment._key %>" class="btn border">View</a>
+                                </div>
+                            </div>
+
+                            <% month_prev = month_curr %>
+
+                        <% } %>
+
+                    <% }) %>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>

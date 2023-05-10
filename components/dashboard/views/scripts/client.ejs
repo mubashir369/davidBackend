@@ -1,0 +1,376 @@
+<script>
+  extendedController = function () {
+    scope.view.client_notification_method = false;
+
+    scope.sendAuthLink = function (key) {
+      let payload = {
+        key: key,
+      };
+
+      scope
+        .post("customers/send_auth_link", payload)
+        .then((data) => {
+          scope.notify(data);
+        })
+        .catch((err) => {
+          scope.notify(err, "error");
+        });
+    };
+
+    scope.sendSMS = function () {
+      if (!scope.view.client_notification_msg) {
+        scope.notify("Please enter a message", "error");
+        return;
+      }
+
+      if (!scope.view.client_notification_method) {
+        scope.notify(
+          "Please select the notification method, either email or sms",
+          "error"
+        );
+        return;
+      }
+
+      if (
+        (scope.view.client_notification_method == "sms" &&
+          scope.client_profile &&
+          !scope.client_profile.tel) ||
+        (scope.view.client_notification_method == "sms" &&
+          scope.client_profile &&
+          !scope.client_profile.tel.match(/^(07|\+447)/))
+      ) {
+        scope.notify("Invalid mobile number for SMS", "error");
+      } else if (
+        scope.view.client_notification_msg.length > 160 &&
+        scope.view.client_notification_method == "sms"
+      ) {
+        scope.notify(
+          "Too many characters, please limit to 160",
+          "error",
+          5,
+          "fa-exclamation-circle"
+        );
+      } else {
+        let payload = {
+          to: scope.client_profile.tel,
+          text: scope.view.client_notification_msg,
+          customer_id: scope.client_profile._key,
+          method: scope.view.client_notification_method,
+        };
+
+        scope
+          .post("/dashboard/clients/notify", payload)
+          .then((notify_data) => {
+            scope.view.modal = false;
+            scope.notify(notify_data);
+          })
+          .catch((err) => {
+            scope.view.modal = false;
+            scope.notify(err, "error", 5, "fa-exclamation-circle");
+          });
+      }
+    };
+
+    scope.saveClient = function () {
+      scope
+        .post("customers", scope.new)
+        .then((cust_data) => {
+          scope.view.modal = false;
+          scope.client_profile = cust_data;
+          scope.notify("Saved");
+        })
+        .catch((err) => {
+          scope.notify(err, "error", 15, "fa-exclamation-circle");
+        });
+    };
+
+    scope.saveClientCard = function () {
+      scope
+        .post("customers", scope.client_profile)
+        .then((cust_data) => {
+          scope.view.modal = false;
+          scope.client_profile = cust_data;
+          scope.notify("Saved");
+        })
+        .catch((err) => {
+          scope.view.modal = false;
+          scope.notify(err, "error", 5, "fa-exclamation-circle");
+        });
+    };
+
+    scope.newTransaction = function (key) {
+      scope
+        .get("transactions", "new_transaction?type=customer&&key=" + key)
+        .then(() => {
+          window.location.href = "/dashboard/checkout";
+        })
+        .catch((err) => {
+          scope.notify(err, "error");
+        });
+    };
+
+    scope.openClientImage = function (url) {
+      if (!url.match(/client_profile/)) {
+        window.location.href = url;
+      }
+    };
+
+    scope.saveConsultation = function (client_id) {
+      scope.new._key = client_id;
+
+      if (typeof signaturePad != "undefined") {
+        scope.new.signature = signaturePad.toDataURL("image/jpeg");
+      }
+
+      scope
+        .post("customers/save_consultation", scope.new)
+        .then((cust_data) => {
+          scope.view.modal = false;
+          scope.client = cust_data;
+          scope.notify("Consultation Saved").then(() => {});
+        })
+        .catch((err) => {
+          scope.notify(err, "error");
+        });
+    };
+
+    scope.showConsultations = function (id) {
+      scope.view.search = "";
+      scope.get("consultations", id + "/find_by_client").then((data) => {
+        scope.view.tab = "two";
+      });
+    };
+
+    scope.newConsultation = function (id) {
+      localStorage.setItem("client", JSON.stringify(scope.client_profile));
+      localStorage.setItem("checked_in", true);
+      window.location.href = "/dashboard/clients/consultation";
+    };
+
+    scope.openConsultation = function (idx) {
+      scope.view.consultation = scope.consultations[idx];
+      scope.view.modal = "show_consultation";
+    };
+
+    scope.viewClientNote = function (client) {
+      scope.view.modal = "show_notes";
+      scope.client = client;
+    };
+
+    scope.saveClientNote = function () {
+      scope
+        .post("customers", scope.client_profile, "client_profile")
+        .then((client_data) => {
+          scope.view.modal = false;
+        })
+        .catch((err) => {
+          scope.notify(err, "error");
+        });
+    };
+
+    scope.addNewEvent = function (type, data) {
+      let url = "/dashboard/calendar/";
+
+      if (type == "customer_appointment") {
+        url = url + "new-appointment";
+      } else if (type == "staff_appointment") {
+        url = url + "new-staff-appointment";
+      } else if (type == "memo") {
+        url = url + "new-memo";
+      } else {
+        return false;
+      }
+
+      url = url + "?date=" + scope.selected_date.full;
+
+      if (scope.query.client_id) {
+        data = scope.query.client_id;
+      }
+
+      if (data) {
+        if (type == "customer_appointment") {
+          url = url + "&&client_id=" + data;
+        } else if (type == "staff_appointment") {
+          url = url + "&&staff_id=" + data;
+        }
+      }
+
+      if (scope.view.selected_staff) {
+        url = url + "&&staff_id=" + scope.view.selected_staff;
+      }
+
+      window.location.href = url;
+    };
+
+    scope.unsubscribe = function (client_key, subscription_id) {
+      document.getElementById(subscription_id).style.display = "none";
+      document.getElementById("wait-" + subscription_id).style.display =
+        "inline-flex";
+
+      let payload = {
+        client_key: client_key,
+        subscription_id: subscription_id,
+      };
+
+      scope
+        .post("/dashboard/clients/memberships/unsubscribe", payload)
+        .then((data) => {
+          document.getElementById(subscription_id).style.display =
+            "inline-flex";
+          document.getElementById("wait-" + subscription_id).style.display =
+            "none";
+          scope.client_profile.membership = false;
+          scope.notify(
+            "Unsubscribed. The customer will not be charged again for the subscription"
+          );
+        })
+        .catch((err) => {
+          document.getElementById(subscription_id).style.display =
+            "inline-flex";
+          document.getElementById("wait-" + subscription_id).style.display =
+            "none";
+          scope.notify(err, "error");
+        });
+    };
+
+    scope.subscribe = function (type, client_key, membership_id) {
+      let payload = {
+        client_key: client_key,
+        membership_id: membership_id,
+      };
+
+      document.getElementById(membership_id).style.display = "none";
+      document.getElementById("wait-" + membership_id).style.display =
+        "inline-flex";
+
+      scope
+        .post("/dashboard/clients/memberships/subscribe", payload)
+        .then((data) => {
+          document.getElementById(membership_id).style.display = "inline-flex";
+          document.getElementById("wait-" + membership_id).style.display =
+            "none";
+
+          scope.notify("Subscribed").then(() => {
+            location.reloaad();
+          });
+        })
+        .catch((err) => {
+          document.getElementById(membership_id).style.display = "inline-flex";
+          document.getElementById("wait-" + membership_id).style.display =
+            "none";
+          scope.notify(err, "error");
+        });
+    };
+
+    scope.parseConfidence = function (client) {
+      if (client.no_show) {
+        return client.no_show.length;
+      } else {
+        return "";
+      }
+    };
+
+    scope.changepage = function (page) {
+      let post_data = {
+        method: "POST",
+        body: JSON.stringify({
+          page: page,
+        }),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          //'X-CSRFToken':  cookie.load('csrftoken')
+        },
+      };
+
+      fetch("/api/customers/pagination", post_data)
+        .then((res) => res.json())
+        .then((data) => {
+          scope.customers = data.data;
+
+          return false;
+        })
+        .catch((err) => console.log(err));
+    };
+
+    scope.getclients = function () {
+      let post_data = {
+        method: "POST",
+        body: JSON.stringify({
+          page: 1,
+        }),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          //'X-CSRFToken':  cookie.load('csrftoken')
+        },
+      };
+      fetch("/api/customers/pagination", post_data)
+        .then((res) => res.json())
+        .then((data) => {
+       document.addEventListener(
+            "DOMContentLoaded",
+            init(parseInt(data.total / 10)),
+            false
+          );   
+          scope.customers = data.data;
+        })
+        .catch((err) => console.log(err));
+    };
+
+    scope.changepaginationcount = function (va) {
+      document.addEventListener(
+        "DOMContentLoaded",
+        init(parseInt(va / 10)),
+        false
+      );
+    };
+    scope.addRecommendedProduct = function (client_key, product_key, remove) {
+      var payload = {
+        _key: client_key,
+        product_key: product_key,
+      };
+
+      if (remove) {
+        payload.remove = true;
+      }
+
+      scope
+        .post("customers/add_recommended_product", payload)
+        .then((rp_data) => {
+          console.log(rp_data);
+          scope.view.search_results = false;
+          // scope.recommended_products = rp_data
+        })
+        .catch((err) => {
+          scope.notify(err, "error", 10, "fa-exclamation-circle");
+        });
+    };
+  };
+
+  var canvas = document.querySelector("canvas");
+
+  if (typeof SignaturePad != "undefined") {
+    var signaturePad = new SignaturePad(canvas);
+    signaturePad.penColor = "rgb(20,20,20)";
+    signaturePad.backgroundColor = "rgb(255,255,255)";
+
+    // Returns signature image as an array of point groups
+    const data = signaturePad.toData();
+
+    // Draws signature image from an array of point groups
+    signaturePad.fromData(data);
+
+    // Clears the canvas
+    signaturePad.clear();
+
+    // Returns true if canvas is empty, otherwise returns false
+    signaturePad.isEmpty();
+
+    // Unbinds all event handlers
+    signaturePad.off();
+
+    // Rebinds all event handlers
+    signaturePad.on();
+  }
+</script>

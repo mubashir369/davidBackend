@@ -1,0 +1,166 @@
+<div class="modal" app-show="view.modal == 'show_edit_port'" anim="{'enter':'fade-in'}">
+
+    <div class="modal-body p-0 w-60 w-m-90" anim="{'enter':'move-up','duration':'0.2'}">
+
+        <div class="modal-header text-primary">
+            <div class="title">
+                <p class="m-0">
+                    Edit Portfolio
+                </p>
+            </div>
+            <div class="close">
+                 <span class="icon close white clickable" onclick="modalCloseAll()"></span> 
+
+                <!--<div class="btn-wrap">
+                    <button class="btn btn-left border mr-1 text-primary" app-click="view.tab = 'one'" app-class="{'active':view.tab == 'one'}">Details<span class="icon edit black right"></span></button>
+                    <button class="btn btn-right border text-primary" app-click="view.tab = 'two'" app-class="{'active':view.tab == 'two'}">Skills and Access<span class="icon stylist black right"></span></button>
+                </div>-->
+            </div>
+        </div>
+
+        <div class="modal-content p-2">
+
+            <div app-show="view.tab == 'one'">
+
+                <div class="">
+
+                    <div class="bg-white border p-2 box-shadow">
+                            <div class="list-item-wrap">
+                                <div class="grid gap-1 col-9 mb-1 ">
+                                    <div class="text-bold colspan-2">
+                                        <label>Headline</label>
+                                    </div>
+    
+                                    <div class="text-bold colspan-3">
+                                        <textarea app-model="editt.description" placeholder="Description"
+                                            class="text-left" name="headline"></textarea>
+                                    </div>
+    
+                                    <div class="divider mb-1 colspan-9"></div>
+                                </div>
+    
+                                <div class="grid gap-1 col-9 mb-1 ">
+                                    <div class="text-bold colspan-2">
+                                        <label>Image</label>
+                                    </div>
+                                    <div class="text-bold colspan-3">
+                                        <label>Service</label>
+                                    </div>
+                                    <div class="text-bold colspan-3">
+                                        <label>Skill</label>
+    
+                                    </div>
+                                    <!-- <div class="text-bold colspan-3">
+                                    <label>Service Detail</label>
+                                </div> -->
+    
+                                    <div class="divider mb-1 colspan-9"></div>
+                                </div>
+                                <div class="grid gap-1 col-9 mb-1 ">
+                                   
+                                   
+                                   
+                                    <div class="text-bold colspan-2">
+                                        <label for="timeIcon_image2" class="clickable">
+
+                                            <img src="/images/products/upload.svg" app-src="'../../../../uploads/'+editt.image" id="editedImage" />
+                                           
+                                        </label>
+                                        <input type="file" id="timeIcon_image2"
+                                            class="app-hidden" onchange="postSkillImage3()">
+                                    </div>
+
+                                    
+
+
+                                    <input type="hidden" app-model="del.key" class="rounded mb-1">
+                                    <input type="hidden" app-model="del.member_id" />
+                                    <input type="hidden" id="skill_image_3" app-model="editt.image" />
+
+                                    <div class="text-bold colspan-3">
+                                        <input type="text" app-model="editt.title" placeholder="Title"
+                                            class="" name="title">
+                                    </div>
+                                    <div class="text-bold colspan-3">
+                                      
+                                            <select
+                                            class="form-control"
+                                            aria-label="Default select example"
+                                            id="form6Example13"
+                                            name="skill_id"
+                                            app-model="editt.skill_id"
+                                          >
+                                            <option selected value="null">Select Category</option>
+                                            <% skills.forEach(function(skill){ %>
+                                            <option value="<%= skill._id%>" ><%= skill.name %></option>
+                                           
+                                            <% }) %>
+                                          </select>
+                                    </div>
+    
+                                    <!-- <div class="text-bold colspan-3">
+                                    <textarea app-model="portfolioItem.portfolioDescrip" placeholder="Description"
+                                        class="text-left"></textarea>
+                                </div>
+    
+                                    <div class="text-right flex flex-middle-right">
+                                        <a class="" app-click="microPortfolio('remove',{{index}})"><span
+                                                class="icon close black right"></span></a>
+                                    </div> -->
+    
+    
+                                    <div class="divider mb-1 colspan-9"></div>
+                                </div>
+    
+                            </div>
+                            
+
+
+                </div>
+            </div>
+
+           
+
+        </div>
+
+
+        <div class="modal-appointment-actions flex flex-middle-right">
+            <a class="btn bg-secondary" app-click="savePortfolio()">
+                <span >Save<span class="icon tick white right"></span></span>
+                
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+let img1=document.getElementById("editedImage")
+ const img_3 = document.getElementById("skill_image_3");
+ console.log("value",img_3.value);
+function postSkillImage3() {
+                console.log("hello post skill image 77777799999")
+                const x = document.getElementById("timeIcon_image2");
+                //const img_3 = document.getElementById("skill_image_3");
+                let data = new FormData()
+                data.append('img', x.files[0])
+                for (let key of data.entries()) {
+                    console.log(key[0] + ', ' + key[1])
+                }
+                fetch('/post', {
+                    method: 'POST',
+                    body: data
+                })
+                    .then(res => res.json())
+                    .then(data5 => {
+                        console.log(data5,"ddddddd")
+                        scope.editt.image = data5.filename
+                        img1.src=`../../../../uploads/${data5.filename}`
+                        //img_3.value = data5.filename
+                        //console.log(img_3.value);
+                    })
+                    .catch(err => console.log(err))
+            }
+
+</script>

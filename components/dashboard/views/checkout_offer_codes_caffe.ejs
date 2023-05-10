@@ -1,0 +1,132 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+    
+
+    <div class="page px-2 h100" app-init="get('vouchers','getOfferCodes1?type=Caffe')">
+
+        <div>
+
+            <div class="table">
+
+                <div class="row table-header">
+
+                    <div class="cell middle pl-1">Code</div>
+                    <div class="cell middle" style="width:5em;">Value</div>
+                    <div class="cell middle">Method</div>
+                    <div class="cell middle" style="width:10em;">Description</div>
+                    <div class="cell middle">Customer</div>
+                    <div class="cell middle">Applied</div>
+                    <div class="cell middle">Used</div>
+                    <div class="cell middle">Multi Use</div>
+                    <div class="cell middle">Limit Use</div>
+                    <div class="cell middle">Min Spend</div>
+                    <div class="cell middle">Start Date</div>
+                    <div class="cell middle">End Date</div>
+                    <div class="cell middle"></div>
+
+                </div>
+
+                <div class="row" app-for="code in vouchers">
+
+                    <div class="cell middle" app-bind="code.code"></div>
+                    <div class="cell middle" app-bind="code.value"></div>
+                    <div class="cell middle capitalise" app-bind="parseString(code.method)"></div>
+                    <div class="cell middle" app-bind="code.description"></div>
+                    <div class="cell middle" app-bind="code.customer_id"></div>
+                    <div class="cell middle" app-bind="code.applied"></div>
+                    <div class="cell middle" app-bind="code.used"></div>
+                    <div class="cell middle" app-bind="code.multi_use"></div>
+                    <div class="cell middle" app-bind="code.limit_use"></div>
+                    <div class="cell middle" app-bind="code.min_spend"></div>
+                    <div class="cell middle" app-bind="code.start_date"></div>
+                    <div class="cell middle" app-bind="code.end_date"></div>
+                    <div class="cell middle action-icons" app-attr="{id:'cell-'+code._key}">
+                        <div class="context-link btn border" app-click="toggleContext(code._key)">
+                            <span class="icon black arrowdown sm"></span>
+                        </div>
+                        <div class="context dropdown text-left" style="display: none" app-attr="{id:'context-'+code._key}">
+                            <div class="link" app-click="edit('offer_codes',code)">
+                                <span class="icon black edit left"></span>
+                                Edit
+                            </div>
+                            <div class="link" app-click="delete('offer_codes',code._key)">
+                                <span class="icon black delete left"></span>
+                                Delete
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+    <div class="modal" app-show="view.modal == 'show_edit'" anim="{'enter':'fade-in'}">
+
+        <div class="modal-body p-0" anim="{'enter':'move-up','duration':'0.2'}">
+
+            <div class="modal-header">
+                    <h4 class="title text-black">
+                        <span app-show="new._key">Edit Discount Code</span>
+                        <span app-hide="new._key">New Discount Code</span>
+                    </h4>
+                <div class="text-right">
+                    <h4 class="close-icon text-light clickable" onclick="modalCloseAll()">&times;</h4>
+                </div>
+            </div>
+            <div class="modal-content p-2">
+                <div class="grid col-2 gap-1 pb-1">
+                        
+                    <input type="text" id = "code" app-model="new.code" placeholder="Code">
+                    <input type="text" hidden id = "_key" app-model="new._key" placeholder="Code">
+                    <input type="text" id ="value" app-model="new.value" placeholder="Value">
+                    <select id ="method" app-model="new.method">
+                        <option value="percent_off" selected>Percentage Discount</option>
+                        <option value="fixed_off">Fixed Price Discount</option>
+                    </select>
+                    <select id ="type" required app-model="new.type">
+                        <option value="Caffe" selected>Caffe coupon</option>
+                        <option value="Store">Store Coupon</option>
+                    </select>
+                    <input type="text" id ="description" app-model="new.description" placeholder="Description">
+                   
+                    
+                    <input type="number" id = "multi_use" app-model="new.multi_use" placeholder="How many times can 1 person use it">
+                    <input type="number" id = "limit_use" app-model="new.limit_use" placeholder="Vouchers Available">
+                    <input type="text" id= "min_spend" app-model="new.min_spend" placeholder="Min Spend">
+                    <input type="datetime-local" id ="start_date" app-model="new.start_date"  placeholder="Start Date">
+                    <input type="datetime-local" id ="end_date"  app-model="new.end_date" placeholder="End Date">
+                    <select  id ="customer_to" onchange="changedValue()" app-model="new.customer_to">
+                        <option value="all" selected>All Customer</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                    <input type="text" id ="customer_id"  app-model="new.customer_id" placeholder="Customer Email">
+                     
+                </div>
+            </div>
+
+            <div class="modal-appointment-actions flex flex-middle-right">
+                <a class="btn bg-secondary" app-click="setValueAndSave()">
+                    <span app-show="new._key">Save</span>
+                    <span app-hide="new._key">Add</span>
+                     <span class="icon add white right"></span>
+                </a>
+            </div>
+
+        </div>
+<script>
+   
+    const changedValue =()=>{
+        if(document.getElementById('customer_to').value ==='custom'){
+            document.getElementById('customer_id').classList.remove('hidden'); 
+        }else{
+            document.getElementById('customer_id').classList.add('hidden');   
+        }
+    }
+</Script>
+    </div>

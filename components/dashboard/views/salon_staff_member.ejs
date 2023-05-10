@@ -1,0 +1,161 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+
+    <div class="hidden" app-init="get('salon','54855602')"></div>
+
+    <div class="page grid col-12 col-s-1 client overflow-hidden" app-init="get('staff','<%- member._key %>','member')">
+
+            <div class="colspan-4 pr-2">
+
+                <div class="p-1 bg-secondary p-1 radius-10 box-shadow dashboard-card">
+                    <img src="/images/avatars/Profile_Placeholder.svg" app-src="member.avatar" class="avatar lg">
+                    <div class="capitalise dp-text-subTitle3 text-bold text-white"> <strong> <%- member.name.first %> <%- member.name.last %> </strong></div>
+                    <div class="text-white"><%- member.tel %></div>
+                    <div class="text-white"><%- member.email %></div>
+                    <% if (typeof member != 'undefined' && member._key == user._key || user.guard == 'admin'){ %>
+                        <div><a class="w-s-100 dp-btn dp-btn-glow-black mt-1 bg-primary" app-click="edit('staff',member)"><span class="icon edit left white"></span>Edit Details</a></div>
+                    <% } %>
+                </div>
+                    <div><a class="w-s-100 dp-btn bg-secondary text-white d-flex align-items-center radius-50 mt-1" href="/dashboard/calendar/new-appointment?staff_id=<%- member._key %>"><span class="icon calendar left secondary"></span>New Appointment</a></div>
+                
+            </div>
+
+            <div class="colspan-8 bg-33-light-grey pb-5">
+
+                <div class="tabs">
+                    <a class="clickable" app-click="view.tab = 'one'" app-class="{'active':view.tab == 'one'}">Appointments</a>
+                    <a class="clickable" app-click="view.tab = 'two'" app-class="{'active':view.tab == 'two'}">Availability</a>
+                </div>
+
+                <div class="overflow-y" app-show="view.tab == 'one'">
+
+                    <% if (typeof selected_date == 'undefined') { %>
+
+                        <h4 class="text-primary mt-2 mb-2">Todays Appointments</h4>
+
+                        <div class="appointment-wrap">
+
+                            <% member.appointments.forEach((appointment) => { %>
+
+                                <% if (functions.isToday(appointment.date)) { %>
+
+                                    <div class="appointment <%- appointment.status %>">
+                                        <div class="date">
+                                            <div class="day"><%- functions.getDay(appointment.date) %></div>
+                                            <div class="date"><%- functions.getDate(appointment.date) %></div>
+                                        </div>
+                                        <div class="info">
+                                            <div class="text-bold"><%- functions.getStart(appointment.date) %></div>
+                                            <div><%- appointment.service_name %></div>
+                                            <% if (appointment.customer.name){ %>
+                                                <div><%- appointment.customer.name.first %> <%- appointment.customer.name.last %> - <%- appointment.description %></div>
+                                            <% } else { %>
+                                                <div><%- appointment.customer.email %></div>
+                                            <% } %>
+                                        </div>
+                                        <div class="action">
+                                            <a href="/dashboard/calendar/<%- functions.parseCalendarLink(appointment.date) %>?appointment_id=<%- appointment._key %>" class="btn border">View</a>
+                                        </div>
+                                    </div>
+
+                                <% } %>
+
+                            <% }) %>
+
+                        </div>
+
+                    <% } %>
+
+                    <% if (typeof selected_date == 'undefined') { %>
+                        <h4 class="text-primary mt-2">Upcoming Appointments</h4>
+                    <% } %>
+
+                    <div class="appointment-wrap mt-2">
+
+                        <% var month_curr, month_prev %>
+
+                        <% member.appointments.forEach((appointment) => { %>
+
+                            <% if (appointment.date > new Date().toISOString()) { %>
+
+                                <% month_curr = functions.getMonth(appointment.date) %>
+
+                                <% if (month_curr != month_prev){ %>
+                                    <h4><%- month_curr %></h4>
+                                <% } %>
+
+                                <div class="appointment <%- appointment.status %>">
+                                    <div class="date">
+                                        <div class="day"><%- functions.getDay(appointment.date) %></div>
+                                        <div class="date"><%- functions.getDate(appointment.date) %></div>
+                                    </div>
+                                    <div class="info">
+                                        <div class="text-small"><%- functions.getStart(appointment.date) %></div>
+                                        <div class="capitalise text-weight-900"><%- appointment.service_name %></div>
+                                        <div class="text-bold capitalise">With <%- appointment.customer.name.first %> <%- appointment.customer.name.last %></div>
+                                    </div>
+                                    <div class="action">
+                                        <a href="/dashboard/calendar/<%- functions.parseCalendarLink(appointment.date) %>?appointment_id=<%- appointment._key %>" class="btn border">View</a>
+                                    </div>
+                                </div>
+
+                                <% month_prev = month_curr %>
+
+                            <% } %>
+
+                        <% }) %>
+
+                        <% month_curr = ''; month_prev = '' %>
+
+                    </div>
+
+                </div>
+
+                <div class="overflow-y" app-show="view.tab == 'two'">
+
+                        <div class="appointment-wrap mt-2">
+
+                            <% member.availability.forEach((appointment) => { %>
+
+                                <% month_curr = functions.getMonth(appointment.date) %>
+
+                                <% if (month_curr != month_prev){ %>
+                                    <h4><%- month_curr %></h4>
+                                <% } %>
+
+                                <div class="appointment confirmed">
+                                    <div class="date">
+                                        <div class="day"><%- functions.getDay(appointment.date) %></div>
+                                        <div class="date"><%- functions.getDate(appointment.date) %></div>
+                                    </div>
+                                    <div class="info">
+                                        <div class="text-small"><%- functions.getStart(appointment.date) %> - <%- functions.getStart(appointment.end_date) %></div>
+                                        <div class="capitalise text-weight-900"><%- appointment.description %></div>
+                                        <div><%- appointment.filled %>% booked</div>
+                                    </div>
+                                    <div class="action">
+                                        <a href="/dashboard/calendar/<%- functions.parseCalendarLink(appointment.date) %>?appointment_id=<%- appointment._key %>" class="btn border">View</a>
+                                    </div>
+                                </div>
+
+                                <% month_prev = month_curr %>
+
+                            <% }) %>
+
+                        </div>
+
+                </div>
+
+                <div class="overflow-y pb-5" app-show="view.tab == 'two'" app-init="get('staff','<%- member._key %>/currentbookings','bookings')">
+
+                </div>
+
+            </div>
+
+
+    </div>
+
+    <% if (typeof member != 'undefined' && member._key == user._key || user.guard == 'admin'){ %>
+        <%- include ../../dashboard/partials/modal/staff_profile.ejs %>
+    <% } %>

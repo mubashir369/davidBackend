@@ -1,0 +1,406 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+
+
+
+        <div class="page px-2 px-s-0 bg-white common-form common-form-border ">
+            <div class="mt-50 p-0">
+                <h4 class="text-weight-700 mb-1">About Us</h4>
+                <div class="divider mb-2 p-0"></div>
+
+            </div>
+
+            <% if (aboutdetails!=='' ) { %>
+                <form action="/dashboard/addAboutUs" method="post" class="grid col-6 gap-2 ">
+                <div class="colspan-3">
+                    <div class="bg-white box-shadow p-2 radius-10 border">
+                        <label>Heading</label>
+                        <input type="text" class="rounded mb-1" placeholder="Heading" name="heading"
+                            value="<%= aboutdetails.heading %>">
+                        <label>Sub Heading</label>
+                        <input type="text" class="rounded mb-1" placeholder="Sub Heading" name="sub_heading"
+                            value="<%= aboutdetails.sub_heading %>">
+                        <label>Description</label>
+                        <textarea type="text" class="rounded mb-1" placeholder="Description"
+                            name="description"><%= aboutdetails.description %></textarea>
+                        <label>Button Text</label>
+                        <input type="text" class="rounded mb-1" placeholder="Button Text" name="button_text"
+                            value="<%= aboutdetails.button_text %>">
+
+                            <div class="link">
+                                <div class="mt-1 colspan-6 ">
+                                    <button type="submit" class="dp-btn bg-secondary">Save </button>
+                                </div>
+                               </div>
+                    </div>
+                </div>
+            </form>
+                <% } else {%>
+                    <form action="/dashboard/addAboutUs" method="post" class="grid col-6 gap-2 ">
+
+                        <div class="colspan-3">
+                            <div class="bg-white box-shadow p-2 radius-10 border">
+                                <label>Heading</label>
+                                <input type="text" class="rounded mb-1" placeholder="Heading" name="heading">
+                                <label>Sub Heading</label>
+                                <input type="text" class="rounded mb-1" placeholder="Sub Heading" name="sub_heading">
+                                <label>Description</label>
+                                <textarea type="text" class="rounded mb-1" placeholder="Description"
+                                    name="description"></textarea>
+                                <label>Button Text</label>
+                                <input type="text" class="rounded mb-1" placeholder="Button Text" name="button_text">
+
+                                <div class="mt-1 colspan-6 text-right">
+                                    <button type="submit" class="dp-btn bg-secondary">Submit </button>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </form>
+
+                    <% }; %>
+
+
+
+
+                        <!-- ----------- -->
+
+
+
+
+                        <div class="mt-50 p-0">
+                            <h4 class="text-weight-700 mb-1">Why Choose Us</h4>
+                            <div class="divider mb-2 p-0"></div>
+                        </div>
+
+                        <% if (why_choose_details!=='' ) { %>
+                            
+
+
+                            <form action="/dashboard/addWhyChooseUs" method="post"
+                            class="grid col-9 gap-2  grid col-9 gap-2 p-2 border box-shadow ">
+
+                            <div class="colspan-3">
+                                <div class="">
+                                    <label>Heading</label>
+                                    <input type="text" class="rounded mb-1" placeholder="Heading" name="heading" value="<%= why_choose_details.heading %>">
+                                    <label>Sub Heading</label>
+                                    <input type="text" class="rounded mb-1" placeholder="Sub Heading"
+                                        name="sub_heading" value="<%= why_choose_details.sub_heading %>">
+                                    <label>Description</label>
+                                    <textarea type="text" class="rounded mb-1" placeholder="Description"
+                                        name="description"><%= why_choose_details.description %></textarea>
+                                </div>
+                            </div>
+                            <div class="colspan-6 ">
+                                <div class="grid col-6 gap-2  ">
+                                    <div class="colspan-1">Upload Icon</div>
+                                    <div class="colspan-2">Counter Value</div>
+                                    <div class="colspan-3">Counter Text</div>
+                                </div>
+                                <div class="divider mb-2 mt-1"></div>
+
+                                <div class="grid col-6 gap-2  ">
+                                    <div class="colspan-1">
+                                        <div class="d-inline">
+                                            <label for="new_image1" class="clickable">
+                                                <img src=<%="/images/whyIcons/" + why_choose_details.icon1.iconImage %>
+                                                    class="object-fit">
+                                            </label>
+                                            <input type="file" app-model="item.img1" id="new_image1"  class="icon_one"
+                                                name="icon1" onchange="postImage_1()">
+                                                <input type="hidden" id="icon1" name="icon_1">
+                                        </div>
+                                    </div>
+                                    <div class="colspan-2">
+                                        <input type="text" class="rounded mb-1" placeholder="Value"
+                                            name="countervalue1"  value="<%= why_choose_details.icon1.countervalue %>">
+                                    </div>
+                                    <div class="colspan-3">
+                                        <textarea type="text" class="rounded mb-1" placeholder="Counter Text"
+                                            name="counter_text1"><%= why_choose_details.icon1.counter_text %></textarea>
+                                    </div>
+                                </div>
+                                <div class="divider mb-1"></div>
+
+
+                                <div class="grid col-6 gap-2  ">
+                                    <div class="colspan-1">
+                                        <div class="d-inline">
+                                            <label for="new_image2" class="clickable">
+                                                <img src=<%="/images/whyIcons/" + why_choose_details.icon2.iconImage %>
+                                                    class="object-fit">
+                                            </label>
+                                            <input type="file" app-model="item.img2" id="new_image2" class="app-hidden"
+                                                name="icon2" onchange="postImage_2()">
+                                                <input type="hidden" id="icon2" name="icon_2">
+                                        </div>
+                                    </div>
+                                    <div class="colspan-2">
+                                        <input type="text" class="rounded mb-1" placeholder="Value"
+                                            name="countervalue2"  value="<%= why_choose_details.icon2.countervalue %>">
+                                    </div>
+                                    <div class="colspan-3">
+                                        <textarea type="text" class="rounded mb-1" placeholder="Counter Text"
+                                            name="counter_text2"><%= why_choose_details.icon2.counter_text %></textarea>
+                                    </div>
+                                </div>
+                                <div class="divider mb-1"></div>
+
+
+                                <div class="grid col-6 gap-2  ">
+                                    <div class="colspan-1">
+                                        <div class="d-inline">
+                                            <label for="new_image3" class="clickable">
+                                                <img src=<%="/images/whyIcons/" + why_choose_details.icon3.iconImage %>
+                                                    class="object-fit">
+                                            </label>
+                                            <input type="file" app-model="item.img3" id="new_image3" class="app-hidden"
+                                                name="icon3" onchange="postImage_3()">
+                                                <input type="hidden" id="icon3" name="icon_3">
+                                        </div>
+                                    </div>
+                                    <div class="colspan-2">
+                                        <input type="text" class="rounded mb-1" placeholder=" Value"
+                                            name="countervalue3"  value="<%= why_choose_details.icon3.countervalue %>">
+                                    </div>
+                                    <div class="colspan-3">
+                                        <textarea type="text" class="rounded mb-1" placeholder="Counter Text"
+                                            name="counter_text3"><%= why_choose_details.icon3.counter_text %></textarea>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                            <div class="mt-1 colspan-6">
+                                <button class="dp-btn bg-secondary">save </button>
+                            </div>
+
+                            <div class="mt-1 colspan-6">
+                               
+                            </div>
+
+
+
+
+                            </form>
+                            
+                            
+                            
+                            
+                        
+                        
+              
+                       
+
+                        <div class="mb-50"></div>
+        </div>
+
+                            
+                            
+                            
+                        <% } else {%>
+                                
+                            <form action="/dashboard/addWhyChooseUs" method="post"
+                            class="grid col-9 gap-2  grid col-9 gap-2 p-2 border box-shadow ">
+
+                            <div class="colspan-3">
+                                <div class="">
+                                    <label>Heading</label>
+                                    <input type="text" class="rounded mb-1" placeholder="Heading" name="heading">
+                                    <label>Sub Heading</label>
+                                    <input type="text" class="rounded mb-1" placeholder="Sub Heading"
+                                        name="sub_heading">
+                                    <label>Description</label>
+                                    <textarea type="text" class="rounded mb-1" placeholder="Description"
+                                        name="description"></textarea>
+                                </div>
+                            </div>
+                            <div class="colspan-6 ">
+                                <div class="grid col-6 gap-2  ">
+                                    <div class="colspan-1">Upload Icon</div>
+                                    <div class="colspan-2">Counter Value</div>
+                                    <div class="colspan-3">Counter Text</div>
+                                </div>
+                                <div class="divider mb-2 mt-1"></div>
+
+                                <div class="grid col-6 gap-2  ">
+                                    <div class="colspan-1">
+                                        <div class="d-inline">
+                                            <label for="new_image1" class="clickable">
+                                                <img src="/images/products/upload.svg" app-src="item.img1"
+                                                    class="object-fit">
+                                            </label>
+                                            <input type="file" app-model="item.img1" id="new_image1"  class="icon_one"
+                                                name="icon1" onchange="postImage_1()">
+                                                <input type="hidden" id="icon1" name="icon_1">
+                                        </div>
+                                    </div>
+                                    <div class="colspan-2">
+                                        <input type="text" class="rounded mb-1" placeholder="Value"
+                                            name="countervalue1">
+                                    </div>
+                                    <div class="colspan-3">
+                                        <textarea type="text" class="rounded mb-1" placeholder="Counter Text"
+                                            name="counter_text1"></textarea>
+                                    </div>
+                                </div>
+                                <div class="divider mb-1"></div>
+
+
+                                <div class="grid col-6 gap-2  ">
+                                    <div class="colspan-1">
+                                        <div class="d-inline">
+                                            <label for="new_image2" class="clickable">
+                                                <img src="/images/products/upload.svg" app-src="item.img2"
+                                                    class="object-fit">
+                                            </label>
+                                            <input type="file" app-model="item.img2" id="new_image2" class="app-hidden"
+                                                name="icon2" onchange="postImage_2()">
+                                                <input type="hidden" id="icon2" name="icon_2">
+                                        </div>
+                                    </div>
+                                    <div class="colspan-2">
+                                        <input type="text" class="rounded mb-1" placeholder="Value"
+                                            name="countervalue2">
+                                    </div>
+                                    <div class="colspan-3">
+                                        <textarea type="text" class="rounded mb-1" placeholder="Counter Text"
+                                            name="counter_text2"></textarea>
+                                    </div>
+                                </div>
+                                <div class="divider mb-1"></div>
+
+
+                                <div class="grid col-6 gap-2  ">
+                                    <div class="colspan-1">
+                                        <div class="d-inline">
+                                            <label for="new_image3" class="clickable">
+                                                <img src="/images/products/upload.svg" app-src="item.img3"
+                                                    class="object-fit">
+                                            </label>
+                                            <input type="file" app-model="item.img3" id="new_image3" class="app-hidden"
+                                                name="icon3" onchange="postImage_3()">
+                                                <input type="hidden" id="icon3" name="icon_3">
+                                        </div>
+                                    </div>
+                                    <div class="colspan-2">
+                                        <input type="text" class="rounded mb-1" placeholder=" Value"
+                                            name="countervalue3">
+                                    </div>
+                                    <div class="colspan-3">
+                                        <textarea type="text" class="rounded mb-1" placeholder="Counter Text"
+                                            name="counter_text3"></textarea>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                            <div class="mt-1 colspan-6">
+                                <button type="submit" class="dp-btn bg-secondary">Submit </button>
+                            </div>
+
+
+
+
+                        </form>
+                            
+                            
+                            
+                            
+                        
+                        
+                        <% }; %>
+                       
+
+                        <div class="mb-50"></div>
+        </div>
+
+        <script>
+
+
+            function postImage_1() {
+                console.log("hello")
+                const x = document.getElementById("new_image1");
+                console.log(x);
+                const img_1 = document.getElementById("icon1");
+                console.log(x.files[0], "xxxxxxxxxxxxx")
+                var data = new FormData()
+                data.append('img', x.files[0])
+                for (let key of data.entries()) {
+                    console.log(key[0] + ', ' + key[1])
+                }
+
+                fetch('/dashboard/whyIcons', {
+                    method: 'POST',
+                    body: data
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log(data.filename, "ffff")
+                        img_1.value = data.filename
+                        console.log(img_1,"imm");
+                    })
+                    .catch(err => console.log(err))
+            }
+
+            function postImage_2() {
+                console.log("hello")
+                const x = document.getElementById("new_image2");
+                console.log(x);
+                const img_1 = document.getElementById("icon2");
+                console.log(x.files[0], "xxxxxxxxxxxxx")
+                var data = new FormData()
+                data.append('img', x.files[0])
+                for (let key of data.entries()) {
+                    console.log(key[0] + ', ' + key[1])
+                }
+
+                fetch('/dashboard/whyIcons', {
+                    method: 'POST',
+                    body: data
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log(data.filename, "ffff")
+                        img_1.value = data.filename
+                        console.log(img_1,"imm");
+                    })
+                    .catch(err => console.log(err))
+            }
+
+            function postImage_3() {
+                console.log("hello")
+                const x = document.getElementById("new_image3");
+                console.log(x);
+                const img_1 = document.getElementById("icon3");
+                console.log(x.files[0], "xxxxxxxxxxxxx")
+                var data = new FormData()
+                data.append('img', x.files[0])
+                for (let key of data.entries()) {
+                    console.log(key[0] + ', ' + key[1])
+                }
+
+                fetch('/dashboard/whyIcons', {
+                    method: 'POST',
+                    body: data
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log(data.filename, "ffff")
+                        img_1.value = data.filename
+                        console.log(img_1,"imm");
+                    })
+                    .catch(err => console.log(err))
+            }
+
+
+
+        </script>
+
+
+

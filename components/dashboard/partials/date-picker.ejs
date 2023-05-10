@@ -1,0 +1,88 @@
+
+<div class="btn-wrap w-m-75 w-s-100 bg-white">
+
+    <div class="btn left-arrow" app-click="chgDay('prev')">
+         <span class="icon arrowleft light-grey"></span>
+    </div>
+
+    <a class="btn today flex-2" href="/dashboard/calendar/today" app-class="selected_date.today">
+        Today
+    </a>
+
+    <div class="btn context-link flex-4" app-click="view.datepicker = !view.datepicker">
+        <span app-bind="selected_date.date_string_short"></span>
+    </div>
+
+    <div class="btn right-arrow" app-click="chgDay('next')">
+         <span class="icon arrowright light-grey"></span>
+    </div>
+
+</div>
+
+<div app-show="view.datepicker" class="datepicker context" anim="{'enter':'move-down'}">
+
+    <div class="grid col-4 col-s-1">
+
+        <div class="colspan-3 dates pr-2 pr-s-0">
+
+            <div class="btn-wrap">
+
+                <div class="btn left-arrow context-link" app-click="chgMonth('prev')">
+                     <span class="icon arrowleft light-grey"></span>
+                </div>
+
+                <div class="btn flex-4">
+                    <span app-bind="selected_date.month_name_year"></span>
+                </div>
+
+                <div class="btn right-arrow context-link" app-click="chgMonth('next')">
+                     <span class="icon arrowright light-grey"></span>
+                </div>
+
+            </div>
+
+            <div class="grid col-7">
+                <div app-for="<% if (typeof obj != 'undefined'){ %><%- obj %><% } else { %>date<% } %> in dates" class="cell clickable">
+                    <span app-bind="<% if (typeof obj != 'undefined'){ %><%- obj %><% } else { %>date<% } %>.date" app-class="datepickerClass(<% if (typeof obj != 'undefined'){ %><%- obj %><% } else { %>date<% } %>)" app-click="gotoDate(<% if (typeof obj != 'undefined'){ %><%- obj %><% } else { %>date<% } %>)"></span>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="colspan-1 buttons">
+
+            <div class="mb-1 w100">
+                <a class="btn bg-secondary m-0 w100" app-click="chgWeek(1)">
+                     <span class="icon left add white"></span> 1 week
+                </a>
+            </div>
+            <div class="mb-1 w100">
+                <a class="btn bg-secondary m-0 w100" app-click="chgWeek(2)">
+                     <span class="icon left add white"></span> 2 weeks
+                </a>
+            </div>
+            <div class="mb-1 w100">
+                <a class="btn bg-secondary m-0 w100" app-click="chgWeek(3)">
+                     <span class="icon left add white"></span> 3 weeks
+                </a>
+            </div>
+            <div class="mb-1 w100">
+                <a class="btn bg-secondary m-0 w100" app-click="chgWeek(4)">
+                     <span class="icon left add white"></span> 4 weeks
+                </a>
+            </div>
+            <div class="mb-1 w100">
+                <a class="btn bg-secondary m-0 w100" app-click="chgWeek(5)">
+                     <span class="icon left add white"></span> 5 weeks
+                </a>
+            </div>
+            <div class="mb-1 w100">
+                <a class="btn bg-secondary m-0 w100" app-click="chgWeek(6)">
+                     <span class="icon left add white"></span> 6 weeks
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+</div>

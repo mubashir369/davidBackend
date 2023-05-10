@@ -1,0 +1,183 @@
+.menu {
+
+    display: inline-block;
+    vertical-align: top;
+    font-size: 1rem;
+    height: 100vh;
+    overflow-y:auto;
+    transition: 0.2s width ease;
+
+    @media small {
+
+        position: fixed;
+        top: 0;
+        left: 0;
+        transform: translateX(-100vw);
+        padding: 0.75rem 2rem 2rem 2rem;
+        z-index: 999;
+        transition: 0.2s all ease;
+
+        &.open {
+            transform: translateX(0vw);
+        }
+
+    }
+
+     a:not(.burger) {
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        width: calc(100% - 1.25em);
+        height: 2.188em;
+        border-radius: 0.250em;
+        padding: 0.65em 0.250em;
+        margin: 0.188em 0.625em;
+        font-weight:300;
+
+        @media small {
+            font-size: 1.2rem;
+            padding: 1rem 0;
+            margin-bottom: 1rem;
+        }
+
+        .icon {
+            transition: opacity 0.3s ease;
+        }
+
+        &:hover {
+            background-color: rgba(255,255,255,0.05);
+            .icon {
+                background-color: white;
+                opacity: 1;
+            }
+        }
+
+        &.overview-icon {
+            position: absolute;
+            bottom: 5rem;
+            .icon {
+                height: 2rem !important;
+                width: 2rem !important;
+            }
+
+            &.active {
+                .icon {
+                    opacity: 1
+                }
+            }
+
+            &:hover {
+                background: none;
+                .icon {
+                    background-color: white;
+                    opacity: 1;
+                }
+            }
+        }
+
+        &.expand {
+            position: absolute;
+            bottom: 2rem;
+            .icon {
+                height: 2rem !important;
+                width: 2rem !important;
+            }
+
+            &:hover {
+                background: none;
+                .icon {
+                    background-color: white;
+                    opacity: 1;
+                }
+            }
+        }
+
+        &.bg-active {
+            background-color: rgba(255,255,255,0.1);
+
+            .icon {
+                opacity: 1;
+            }
+        }
+
+        &.active {
+            font-weight: 500;
+        }
+
+        &.subitem {
+            font-size: 0.875rem;
+            padding: 0.2em 0.1em;
+            opacity: 0.5;
+            font-weight: 400;
+            height: 1.875em;
+
+            @media small {
+                padding: 1rem;
+                font-size: 1rem;
+            }
+
+            &:hover {
+                opacity: 1;
+                background: none;
+            }
+
+            &:first-child {
+                margin-top: 0.500em;
+            }
+
+            &:last-child {
+                margin-bottom: 1.750em;
+            }
+
+            &.active {
+                opacity: 1;
+                font-weight: 500;
+            }
+
+            .icon {
+                flex: 0 0 2.9em;
+                margin:0;
+            }
+        }
+
+        .icon {
+            display: block;
+            vertical-align: middle;
+            height: 1.875rem;
+            flex: 0 0 1.313em;
+            opacity: 0.5;
+            object-fit: cover;
+            margin: 0 0.75rem 0 0.3rem;
+        }
+
+
+    }
+
+    .logos {
+
+        height: 3.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        @media small {
+            display: none;
+        }
+
+        .logo {
+            display: block;
+            height: auto;
+            width: 90%;
+        }
+
+        .logo-small {
+            height: auto;
+            width:75%;
+            max-width: 3rem
+        }
+
+    }
+
+
+}

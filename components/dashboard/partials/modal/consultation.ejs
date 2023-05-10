@@ -1,0 +1,56 @@
+<div class="modal" app-show="view.modal == 'show_template'" anim="{'enter':'fade-in'}">
+
+    <div class="modal-body" anim="{'enter':'move-up','duration':'0.2'}">
+
+        <div class="grid col-2 pb-1">
+            <div>
+                <h4 class="text-light" app-bind="new.name"></h4>
+            </div>
+            <div class="text-right">
+                <h4 class="close-icon text-light clickable" onclick="modalCloseAll()">&times;</h4>
+            </div>
+        </div>
+        <div class="">
+            <div class="mb-1" app-for="input in new.inputs">
+
+                <div app-show="input.type == 'textparagraph'">
+                    <h4 class="mb-1" app-bind="input.description"></h4>
+                    <p app-bind="input.value"></p>
+                </div>
+
+                <div app-show="input.type == 'text'">
+                    <label class="block text-small" app-bind="input.description"></label>
+                    <input type="text" app-model="input.value">
+                </div>
+
+                <div app-show="input.type == 'checkbox'">
+                    <label class="block text-33-black">
+                        <input type="checkbox" class="pr-1" app-model="input.value">
+                        <span app-bind="input.description"></span>
+                    </label>
+                </div>
+
+                <div app-show="input.type == 'textarea'">
+                    <label class="block text-small" app-bind="input.description"></label>
+                    <textarea app-model="input.value"></textarea>
+                </div>
+
+            </div>
+        </div>
+
+        <div>
+            <label>Signature</label>
+            <canvas></canvas>
+            <a class="block text-primary text-small" onclick="signaturePad.clear()"><i class="fas fa-times"></i> Clear</a>
+        </div>
+
+        <div class="text-right pt-1">
+            <a class="btn bg-secondary" app-click="saveConsultation('<%- client_data._key %>')">
+                <img src="/icons/add.svg" class="icon left">
+                <span>Save</span>
+            </a>
+        </div>
+
+    </div>
+
+</div>

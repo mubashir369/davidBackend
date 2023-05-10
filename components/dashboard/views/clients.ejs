@@ -1,0 +1,300 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+
+    <div class="page px-2 p-s-0" app-init="getclients()">
+
+        <div class="px-2 pt-2 pb-0 hidden hidden-m">
+            <input type="text" class="search colspan-2 border" placeholder="Search by name, number or email" app-model="view.search" onkeyup="scope.searchApi('customers',this.value)" spellcheck="false">
+        </div>
+
+        <div>
+
+            <div class="table">
+
+                <div class="row table-header">
+
+                    <div class="cell middle" style="width: 4em"></div>
+                    <div class="cell middle mobile-cell">Name</div>
+                    <div class="cell middle hidden-s" style="width: 10em">Number</div>
+                    <div class="cell middle hidden-s">Email</div>
+                    <!-- <div class="cell middle hidden-s" style="width: 5em">Gender</div>
+                    <div class="cell middle hidden-s" style="width: 5em">Notes</div> -->
+                    <div class="cell middle" style="width: 4em">Action</div>
+
+                </div>
+
+                <div class="row" app-for="client_list in customers">
+
+                    <div class="cell middle">
+                        <img app-src="client_list.avatar" src="/images/avatars/Profile_Placeholder.svg" class="icon avatar lg">
+                    </div>
+                    <!-- <div class="cell middle clickable text-weight-500 capitalise mobile-cell" app-click="goto('/dashboard/clients/',client_list._key)"> -->
+                    <div class="cell middle @clickable text-weight-500 capitalise mobile-cell">
+                        <span app-bind="parseName(client_list.name)"></span>
+                        <div class="text-33-red" app-show="client_list.blocked">Blocked</div>
+                        <div class="text-33-red" app-bind="parseConfidence(client_list)"></div>
+                    </div>
+                    <div class="cell middle text-light hidden-s" app-bind="client_list.tel"></div>
+                    <div class="cell middle text-light hidden-s" app-bind="client_list.email"></div>
+                    <!-- <div class="cell middle text-light hidden-s" app-bind="client_list.gender"></div> -->
+                    <!-- <div class="cell middle text-light hidden-s clickable text-primary" app-click="viewClientNote(client_list)"><span app-show="client_list.notes">View</span></div> -->
+                    <div class="cell middle action-icons" app-attr="{id:'cell-'+client_list._key}">
+                        <div class="context-link btn border" app-click="toggleContext(client_list._key)">
+                            <span class="icon black arrowdown sm"></span>
+                        </div>
+                        <div class="context dropdown text-left" style="display: none" app-attr="{id:'context-'+client_list._key}">
+                            <div class="link" app-click="edit('customers',client_list)">
+                                <span class="icon left black edit"></span>
+                                Edit
+                            </div>
+                            <% if (typeof user != 'undefined' && user.guard == 'admin' || typeof user != 'undefined' && user.role >= 2){ %>
+                            <div class="link" app-click="edit('customers',client_list,'delete')">
+                                <span class="icon left black delete"></span>
+                                Delete
+                            </div>
+                            <% } %>
+                            <!-- <div class="link" app-click="addNewEvent('customer_appointment',client_list._key)">
+                                <span class="icon left black calendar"></span>
+                                New Appointment
+                            </div>
+                            <div class="link" app-click="newTransaction(client_list._key)">
+                                <span class="icon left black transaction"></span>
+                                New Transaction
+                            </div>
+                            <div class="link" app-click="newNotification('customer_id',client_list)">
+                                <span class="icon left black bell"></span>
+                                Salon Notification
+                            </div>
+                            <div class="link" app-click="blockClient(client_list)">
+                                <span class="icon left black noshow"></span>
+                                <span app-hide="client_list.blocked">Block</span>
+                                <span app-show="client_list.blocked">Unblock</span>
+                            </div> -->
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div id="paginationID" class="pagination"></div>
+
+
+        </div>
+
+
+    </div>
+
+<script>
+    let starting = 1
+var pagePagination = {
+code : '',
+Extend : function(data) {
+data = data || {};
+pagePagination.size = data.size || 0;
+pagePagination.page = data.page || 0;
+pagePagination.step = data.step || 0;
+},
+Add : function(p, q) {
+for (var l =p;l < q; l++) {
+pagePagination.code += '<a>' + l + '</a>';
+}
+},
+Last : function() {
+pagePagination.code += '<i>...</i><a>' + pagePagination.size + '</a>';
+},
+First : function() {
+pagePagination.code += '<a>1</a><i>...</i>';
+},
+Click : function() {
+pagePagination.page = +this.innerHTML;
+pagePagination.Start();
+},
+Prev : function() {
+pagePagination.page--;
+//scope.changepage(pagePagination.page)
+if (pagePagination.page < 1) {
+pagePagination.page = 1;
+}
+pagePagination.Start();
+},
+Next : function() {
+pagePagination.page++;
+//scope.changepage(pagePagination.page)
+if (pagePagination.page > pagePagination.size) {
+pagePagination.page = pagePagination.size;
+}
+pagePagination.Start();
+},
+Bind : function() {
+var a = pagePagination.e.getElementsByTagName('a');
+for (var num = 0; num < a.length; num++) {
+if (+a[num].innerHTML === pagePagination.page)
+a[num].className = 'current';
+a[num].addEventListener('click', pagePagination.Click, false);
+}
+console.log(pagePagination.page)
+//scope.changepage(pagePagination.page)
+},
+Finish : function() {
+pagePagination.e.innerHTML = pagePagination.code;
+pagePagination.code = '';
+pagePagination.Bind();
+},
+Start : function() {
+if (pagePagination.size < pagePagination.step * 2 + 6) {
+pagePagination.Add(1, pagePagination.size + 1);
+} else if (pagePagination.page < pagePagination.step * 2 + 1) {
+pagePagination.Add(1, pagePagination.step * 2 + 4);
+pagePagination.Last();
+} else if (pagePagination.page > pagePagination.size - pagePagination.step * 2) {
+pagePagination.First();
+pagePagination.Add(pagePagination.size - pagePagination.step * 2 - 2,
+pagePagination.size + 1);
+} else {
+pagePagination.First();
+pagePagination.Add(pagePagination.page - pagePagination.step,
+pagePagination.page + pagePagination.step + 1);
+pagePagination.Last();
+}
+
+console.log(pagePagination.page)
+pagePagination.Finish();
+
+if(starting!==pagePagination.page){
+    scope.changepage(pagePagination.page)
+    starting = pagePagination.page
+}
+
+},
+Buttons : function(e) {
+var nav = e.getElementsByTagName('a');
+nav[0].addEventListener('click', pagePagination.Prev, false);
+nav[1].addEventListener('click', pagePagination.Next, false);
+},
+Create : function(e) {
+var html = [ '<a>◄</a>', // previous button
+'<span></span>', // paginationID container
+'<a>►</a>' // next button
+];
+e.innerHTML = html.join('');
+pagePagination.e = e.getElementsByTagName('span')[0];
+pagePagination.Buttons(e);
+},
+Init : function(e, data) {
+pagePagination.Extend(data);
+pagePagination.Create(e);
+pagePagination.Start();
+}
+};
+
+var init = function(data) {
+                        console.log(data,"ddddddd")
+                            pagePagination.Init(document.getElementById('paginationID'), {
+                                size : data,
+                                page : 1,
+                                step : 5
+                            });
+                        };
+
+</script>
+
+
+
+    <%- include('../../dashboard/partials/modal/client_profile.ejs') %>
+    <%- include('../../dashboard/partials/modal/client_notes.ejs') %>
+    <%- include('../../dashboard/partials/modal/new_notification.ejs') %>
+
+
+    <div class="modal" app-show="view.modal == 'show_delete'" anim="{'enter':'fade-in'}">
+
+        <div class="modal-body w-30 w-m-90 p-0" anim="{'enter':'move-up','duration':'0.2'}">
+
+            <div class="modal-header text-primary">
+                <div class="title">
+                    <h4 class="text-light">
+                        Delete Client?
+                    </h4>
+                </div>
+                <div class="text-right">
+                    <h4 class="close-icon text-light clickable" onclick="modalCloseAll()">&times;</h4>
+                </div>
+            </div>
+            <div class="modal-content grid col-4 gap-2 p-2">
+                <div class="colspan-2 text-right ">
+                    <a class="btn border w-100" app-click="modalCloseAll()">
+                        Cancel
+                    </a>
+                </div>
+
+                <div class="colspan-2 text-right ">
+                    <a class="btn bg-secondary w-100" app-click="delete('customers',new._key)">
+                        Delete
+                        <span class="icon delete right white"></span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    <style type="text/css">
+
+        /* #paginationID {
+        display: inline-block;
+        vertical-align: middle;
+        border-radius: 4px;
+        padding: 1px 2px 4px 2px;
+        border-top: 1px solid #AEAEAE;
+        border-bottom: 1px solid #FFFFFF;
+        background-color: #DADADA;
+        background-image: -webkit-linear-gradient(top, #DBDBDB, #E2E2E2);
+        background-image: -moz-linear-gradient(top, #DBDBDB, #E2E2E2);
+        background-image: -ms-linear-gradient(top, #DBDBDB, #E2E2E2);
+        background-image: -o-linear-gradient(top, #DBDBDB, #E2E2E2);
+        background-image: linear-gradient(top, #DBDBDB, #E2E2E2);
+        }
+        #paginationID a, #paginationID i {
+        display: inline-block;
+        vertical-align: middle;
+        width: 22px;
+        color: #7D7D7D;
+        text-align: center;
+        font-size: 10px;
+        padding: 3px 0 2px 0;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -o-user-select: none;
+        user-select: none;
+        }
+        #paginationID a {
+        margin: 0 2px 0 2px;
+        border-radius: 4px;
+        border: 1px solid #E3E3E3;
+        cursor: pointer;
+        box-shadow: inset 0 1px 0 0 #FFF, 0 1px 2px #666;
+        text-shadow: 0 1px 1px #FFF;
+        background-color: #E6E6E6;
+        background-image: -webkit-linear-gradient(top, #F3F3F3, #D7D7D7);
+        background-image: -moz-linear-gradient(top, #F3F3F3, #D7D7D7);
+        background-image: -ms-linear-gradient(top, #F3F3F3, #D7D7D7);
+        background-image: -o-linear-gradient(top, #F3F3F3, #D7D7D7);
+        background-image: linear-gradient(top, #F3F3F3, #D7D7D7);
+        }
+        #paginationID i {
+        margin: 0 3px 0 3px;
+        }
+        #paginationID a.current {
+        border: 1px solid #E9E9E9;
+        box-shadow: 0 1px 1px #999;
+        background-color: #DFDFDF;
+        background-image: -webkit-linear-gradient(top, #D0D0D0, #EBEBEB);
+        background-image: -moz-linear-gradient(top, #D0D0D0, #EBEBEB);
+        background-image: -ms-linear-gradient(top, #D0D0D0, #EBEBEB);
+        background-image: -o-linear-gradient(top, #D0D0D0, #EBEBEB);
+        background-image: linear-gradient(top, #D0D0D0, #EBEBEB);
+        } */
+        </style>

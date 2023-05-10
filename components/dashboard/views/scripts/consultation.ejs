@@ -1,0 +1,226 @@
+<script>
+
+    extendedController = function(){
+
+        scope.getClients = function(){
+
+            scope.get('appointments','find_current_appointments').then((data)=>{
+                scope.clients = data.map((appt)=>{
+
+                    if (appt.customer){
+                        if (appt.staff){
+                            appt.customer.stylist = appt.staff
+                        }
+                        appt.customer.appt_key = appt._key
+                        return appt.customer
+                    } else {
+                        return false
+                    }
+
+                }).filter((v,i,a)=>{
+                    return typeof v == 'object' && a.findIndex(t=>(t._id === v._id))===i
+                })
+                scope.view.page = 'clients'
+
+            })
+            // scope.get('customers','today').then((clients_data)=>{
+            //     scope.clients = clients_data
+            //     scope.view.page = 'clients'
+            // })
+        }
+
+        scope.selectClient = function(client){
+
+            scope.selected_client = client
+
+            if (client.tel){
+
+                client.parsed_tel = client.tel.substr(-4)
+                scope.view.page = 'client_confirm'
+
+            } else {
+
+                let payload = {
+                    _key:client.appt_key,
+                    status:'checked_in'
+                }
+
+                scope.post('appointments/check_in',payload).then((appt_data)=>{
+                    scope.store()
+                    scope.view.page = 'show_client'
+                })
+
+            }
+
+        }
+
+        scope.showClient = function(){
+
+            let payload = {
+                _key:scope.selected_client.appt_key,
+                status:'checked_in'
+            }
+
+            scope.post('appointments/check_in',payload).then((appt_data)=>{
+                scope.store()
+                scope.view.page = 'show_client'
+            })
+
+        }
+
+        scope.startConsultation = function(){
+
+            scope.consultation = {
+                customer_id: scope.selected_client._key
+            }
+
+            if (scope.selected_client.stylist){
+                scope.consultation.stylist = scope.selected_client.stylist
+                scope.consultation.stylist_id = scope.selected_client.stylist._key
+            }
+
+            scope.get('consultations',scope.selected_client._key+'/find_recent').then((consultations)=>{
+
+                if (consultations && consultations.length > 0){
+                    scope.view.consultations = consultations
+
+                    if (consultations[0].stylist_confirmed){
+                        scope.consultation = {
+                            customer_id: scope.selected_client._key,
+                            hair_description: consultations[0].hair_description,
+                            hair_length: consultations[0].hair_length,
+                            hair_texture: consultations[0].hair_texture,
+                            hair_styling: consultations[0].hair_styling,
+                            tools_used: consultations[0].tools_used,
+                            chemical_services: consultations[0].chemical_services,
+                            wet_hair_feeling: consultations[0].wet_hair_feeling,
+                            wash_frequency: consultations[0].wash_frequency,
+                            hair_achieve: consultations[0].hair_achieve
+                        }
+                    } else {
+                        scope.consultation = consultations[0]
+                    }
+
+                    scope.view.page = 'show_consultation'
+
+                } else {
+                    scope.view.page = 'new_consultation'
+                }
+
+            }).catch((err)=>{
+                scope.view.page = 'new_consultation'
+            })
+
+        }
+
+        scope.addImage = function(url){
+
+            scope.consultation.image = url
+            scope.saveConsultation('end_consultation')
+
+        }
+
+        watch['consultation.stylist_id'] = function(data){
+
+            if (scope.staff){
+                scope.consultation.stylist = scope.staff.find((stylist)=>{
+                    return stylist._key == data
+                })
+            }
+
+        }
+
+        scope.confirmConsultation = function(){
+
+            scope.consultation.confirmed = moment().toISOString()
+
+            if (!scope.consultation.stylist_id){
+                scope.get('staff')
+            }
+
+            scope.saveConsultation('stylist_confirmation')
+
+        }
+
+        scope.stylistConfirmation = function(){
+
+            scope.consultation.stylist_confirmed = moment().toISOString()
+            scope.saveConsultation('finish')
+
+        }
+
+        scope.removeSpecificInstruction = function(){
+            delete scope.consultation.specific_instruction
+            scope.saveConsultation('style_selection')
+        }
+
+        scope.saveConsultation = function(done){
+
+            http('post','/api/consultations',scope.consultation)
+                .then((consultation) => {
+
+                    if (consultation.match(/^{/)){
+
+                        consultation = JSON.parse(consultation)
+                        if (consultation && consultation._key){
+                            scope.consultation._key = consultation._key
+                        }
+                        if (done.length > 0){
+                            scope.view.page = done
+                        } else {
+                            scope.view.page = 'style_selection'
+                        }
+
+                    }
+                }).catch((err)=>{
+                    scope.notify(err,'error')
+                })
+
+        }
+
+        scope.addText = function(){
+            scope.view.page = 'text_input'
+            setTimeout(function(){
+                document.getElementById('look-text').focus()
+            },500)
+
+        }
+
+        scope.reset = function(){
+            localStorage.removeItem('client')
+            localStorage.removeItem('checked_in')
+            location.reload()
+        }
+
+        scope.parseShortName = function(name){
+            return name.first+' '+name.last.substring(0,1)
+        }
+
+        scope.store = function(){
+
+            localStorage.setItem('client',JSON.stringify(scope.selected_client))
+            localStorage.setItem('checked_in',true)
+
+        }
+
+        scope.init = function(){
+
+            scope.view.checked_in = localStorage.getItem('checked_in')
+            if (scope.view.checked_in == 'true'){
+                scope.selected_client = JSON.parse(localStorage.getItem('client'))
+                scope.view.page = 'show_client'
+            } else {
+                scope.view.page = 'start'
+            }
+
+        }
+
+        scope.init()
+
+    }
+
+    window.onbeforeunload = function(e) {
+        // return 'Are you sure you want to cancel?'
+    }
+
+</script>

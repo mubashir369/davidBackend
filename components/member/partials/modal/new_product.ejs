@@ -1,0 +1,419 @@
+
+    <div class="modal addNewCafeProd" app-show="view.modal == 'show_edit'" anim="{'enter':'fade-in'}">
+
+        <div class="modal-body p-0 w-80 w-m-90" anim="{'enter':'move-up','duration':'0.2'}">
+
+            <div class="modal-header text-primary">
+                <div class="title">
+                    <p class="m-0" app-bind="new.name" app-show="new.name"></p>
+                    <p class="m-0" app-hide="new.name">Add New Product</p>
+                </div>
+                <div class="close">
+                    <!-- <span class="icon close white clickable" onclick="modalCloseAll()"></span> -->
+
+                    <div class="btn-wrap">
+                        <button class="dp-btn bg-secondary btn-left border mr-1 text-white" app-click="view.tab = 'one'" app-class="{'active':view.tab == 'one'}">Information<span class="icon product black right"></span></button>
+
+                        <button class="dp-btn bg-primary btn-mid border text-white" app-click="view.tab = 'three'" app-class="{'active':view.tab == 'two'}">Filters<span class="icon stylist black right"></span></button>
+                        <button class="dp-btn bg-primary btn-right border text-white" app-click="view.tab = 'two'" app-class="{'active':view.tab == 'two'}">Stock & Pricing<span class="icon checkout black right"></span></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-content p-2" style="height: 80vh">
+
+                <div class="grid pb-1 gap-2 col-4" app-show="view.tab == 'one'">
+
+                    <div class="rowspan-4">
+                        <label>Product Image 1</label>
+                        <label for="new_image" class="clickable">
+                            <img src="/images/products/upload.svg" app-src="new.image" class="object-fit">
+                        </label>
+                        <input type="file" app-model="new.image" id="new_image" class="app-hidden">
+
+
+                        <label>Product Image 2</label>
+                        <label for="new_image2" class="clickable">
+                            <img src="/images/products/upload.svg" app-src="new.image2" class="object-fit">
+                        </label>
+                        <input type="file" app-model="new.image2" id="new_image2" class="app-hidden">
+
+
+                        <label>Product Image 3</label>
+                        <label for="new_image3" class="clickable">
+                            <img src="/images/products/upload.svg" app-src="new.image3" class="object-fit">
+                        </label>
+                        <input type="file" app-model="new.image3" id="new_image3" class="app-hidden">
+
+
+                        <label>Product Image 4</label>
+                        <label for="new_image4" class="clickable">
+                            <img src="/images/products/upload.svg" app-src="new.image4" class="object-fit">
+                        </label>
+                        <input type="file" app-model="new.image4" id="new_image4" class="app-hidden">
+
+
+                        <label>Product Image 5</label>
+                        <label for="new_image5" class="clickable">
+                            <img src="/images/products/upload.svg" app-src="new.image5" class="object-fit">
+                        </label>
+                        <input type="file" app-model="new.image5" id="new_image5" class="app-hidden">
+
+
+
+                    </div>
+
+                    <div>
+                        <div class="mb-1">
+                            <label class="block text-small">Barcode</label>
+                            <input type="text" app-model="new.barcode" placeholder="Barcode" class="rounded">
+                        </div>
+
+                        <div class="mb-1">
+                            <label class="block text-small">Brand</label>
+                            <input type="text" app-model="new.brand" placeholder="Description" class="rounded">
+                        </div>
+
+                        <div class="mb-1">
+                            <label class="block text-small">Product Name</label>
+                            <input type="text" app-model="new.name" placeholder="Product Name" class="rounded">
+                        </div>
+
+                        <div class="mb-1">
+                            <label class="block text-small">Keywords</label>
+                            <input type="text" app-model="new.keywords" placeholder="Product Keywords" class="rounded">
+                        </div>
+
+                        <div class="mb-1">
+                            <label class="block text-small">Category</label>
+                            <select app-model="new.category" class="rounded">
+                                <option value="" selected disabled>Please select...</option>
+                                <% if (salon.product_categories){ %>
+                                    <% salon.product_categories.forEach((item,i)=>{ %>
+                                        <option value="<%- item._id %>"><%- item.name %></option>
+                                    <% }) %>
+                                <% } %>
+                            </select>
+                        </div>
+
+                        <div class="mb-1">
+                            <label class="block text-small">Rating</label>
+                            <input type="number" max="5" min="1" app-model="new.rating" placeholder="Enter 1 to 5 number" class="rounded">
+                        </div>
+
+
+                    </div>
+
+                    <div class="colspan-2 rowspan-3">
+
+                        <label class="block text-small">Sub Description</label>
+                        <textarea app-model="new.sub_des" class="rounded" style="height:30%;"></textarea>
+
+
+                        <label class="block text-small">Description</label>
+                        <textarea app-model="new.description" class="rounded" style="height:30%;"></textarea>
+            
+                        <label class="block text-small">Product Details</label>
+                        <textarea app-model="new.pro_detail" class="rounded" style="height:30%;"></textarea>
+              
+                        <label class="block text-small">How To Use</label>
+                        <textarea app-model="new.howtouse" class="rounded" style="height:30%;"></textarea>
+      
+
+                        <label class="block text-small">Ingredients</label>
+                        <textarea app-model="new.ingredients" class="rounded" style="height:30%;"></textarea>
+                    </div>
+
+                </div>
+                    <div class="" app-show="view.tab == 'three'">
+                        <div class="mb-2">
+                            <label class="block text-small">Hair Types</label>
+                            <div class="grid col-5 col-m-4 gap-1">
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.hair_types,'fine')" app-checked="inArray(new.hair_types,'fine')" class="mr-1">Fine
+                                </label>
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.hair_types,'normal')" app-checked="inArray(new.hair_types,'normal')" class="mr-1">Normal
+                                </label>
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.hair_types,'thick')" app-checked="inArray(new.hair_types,'thick')" class="mr-1">Thick
+                                </label>
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.hair_types,'thinning')" app-checked="inArray(new.hair_types,'thinning')" class="mr-1">Thinning
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="block text-small">Hair Lengths</label>
+                            <div class="grid col-5 col-m-4 gap-1">
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.hair_lengths,'short')" app-checked="inArray(new.hair_lengths,'short')" class="mr-1">Short
+                                </label>
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.hair_lengths,'shoulder')" app-checked="inArray(new.hair_lengths,'shoulder')" class="mr-1">Shoulder
+                                </label>
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.hair_lengths,'long')" app-checked="inArray(new.hair_lengths,'long')" class="mr-1">Long
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="block text-small">Hair Textures</label>
+                            <div class="grid col-5 col-m-4 gap-1">
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.hair_textures,'straight')" app-checked="inArray(new.hair_textures,'straight')" class="mr-1">Straight
+                                </label>
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.hair_textures,'wavy')" app-checked="inArray(new.hair_textures,'wavy')" class="mr-1">Wavy
+                                </label>
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.hair_textures,'curly')" app-checked="inArray(new.hair_textures,'curly')" class="mr-1">Curly
+                                </label>
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.hair_textures,'afro')" app-checked="inArray(new.hair_textures,'afro')" class="mr-1">Afro
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="block text-small">Hair Styling</label>
+                            <div class="grid col-5 col-m-4 gap-1">
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.hair_styling,'dry_naturally')" app-checked="inArray(new.hair_styling,'dry_naturally')" class="mr-1">Dry Naturally
+                                </label>
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.hair_styling,'dry_')" app-checked="inArray(new.hair_styling,'dry_smooth')" class="mr-1">Dry Smooth
+                                </label>
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.hair_styling,'dry_volume')" app-checked="inArray(new.hair_styling,'dry_volume')" class="mr-1">Dry with volume
+                                </label>
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.hair_styling,'dry_diffuse')" app-checked="inArray(new.hair_styling,'dry_diffuse')" class="mr-1">Diffuse Dry
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="block text-small">Tools</label>
+                            <div class="grid col-5 col-m-4 gap-1">
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.tools,'hair_dryer')" app-checked="inArray(new.tools,'hair_dryer')" class="mr-1">Hair Dryer
+                                </label>
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.tools,'straighteners')" app-checked="inArray(new.tools,'straighteners')" class="mr-1">Straighteners
+                                </label>
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.tools,'tongs')" app-checked="inArray(new.tools,'tongs')" class="mr-1">Tongs
+                                </label>
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.tools,'cool_rollers')" app-checked="inArray(new.tools,'cool_rollers')" class="mr-1">Cool Rollers
+                                </label>
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.tools,'heated_rollers')" app-checked="inArray(new.tools,'heated_rollers')" class="mr-1">Heated Rollers
+                                </label>
+                            </div>
+                        </div>
+
+
+                        <div class="mb-2">
+                            <label class="block text-small">Applied Chemicals</label>
+                            <div class="grid col-5 col-m-4 gap-1">
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.chemicals,'full_colour')" app-checked="inArray(new.chemicals,'full_colour')" class="mr-1">Full Colour
+                                </label>
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.chemicals,'bleach')" app-checked="inArray(new.chemicals,'bleach')" class="mr-1">Bleach
+                                </label>
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.chemicals,'highlights')" app-checked="inArray(new.chemicals,'highlights')" class="mr-1">Highlights
+                                </label>
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.chemicals,'perm')" app-checked="inArray(new.chemicals,'perm')" class="mr-1">Perm
+                                </label>
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.chemicals,'keratin_smoothing')" app-checked="inArray(new.chemicals,'keratin_smoothing')" class="mr-1">Keratin Smoothing
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="block text-small">Feeling of wet hair</label>
+                            <div class="grid col-5 col-m-4 gap-1">
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.wet,'healthy')" app-checked="inArray(new.wet,'healthy')" class="mr-1">Healthy
+                                </label>
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.wet,'dry')" app-checked="inArray(new.wet,'dry')" class="mr-1">Dry
+                                </label>
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.wet,'damaged')" app-checked="inArray(new.wet,'damaged')" class="mr-1">Damaged
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="block text-small">Washes</label>
+                            <div class="grid col-5 col-m-4 gap-1">
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.washes,'infrequent')" app-checked="inArray(new.washes,'infrequent')" class="mr-1">Infrequent
+                                </label>
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.washes,'frequent')" app-checked="inArray(new.washes,'frequent')" class="mr-1">Frequent
+                                </label>
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.washes,'every_day')" app-checked="inArray(new.washes,'every_day')" class="mr-1">Every Day
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="block text-small">Achieves</label>
+                            <div class="grid col-5 col-m-4 gap-1">
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.achieves,'condition')" app-checked="inArray(new.achieves,'condition')" class="mr-1">Better Condition
+                                </label>
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.achieves,'smoother')" app-checked="inArray(new.achieves,'smoother')" class="mr-1">Smoother Hair
+                                </label>
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.achieves,'volume')" app-checked="inArray(new.achieves,'volume')" class="mr-1">More Volume
+                                </label>
+                                <label class="text-black m-0">
+                                    <input type="checkbox" app-click="push(new.achieves,'growth')" app-checked="inArray(new.achieves,'growth')" class="mr-1">Growth
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                <div class="grid pb-1 gap-6 gap-m-3 col-3" app-show="view.tab == 'two'">
+
+                        <div class="grid col-2 gap-1">
+                            <div class="mb-1">
+                                <label class="block text-small">RRP</label>
+                                <input type="text" id="act_price" app-model="new.price" class="text-right rounded">
+                            </div>
+                            <div class="mb-1">
+                                <label class="block text-small">Cost</label>
+                                <input type="text" app-model="new.cost" class="text-right rounded">
+                            </div>
+                            <div class="mb-1">
+                                <label class="block text-small" for="sell-online">Sell Online</label>
+                                <input type="checkbox" app-click="toggleSellOnline()" app-checked="new.sell_online" id="sell-online">
+                            </div>
+                            
+
+                            <div class="mb-1">                               
+                            </div> 
+
+
+                            <div class="mb-1">
+                                <label class="block text-small">Discount in (1-100)%</label>
+                                <input type="text" app-model="new.discount" id="mydis" onkeyup="showMe(this)" class="text-right rounded">
+                            </div>
+                            <div class="mb-1">
+                                <label class="block text-small">Discounted Price</label>
+                                <input type="text" id="after_dis" app-model="new.discounted" class="text-right rounded">
+                                
+                            </div>
+                            <div class="mb-1">
+                               
+                            </div>
+
+
+                        </div>
+
+
+
+
+                        <div class="">
+
+                            <div class="grid col-2 gap-1">
+                                <div class="mb-1">
+                                    <label class="block text-small">Current Stock</label>
+                                    <input type="text" app-model="new.stock" class="text-right rounded">
+                                </div>
+                                <div class="mb-1">
+                                    <label class="block text-small">Order Threshold</label>
+                                    <input type="text" app-model="new.re_order_threshold" class="text-right rounded">
+                                </div>
+                                <div class="mb-1">
+                                    <label class="block text-small">Order Amount</label>
+                                    <input type="text" app-model="new.re_order" class="text-right rounded">
+                                </div>
+                                <div class="mb-1">
+                                    <label class="block text-small">On Order</label>
+                                    <input type="checkbox" app-click="orderProduct(new)" app-checked="new.on_order">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="">
+                            <div class="grid col-3 gap-1">
+                                <div class="mb-1 colspan-2">
+                                    <label class="block text-small">Size</label>
+                                    <input type="text" app-model="new.size" placeholder="Set the size and select units" class="text-right rounded">
+                                </div>
+                                <div class="mb-1">
+                                    <label class="block text-small">Units</label>
+                                    <select app-model="new.size_units" class="rounded">
+                                        <option>ml</option>
+                                        <option>l</option>
+                                        <option>g</option>
+                                        <option>kg</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="grid col-3 gap-1">
+                                <div class="mb-1">
+                                    <label class="block text-small">Width (mm)</label>
+                                    <input type="text" app-model="new.delivery_width" class="text-right rounded">
+                                </div>
+                                <div class="mb-1">
+                                    <label class="block text-small">Height (mm)</label>
+                                    <input type="text" app-model="new.delivery_height" class="text-right rounded">
+                                </div>
+                                <div class="mb-1">
+                                    <label class="block text-small">Length (mm)</label>
+                                    <input type="text" app-model="new.delivery_length" class="text-right rounded">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+            </div>
+
+            <div class="modal-appointment-actions flex flex-middle-right">
+                <a class="dp-btn text-white bg-secondary" app-click="saveProduct()">
+                    <span app-show="new._key">Save Product</span>
+                    <span app-hide="new._key">Add Product</span>
+                    <span class="icon add white right"></span>
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+<script>
+    function showMe(e) {
+        if(e.value>100 || e.value<1){
+            alert('Discount should be between 1 to 100');
+            document.getElementById('mydis').value = '0';
+            document.getElementById('after_dis').value = '0';
+        }else{
+            var mydis = document.getElementById('mydis').value.replace(/^0+/, '')
+            var act_price = document.getElementById('act_price').value
+            document.getElementById('mydis').value = mydis
+
+            var afterdis = parseFloat(act_price) - (parseFloat(act_price) * mydis/100)
+
+            document.getElementById('after_dis').value = afterdis
+        } 
+    }
+</script>

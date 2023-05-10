@@ -1,0 +1,115 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+
+    <div class="page grid col-12 col-s-1 client overflow-hidden" app-init="get('user_notifications','all','notifications')">
+
+        <div class="colspan-4 bg-grey text-small overflow-y">
+            <div class="msg" app-for="msg in notifications" app-class="{'active':view.msg._key == msg._key}" app-click="viewNotification(msg)">
+                <div class="flex-1 flex flex-middle" app-class="msg.status">
+                    <div class="status-dot"></div>
+                </div>
+                <div class="flex-6">
+                    <div class="text-weight-600" app-bind="msg.type"></div>
+                    <div app-show="msg.claimed_by">Claimed by <span app-bind="msg.claimed_by"></span></div>
+                    <div class="text-grey italic">From <span app-bind="msg.from"></span> <span app-bind="parseISODate(msg._created,'ago',true)"></span></div>
+
+                </div>
+                <div class="flex-1 flex flex-middle">
+                    <div app-show="msg.data.url" app-click="goto('',msg.data.url,'link')"><span class="icon linkappt secondary"></span></div>
+                    <div app-show="msg.data.appointment_url" app-click="goto('',msg.data.appointment_url)"><span class="icon calendar secondary"></span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="colspan-8 p-2 overflow-y">
+
+            <div app-show="view.msg">
+                <div class="grid col-2 col-m-1">
+                    <div class="mb-1">
+                        <h2 class="" app-bind="view.msg.type"></h2>
+                        <p class="text-grey text-small m-0">From <span app-bind="view.msg.from"></span> - <span app-bind="parseISODate(view.msg._created,'ddd Do MMM YYYY h:mma')"></p>
+                        <p class="text-small mb-0 mt-1" app-show="view.msg.expiry"><span class="icon time secondary left"></span>This message will expire <span app-bind="parseISODate(view.msg.expiry,'ago')"></span></p>
+                        <p class="text-small mb-0 mt-1" app-show="view.msg.claimed_by"><span class="icon stylist secondary left"></span>This is being handled by <span app-bind="view.msg.claimed_by"></span></p>
+                    </div>
+                    <div class="text-right my-m-2">
+
+                        <button class="dp-btn bg-secondary" app-click="completeNotification('<%- user.name.first %> <%- user.name.last %>')">Complete<span class="icon tick white right"></span></button>
+                    </div>
+                </div>
+
+                <div class="mt-1 mb-2 p-1 bg-white bg-secondary text-white radius-10" app-bind="parseLineBreak(view.msg.msg)"></div>
+
+                <div class="my-2 flex flex-middle-right">
+                    <button class="dp-btn text-white bg-primary border mr-1" app-show="view.msg.data.customer_id" app-click="goto('/dashboard/clients/',view.msg.data.customer_id)">Goto Client Card<span class="icon client white right"></span></button>
+                    <button class="dp-btn text-white bg-secondary border mr-1" app-show="view.msg.data.appointment_url" app-click="goto(view.msg.data.appointment_url,'')">View Appointment<span class="icon calendar white right"></span></button>
+                    <button class="dp-btn text-white bg-secondary border mr-1" app-show="view.msg.data.url" app-click="goto('',view.msg.data.url,'link')">View<span class="icon linkappt white right"></span></button>
+                    <button class="dp-btn text-white bg-primary border mr-1" app-click="claimNotification('<%- user.name.first %> <%- user.name.last %>')">Claim<span class="icon stylist white right"></span></button>
+                    <button class="dp-btn text-white bg-primary " app-click="deleteNotification(view.msg)">Delete<span class="icon delete white right"></span></button>
+                </div>
+
+                <div class="text-small my-2">
+                    <div app-for="msg_note in view.notes" class="flex mb-05">
+                        <div class="flex-1">
+                            <div class="text-weight-600" app-bind="msg_note.user"></div>
+                            <div class="text-grey" app-bind="parseISODate(msg_note.date,'Do MMM h:mma')"></div>
+                        </div>
+                        <div app-bind="msg_note.note" class="flex-5 flex-m-3"></div>
+                    </div>
+                </div>
+
+                <textarea id="new_msg" class="border-dashed bg-light-grey" app-model="view.msg.new_msg" placeholder="Add a note"></textarea>
+
+                <div class="grid col-2 mt-2">
+                    <div class="text-left">
+
+                    </div>
+                    <div class="text-right">
+                        <button class="dp-btn text-white bg-primary" app-click="addNotification(view.msg,'<%- user.name.first %> <%- user.name.last %>')">Add Note<span class="icon reminder white right"></span></button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="modal" app-show="view.modal == 'delete_notification'" anim="{'enter':'fade-in'}">
+
+        <div class="modal-body p-0" anim="{'enter':'move-up','duration':'0.2'}">
+            <div class="modal-header">
+                <div class="text-left title">
+                    <h4 class="text-primary text-left" >Delete Notification</h4>
+                </div>
+                <div class="text-right">
+                    <h4 class="close-icon text-light clickable" app-click="deleteNotification('cancel')">&times;</h4>
+                </div>
+            </div>
+            <div class="modal-content p-2">
+                <div class="grid col-12 pb-1">
+                    <div class="colspan-11">
+                        <h4 class="text-light">
+                            Delete Notification? This action cannot be reverted.<br>Alternatively you can mark the notification as completed.
+                        </h4>
+                    </div>
+                  
+                </div>
+
+                <div class="grid col-2 gap-1">
+                    <div class="text-right pt-1">
+                        <a class="dp-btn text-white bg-secondary" app-click="deleteNotification('cancel')">
+                            Cancel <span class="icon cancel white right"></span>
+                        </a>
+                        <a class="dp-btn text-white bg-primary" app-click="deleteNotification(view.msg)">
+                            Delete<span class="icon delete white right"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+    </div>
+
+    <%- include('../partials/modal/new_notification.ejs') %>

@@ -1,0 +1,42 @@
+
+<h4 class="mb-2">Offer Codes and Vouchers</h4>
+
+<div class="bg-33-white p-2 rounded grid col-2 col-m-1 gap-2">
+
+    <div>
+
+        <p>Offer Code</p>
+
+        <div class="mb-2">
+            <input type="text" app-model="cart.offer_code" onkeyup="scope.addToCart('offer_code', this.value, '<%- cart_id %>')" class="border" placeholder="Scan or enter offer code...">
+        </div>
+
+        <div app-show="cart.offer_code_data.value" class="mb-1">
+            <span app-bind="cart.offer_code_data.description"></span><br>
+            <span class="text-small clickable text-primary" app-click="addToCart('offer_code','remove','<%- cart_id %>')">Remove Offer Code</span>
+        </div>
+
+
+    </div>
+
+    <div>
+
+        <p>Vouchers</p>
+        <div class="mb-2">
+            <input id="voucher_code" type="text" onkeyup="scope.addToCart('voucher', this.value, '<%- cart_id %>')" class="border" placeholder="Scan or enter voucher code...">
+        </div>
+
+        <div app-show="cart.vouchers" class="">
+            <div app-for="voucher in cart.vouchers" class="grid col-2 gap-1">
+                <div app-bind="voucher.barcode"></div>
+                <div class="text-right"><span app-bind="parsePrice(voucher.value)"></span></div>
+            </div>
+        </div>
+
+        <div app-show="cart.vouchers">
+            <a app-click="addToCart('voucher','remove','<%- cart_id %>')" class="text-primary text-small">Remove Vouchers</a>
+        </div>
+
+    </div>
+
+</div>

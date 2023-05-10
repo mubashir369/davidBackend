@@ -1,0 +1,187 @@
+<% layout('member.ejs') -%>
+
+<%- include ../partials/header-member.ejs %>
+
+    <div class="page">
+<% if(member.selected_seats && member.selected_seats.length>0){ %>
+    <div>
+    <h2>Items in cart</h2> 
+    <table class="table app-parent-price puchaseSeat-addCart-table" >
+    <tr>
+	    <th class="text-center" width="40%">Date</th>
+	    <th class="text-center" width="40%">Price</th>
+	    <th class="text-center" width="20%">Action</th>
+    </tr>
+
+    <% 
+    var total = 0
+    for(var i=0; i<member.selected_seats.length; i++) { 
+    
+      total = total +  parseFloat(member.selected_seats[i].price)
+    %>
+    	<tr>
+            <td class="text-center"><%-member.selected_seats[i].date%><%-date_array.includes(member.selected_seats[i].date)?' - Free':''%></td>
+            <td class="text-center">£<%-member.selected_seats[i].price%>/per seat</td>
+            <td class="text-center"> <a class="text-center" app-click="deletecart('<%-member.selected_seats[i]._key%>','<%-user._key%>')"><span class="icon left black delete"></span></a></td>
+    	</tr>
+ 	<% } %>
+ 	</table>
+
+    <button class="dp-btn bg-primary"  app-click="payPopup('<%-user._key%>',<%-total-discount%>,'<%-member.subscription_id%>','<%-member.selected_seats.length-%>')">Pay Now £<%-total-discount%></button>
+
+    </div>
+
+
+
+<% } %>
+
+
+
+        <div id='calendar' class="purchaseSeat"></div>  
+    </div>
+
+    
+
+<script>
+
+console.log('User','<%-user._key%>')
+let seats='<%-JSON.stringify(member.selected_seats) %>'
+localStorage.setItem("selected_seats", seats);
+ var events2 = []
+  <% for(var i=0; i<seats.length; i++) {
+
+
+  if(!purchased.includes(seats[i].date)){
+
+   %>
+    events2.push({title: '£<%-seats[i].price%>/seat Avail: <%-seats[i].seats%> seats',
+          groupId: '<%-seats[i]._key%>',
+          start: '<%-seats[i].date%>',
+          end: '<%-seats[i].date%>',
+          //  display: 'background'
+           })
+ <% }
+
+ } %>
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      dateClick: function(info) {       
+
+        //if(info.dateStr!="") document.getElementById("mydate").value = info.dateStr;
+
+        //alert('Clicked on: ' + info.dateStr);
+
+        //scope.newSeat()
+      },
+
+      events: events2,
+
+
+
+      eventClick: function(info) {
+        console.log(info.event)
+
+        var newDate = new Date(info.event.start);
+            if (newDate > Date.now()) {
+              scope.viewSeat(info.event.groupId,'<%=user._key%>')
+
+            }else return true;
+        
+
+      },
+
+      
+    });
+
+    calendar.render();
+  });
+
+</script>
+<link href="/js/calendar-lib/main.css" rel='stylesheet' />
+
+<%- include('../partials/modal/book_seat.ejs') %>
+<%- include('../partials/modal/pay_seats.ejs') %>
+
+
+<div class=" startUpModal" id="startUpModal">
+    <div onclick="modalClose()" class="duple-overlay position-fixed" style="z-index: 888;"></div>
+    <div class="duple-content slot-content" style="z-index: 999;">
+       <div class="modalCloseBtn" onclick="modalClose()">
+            <span class="icon close black clickable" ></span>
+        </div>
+       <div class="modal-content-main text-left">
+          <div class="modal-content ">
+             <div class="ModalScreen">
+                <div class="modal-title text-center"><span>Membership</span></div>
+                <div class="modal-inner-content dp-scroll">
+                    <% var check = 0; %>
+                    <% for(var i=0; i<member_subscriptions.length; i++) { %>
+                        <% if(member.subscription_id===member_subscriptions[i]._key ){%>
+                            <div class="membership-card currentMember">
+                            <%}else {%>
+                                <div class="membership-card">
+                            <%}%>
+                            <div class="d-flex align-items-center justfy-content-between">
+                                <div class="text dp-text-subTitle2 text-left "><span class="title-caption"><%-member_subscriptions[i].name%></span><span class="undefined"></span></div>
+                                <div class="membership-card-price bg-primary text-white px-1 radius-5"> <span> &#163;</span> <%-member_subscriptions[i].unit_amount/100%></div>
+                            </div>
+                            <p class="mt-1">
+                                <%=member_subscriptions[i].description%>
+                            </p>
+                            <div class="text-left text-white flex " style="justify-content: space-between;">
+
+                                <% if(member.subscription_id===member_subscriptions[i]._key){  %>
+
+                                    <% check = 1; %>
+        
+                                    <span> Your current plan <div></div></span> <span class="seat-left bg-primary"> Seats Left:  <%- remainingSeat%></span>
+                                <% } else if(check == 1 || onemonth>=1 || member.subscription_id===undefined || member.subscription_id==="undefined" ) { %>
+        
+                                <a class="bg-secondary text-white dp-btn" href="/member/membership_purchase/<%=member_subscriptions[i]._key%>">Buy Now</a>
+        
+                                <% } %>
+
+                            </div>
+                   </div>
+                   <% } %>
+                    <!--div class="membership-card">
+                        <div class="d-flex align-items-center justfy-content-between">
+                            <div class="text dp-text-subTitle2 text-left "><span class="title-caption">L2 MemberShip</span><span class="undefined"></span></div>
+                            <div class="membership-card-price bg-primary text-white px-1 radius-5"> <span> &#163;</span> 278.50</div>
+                        </div>
+                        <p class="mt-1">
+                            Lorem Ipsum has been the industry's standard dummy text. Lorem Ipsum has been the industry' Lorem Ipsum has been the industry's standard dummy text
+                        </p>
+                        <div class="text-left mt-2"><a class="bg-secondary text-white dp-btn" href="/">Buy Now</a></div>
+                        <div class="divider mb-2 mt-1"></div>
+                   </div-->
+                   
+                   
+                </div>
+             </div>
+          </div>
+       </div>
+    </div>
+ </div>
+<script>
+   
+
+let modal = document.getElementById("startUpModal")
+    window.onload = (event) => {
+
+    <% if(popup){ %>
+        modal.style.display="block"
+        <% } %>
+        // setModalShowHide("block")
+
+
+    };
+
+    function modalClose () {
+        modal.style.display="none"
+
+    }
+</script>

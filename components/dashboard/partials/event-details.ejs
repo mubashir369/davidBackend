@@ -1,0 +1,123 @@
+<div class="colspan-6 bg-light-grey h-100 relative p-2 pb-s-5 mb-s-5 appointment-data">
+
+    <div class="appointment-client relative layer-3">
+        <p class="mb-2 clickable" app-click="view.datepicker_simple = 'select'"><span app-bind="selected_date.date_string_long"></span> <span class="icon right arrowdown black sm"></span></p>
+
+        <div class="layer-5 w-100 relative">
+            <%- include('../../dashboard/partials/date-picker-simple.ejs',{type:'select'}) %>
+        </div>
+
+        <div class="grid col-12 gap-1 mb-2 p-1 bg-white radius-10  cursor-pointer" app-show="view.selected_customer._key">
+            <div class="colspan-2 flex flex-middle pr-m-1" style="min-width: 5rem;">
+                <img src="/images/avatars/Profile_Placeholder.svg" app-src="view.selected_customer.avatar" class="avatar">
+            </div>
+            <div class="colspan-9 pl-1" app-click="goto('/dashboard/clients/',view.selected_customer._key)">
+                <div class="capitalise text-weight-600"><span app-bind="view.selected_customer.name.first"></span> <span app-bind="view.selected_customer.name.last"></span></div>
+                <div class=""><span app-show="view.selected_customer.tel" app-bind="view.selected_customer.tel"></span></div>
+                <div class=""><span app-show="view.selected_customer.email" app-bind="view.selected_customer.email"></span></div>
+            </div>
+            <div class="flex flex-middle-right">
+                <button class="dp-btn bg-white" app-click="newAppointment('remove_customer')"><span class="icon close secondary sm"></span></button>
+            </div>
+        </div>
+    </div>
+
+    <% if (typeof type != 'undefined' && type == 'staff_appointment'){ %>
+
+        <div class="appointment-wrap relative layer-2">
+            <div class="grid col-12 gap-1 mb-1 bg-white rounded p-1" app-for="appointment in appointments">
+
+                <div app-bind="parseISODate(appointment.date,'HH:mm')" class="text-weight-500 colspan-2 text-center">
+                </div>
+
+                <div class="colspan-9">
+                    <span class="text-weight-500" app-bind="appointment.description"></span><br>
+                </div>
+
+                <div class="clickable flex flex-middle-right">
+                    <button class="dp-btn bg-primary" app-click="newAppointment('remove',{{index}})"><span class="icon close secondary sm"></span></button>
+                </div>
+
+            </div>
+        </div>
+
+    <%  } else if (typeof type != 'undefined' && type == 'memo'){ %>
+
+        <div class="appointment-wrap relative layer-2">
+            <div class="grid col-12 gap-1 mb-1 bg-white rounded p-1" app-for="appointment in appointments">
+
+                <div app-bind="parseISODate(appointment.date,'HH:mm')" class="text-weight-500 colspan-2 text-center">
+                </div>
+
+                <div class="colspan-9">
+                    <span class="text-weight-500" app-bind="appointment.description"></span><br>
+                </div>
+
+                <div class="clickable flex flex-middle-right">
+                    <button class="dp-btn bg-primary" app-click="newAppointment('remove',{{index}})"><span class="icon close secondary sm"></span></button>
+                </div>
+
+            </div>
+        </div>
+
+    <% } else { %>
+
+        <div class="appointment-wrap relative layer-2">
+            <div class="grid col-12 gap-1 mb-1 bg-white rounded p-1" app-for="appointment_grp in visual_appointments">
+
+                <div app-bind="parseISODate(appointment_grp.date,'HH:mm')" class="text-weight-500 colspan-2">
+                </div>
+
+                <div class="colspan-9">
+                    <span>
+                        <span class="text-weight-600" app-bind="appointment_grp.name"></span> -
+                        £<span app-bind="appointment_grp.price"></span>
+                    </span>
+                     <div app-hide="appointment_grp.service_items">
+                         with <span class="" app-bind="appointment_grp.staff_name"></span><br>
+                         <span class="" app-bind="appointment_grp.duration"></span>mins
+                     </div>
+                </div>
+
+                <div class="clickable text-right">
+
+                    <button class="dp-btn bg-primary" app-click="newAppointment('remove',{{index}})">&times;</button>
+                </div>
+
+                <div class="colspan-12 border-top" app-show="appointment_grp.service_items">
+
+                    <div class="grid col-12 gap-1 mt-1" app-for-sub="item in appointment_grp.service_items">
+                        <div app-bind="parseISODate(item.date,'HH:mm')" class="text-weight-500 colspan-2">
+                        </div>
+
+                        <div class="colspan-9">
+                            <span class="text-weight-600" app-bind="item.name"></span><br>
+                            with <span class="" app-bind="item.staff_name"></span> for
+                            <span class="" app-bind="item.duration"></span>mins
+
+                        </div>
+
+                        <div class="clickable">
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    <% } %>
+
+</div>
+
+</div>
+
+<section class="footer">
+<% if (typeof appointment_key != 'undefined'){ %>
+    <button class="dp-btn bg-secondary" app-click="newAppointment('save','<%- appointment_key %>')">Update Booking</button>
+<% } else { %>
+    <button class="dp-btn bg-primary" app-click="storeNewAppointment('cancel')">Cancel<span class="icon close secondary right"></span></button>
+    <button class="dp-btn bg-secondary" app-show="view.ok_to_book" app-click="newAppointment('save')">Add to Calendar <span class="icon arrowright white right"></span></button>
+<% } %>
+</section>

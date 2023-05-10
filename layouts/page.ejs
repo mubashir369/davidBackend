@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <%- include('partials/html_head.ejs') %>
+
+</head>
+
+    <body class="bg-white">
+
+        <%- include partials/top_nav.ejs %>
+
+        <section class="main">
+
+            <%- body -%>
+
+        </section>
+
+        <%- include partials/footer.ejs %>
+        <script src="/js/page-controller.js?v=1.0.0"></script>
+        <script src="/js/dashboard-functions.js?v=1.0.3"></script>
+
+        <%- include('partials/scripts.ejs') %>
+
+    </body>
+</html>

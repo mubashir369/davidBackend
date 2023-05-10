@@ -1,0 +1,292 @@
+.modal {
+
+    background-color: rgba(0,0,0,0.5);
+    z-index:500;
+    overflow: hidden;
+
+    &-header {
+
+        height: 3.75rem;
+        flex: 0 0 3.75rem;
+        // margin: -1.1rem -1.3rem 0 -1.2rem;
+        padding: 1.1rem 1.2rem;
+        border-top-right-radius: 0.313rem;
+        border-top-left-radius: 0.313rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        background-color: white;
+        color: white;
+        border-bottom: 1px solid #e8e8e8;
+
+        &.salon_confirmation {
+            background-color: $salon_confirmation;
+            color: $brand-black;
+
+            .btn {
+                color: $brand-black
+            }
+        }
+
+        &.unconfirmed {
+            background-color: $unconfirmed;
+            color: $brand-black;
+            .btn {
+                color: $brand-black
+            }
+        }
+
+        &.confirmed {
+            background-color: $confirmed;
+        }
+
+        &.checked_in {
+            background-color: $checked_in;
+        }
+
+        &.paid {
+            background-color: $paid;
+        }
+
+        &.cancelled {
+            background-color: $cancelled;
+        }
+
+        &.reschedule {
+            background-color: $cancelled;
+        }
+
+        &.no_show {
+            background-color: $cancelled;
+        }
+
+        .title {
+            grid-column-end: span 3;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+
+        }
+
+        .close {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            color: white;
+
+            .btn {
+                color: white;
+            }
+
+        }
+
+        &.unconfirmed, &.salon_confirmation {
+            .close {
+                .btn {
+                    color: $brand-black
+                }
+                .icon {
+                    background-color: $brand-black !important;
+                }
+            }
+        }
+
+    }
+
+    &-content {
+        flex: 1;
+        border-bottom-right-radius: 0.313rem;
+        border-bottom-left-radius: 0.313rem;
+        overflow-y: scroll;
+    }
+
+    &-appointment-actions {
+
+        flex: 0 0 5rem;
+        display: flex;
+        flex-wrap: wrap;
+        overflow: hidden;
+        width: 100%;
+        padding: 1.2rem 1.2rem 0 1.2rem;
+        border-top: 1px solid #e8e8e8;
+        background-color: white;
+
+        a {
+            flex: none;
+            margin-right: 0.5rem;
+            margin-bottom: 1.2rem;
+
+
+        }
+
+        div.right {
+            margin-left: auto;
+        }
+
+    }
+
+    &.expanded {
+
+        align-items: flex-end;
+
+        .modal-body {
+            max-width: 100vw !important;
+            width: 100vw;
+            height: calc(100vh - 3.750em);
+        }
+    }
+
+
+    &-body {
+
+        background-color: $light_grey;
+        padding: 1rem 1.2rem 1.2rem 1.2rem;
+        display: block;
+        flex-direction: column;
+
+        min-width: 40vw;
+        overflow-y: auto;
+        border-radius: 0.313rem;
+        -webkit-box-shadow: 0px 20px 15px 0px rgba(0,0,0,0.26);
+        -moz-box-shadow: 0px 20px 15px 0px rgba(0,0,0,0.26);
+        box-shadow: 0px 20px 15px 0px rgba(0,0,0,0.26);
+
+        .close-icon {
+            color: $brand-primary;
+            font-size: 1.5rem;
+            margin-top: -0.3rem;
+        }
+
+        @media small {
+            border-radius: 1rem;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            padding: 2rem;
+            width: 100vw !important;
+            max-width: 100vw;
+            max-height:95vh;
+            min-height: 45vh;
+            overflow-y: auto;
+        }
+
+        .avatar {
+            border-radius: 50%;
+            height: 4.3rem;
+            width: 4.3rem;
+        }
+
+        for $status in salon_confirmation confirmed unconfirmed checked_in paid cancelled reschedule no_show {
+
+            &[data-status=\"{$status}\"] {
+
+                .modal-header {
+                    if $status == 'salon_confirmation' {
+                        background-color: $salon_confirmation;
+                        color: $brand-black;
+                        .btn {
+                            color: $brand-black;
+                            span.icon {
+                                background-color: $brand-black;
+                            }
+                        }
+                    } else if $status == 'confirmed' {
+                        background-color: $confirmed;
+                    } else if $status == 'unconfirmed' {
+                        background-color: $unconfirmed;
+                        color: $brand-black;
+
+                        .btn {
+                            color: $brand-black;
+                            span.icon {
+                                background-color: $brand-black;
+                            }
+                        }
+                    } else if $status == 'checked_in' {
+                        background-color: $checked_in;
+                    } else if $status == 'paid' {
+                        background-color: $paid;
+                        color: $brand-black;
+                        .btn {
+                            color: $brand-black;
+                            span.icon {
+                                background-color: $brand-black;
+                            }
+                        }
+
+                    } else if $status == 'cancelled' {
+                        background-color: $cancelled;
+                    } else if $status == 'reschedule' {
+                        background-color: $cancelled;
+                    } else if $status == 'no_show' {
+                        background-color: $cancelled;
+                    }
+                }
+
+                if $status == 'paid' {
+                    .modal-appointment-actions {
+                        display: none;
+                    }
+                    .hide-if-paid {
+                        display: none;
+                    }
+                }
+
+
+                .status {
+
+                    > div {
+                        display: none;
+                        text-align: right;
+                    }
+
+                    for $status2 in salon_confirmation confirmed unconfirmed checked_in paid cancelled reschedule no_show {
+
+                        div.{$status2} {
+                            if $status2 == $status {
+                                display: block;
+                            } else {
+                                display: none;
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+        }
+
+    }
+
+    @media small {
+        align-items: flex-end !important;
+    }
+
+}
+
+#appointment-view {
+
+    @media small {
+
+        .modal-content {
+
+            display: block !important;
+
+            .grid.col-5 {
+                display: block !important;
+                max-height: 999vh !important;
+                height: auto !important;
+            }
+
+        }
+
+        .modal-appointment-actions {
+            display: block !important;
+
+            .btn {
+                width: 100%
+            }
+        }
+    }
+
+}

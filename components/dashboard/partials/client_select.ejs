@@ -1,0 +1,49 @@
+<div class="grid col-2 gap-1 mb-1">
+    <h4>Select a Client</h4>
+    <div class="text-right">
+        <a class="btn bg-secondary" app-click="newClient()">
+            New Client <span class="icon add right white"></span>
+        </a>
+    </div>
+</div>
+
+
+
+<div class="my-2 flex flex-middle-left search-dropdown-wrap">
+    <span class="icon client black right"></span>
+    <input type="text" class="thick rounded border-0" placeholder="Search clients by name, number or email" onkeyup="scope.searchApi('customers',this.value)">
+</div>
+
+<div class="table mb-5" app-init="get('customers','today')">
+    <div class="row" app-for="client in customers">
+
+        <div class="cell middle clickable mobile-cell" style="width: 4em" app-click="newAppointment('add_customer',client)">
+            <img app-src="client.avatar" src="/images/avatars/Profile_Placeholder.svg" class="icon avatar lg">
+        </div>
+        <div class="cell middle clickable mobile-cell" app-click="newAppointment('add_customer',client)">
+            <div class="text-bold capitalise" app-bind="parseName(client.name)"></div>
+            <div class="text-33-red" app-bind="parseConfidence(client)"></div>
+        </div>
+        <div class="cell middle action-icons" app-attr="{id:'cell-'+client._key}" style="width: 5em">
+            <div class="context-link btn border" app-click="toggleContext(client._key)">
+                <span class="icon arrowdown secondary black"></span>
+            </div>
+            <div class="context dropdown text-left" style="display: none" app-attr="{id:'context-'+client._key}">
+                <div class="link" app-click="newAppointment('add_customer',client)">
+                    <span class="icon add left black"></span>
+                    Select
+                </div>
+                <div class="link" app-click="edit('customers',client)">
+                    <span class="icon edit left black"></span>
+                    Edit
+                </div>
+                <div class="link" app-click="goto('/dashboard/clients/',client._key)">
+                    <span class="icon client left black"></span>
+                    Client Card
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>

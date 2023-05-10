@@ -1,0 +1,280 @@
+
+<div class="modal" app-show="view.modal == 'show_edit'" anim="{'enter':'fade-in'}">
+
+    <div class="modal-body p-0 w-80 w-m-90" anim="{'enter':'move-up','duration':'0.2'}">
+
+        <div class="modal-header text-primary">
+            <div class="title">
+                <p class="m-0" app-bind="new.name" app-show="new.name"></p>
+                <p class="m-0" app-hide="new.name">Add New Table</p>
+            </div>
+            <div class="close">
+                <!-- <span class="icon close white clickable" onclick="modalCloseAll()"></span> -->
+
+                <div class="btn-wrap">
+                    <button class="btn btn-left border mr-1 text-primary" app-click="view.tab = 'one'" app-class="{'active':view.tab == 'one'}">Information<span class="icon product black right"></span></button>
+
+                    <!--button class="btn btn-mid border text-primary" app-click="view.tab = 'three'" app-class="{'active':view.tab == 'two'}">Filters<span class="icon stylist black right"></span></button-->
+                    <!-- <button class="btn btn-right border text-primary" app-click="view.tab = 'two'" app-class="{'active':view.tab == 'two'}">Stock & Pricing<span class="icon checkout black right"></span></button> -->
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-content p-2" >
+
+            <div class="grid pb-1 gap-2 col-5" app-show="view.tab == 'one'">
+
+                <div app-show="new.qrcode" class="colspan-1 qrImage">
+                     <label> </label>
+                    <label for="new_image" class="clickable">
+                        <img src="/images/products/upload.svg" app-src="new.qrcode" class="object-fit uploadMed">
+                    </label>
+                    <!-- <input type="file" app-model="new.image" id="new_image" class="app-hidden">  -->
+
+
+                    <!-- <label>Product Image 2</label>
+                    <label for="new_image2" class="clickable">
+                        <img src="/images/products/upload.svg" app-src="new.image2" class="object-fit uploadMed">
+                    </label>
+                    <input type="file" app-model="new.image2" id="new_image2" class="app-hidden">
+
+
+                    <label>Product Image 3</label>
+                    <label for="new_image3" class="clickable">
+                        <img src="/images/products/upload.svg" app-src="new.image3" class="object-fit uploadMed">
+                    </label>
+                    <input type="file" app-model="new.image3" id="new_image3" class="app-hidden">
+
+
+                    <label>Product Image 4</label>
+                    <label for="new_image4" class="clickable">
+                        <img src="/images/products/upload.svg" app-src="new.image4" class="object-fit uploadMed">
+                    </label>
+                    <input type="file" app-model="new.image4" id="new_image4" class="app-hidden">
+
+
+                    <label>Product Image 5</label>
+                    <label for="new_image5" class="clickable">
+                        <img src="/images/products/upload.svg" app-src="new.image5" class="object-fit uploadMed">
+                    </label>
+                    <input type="file" app-model="new.image5" id="new_image5" class="app-hidden"> -->
+
+
+
+                </div>
+                <div class="colspan-2">
+                    <div class="mb-1">
+                        <label class="block text-small">Table Number</label>
+                        <input type="number" app-model="new.tableNumber" placeholder="Table Number" class="rounded" onkeyup="this.value=this.value.replace(/[^\d]/g,'')">
+                    </div>
+
+                    <!--div class="mb-1">
+                        <label class="block text-small">Brand</label>
+                        <input type="text" app-model="new.brand" placeholder="Description" class="rounded">
+                    </div-->
+
+                    <!-- <div class="mb-1">
+                        <label class="block text-small">Status</label>
+                        <input type="text" app-model="new.name" placeholder="Product Name" class="rounded">
+                    </div> -->
+
+                    <!-- <div class="mb-1">
+                        <label class="block text-small">Keywords</label>
+                        <input type="text" app-model="new.keywords" placeholder="Product Keywords" class="rounded">
+                    </div> -->
+
+                    <!-- <div class="mb-1"> -->
+                        
+                    <!-- <label class="">Category</label> -->
+                    <!-- <select app-model="new.type" onchange="changed()" id="categoryID">
+                        <% category.forEach((item,i)=>{ %>
+                            <option value="<%- item._key%>"><%- item.name%></option>
+                            <% }) %>
+                        
+                    </select> -->
+
+                <!-- </div> -->
+                <!-- <div class="mb-1" >
+                    <label class="block text-small">Sub Category</label>
+                    <select app-model="new.category" id="subcatId" class="rounded">
+                        <option value=""  >Please select...</option>
+                        
+                    </select>
+                </div> -->
+
+                <div class="mb-1" app-hide="new.typeoff">
+
+                    <label class="">Status</label>
+                    <select app-model="new.active">
+                        <option value="true">Active</option>
+                        <option value="false">Not-Active</option>
+                    </select>
+
+                </div>
+
+
+                <!-- <div class="mb-1">
+
+                    <label class="">Delivery or Pickup</label>
+                    <select app-model="new.delivery" onchange="">
+                        <option value="delivery">Delivery</option>
+                        <option value="pickup">Pickup</option>
+                    </select>
+
+                </div> -->
+
+
+
+                    <!-- <div class="mb-1">
+                        <label class="block text-small">Rating</label>
+                        <input type="number" max="5" min="1" app-model="new.rating" placeholder="Enter 1 to 5 number" class="rounded">
+                    </div> -->
+
+
+                </div>
+                <!-- <div class="colspan-2">
+
+                    <label class="">Veg or non veg</label>
+                    <select app-model="new.veg">
+                        <option value="true">Veg</option>
+                        <option value="false">Non-veg</option>
+                    </select>
+
+                    <label class="">Delivery or Pickup</label>
+                    <select app-model="new.delivery" onchange="">
+                        <option value="delivery">Delivery</option>
+                        <option value="pickup">Pickup</option>
+                    </select>
+
+                    <label class="block text-small">Rating</label>
+                        <input type="number" max="5" min="1" app-model="new.rating" placeholder="Enter 1 to 5 number" class="rounded">
+
+                        <div class="flex mt-1" >
+                            
+                            <input type="checkbox"class="" app-click="toggleIsAdult()" app-checked="new.isAdult" id="isAdult">
+                            <label class="block text-small" for="is-Adult" style="line-height: normal;">Is For Adult Only (Select for yes) ?</label>
+                        
+                        </div>
+                    
+                </div> -->
+
+            </div>
+                
+
+
+            <div class="grid pb-1 gap-6 gap-m-3 col-2" app-show="view.tab == 'two'">
+
+                    <div class="grid col-2 gap-1">
+                        <div class="mb-1">
+                            <label class="block text-small">RRP</label>
+                            <input type="text" id="act_price" app-model="new.price" class="text-right rounded">
+                        </div>
+                        <div class="mb-1">
+                            <label class="block text-small">Cost</label>
+                            <input type="text" app-model="new.cost" class="text-right rounded">
+                        </div>
+                        <div class="mb-1">
+                            <label class="block text-small" for="sell-online">Sell Online</label>
+                            <input type="checkbox" app-click="toggleSellOnline()" app-checked="new.sell_online" id="sell-online">
+                        </div>
+                        
+
+                        <div class="mb-1">                               
+                        </div> 
+
+
+                        <div class="mb-1">
+                            <label class="block text-small">Discount in (1-100)%</label>
+                            <input type="text" app-model="new.discount" id="mydis" onkeyup="showMe(this)" class="text-right rounded">
+                        </div>
+                        <div class="mb-1">
+                            <label class="block text-small">Discounted Price</label>
+                            <input type="text" id="after_dis" app-model="new.discounted" class="text-right rounded">
+                            
+                        </div>
+                        <div class="mb-1">
+                           
+                        </div>
+
+
+                    </div>
+
+
+
+
+                    <div class="">
+
+                        <div class="grid col-3 gap-1">
+                            <div class="mb-1">
+                                <label class="block text-small">Current Stock</label>
+                                <input type="text" app-model="new.stock" class="text-right rounded">
+                            </div>
+                            <div class="mb-1">
+                                <label class="block text-small">Order Threshold</label>
+                                <input type="text" app-model="new.re_order_threshold" class="text-right rounded">
+                            </div>
+                            <div class="mb-1">
+                                <label class="block text-small">Order Amount</label>
+                                <input type="text" app-model="new.re_order" class="text-right rounded">
+                            </div>
+                            <!--div class="mb-1">
+                                <label class="block text-small">On Order</label>
+                                <input type="checkbox" app-click="orderProduct(new)" app-checked="new.on_order">
+                            </div-->
+                        </div>
+                    </div>
+
+                    <!--div class="">
+                        <div class="grid col-3 gap-1">
+                            <div class="mb-1 colspan-2">
+                                <label class="block text-small">Size</label>
+                                <input type="text" app-model="new.size" placeholder="Set the size and select units" class="text-right rounded">
+                            </div>
+                            <div class="mb-1">
+                                <label class="block text-small">Units</label>
+                                <select app-model="new.size_units" class="rounded">
+                                    <option>ml</option>
+                                    <option>l</option>
+                                    <option>g</option>
+                                    <option>kg</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid col-3 gap-1">
+                            <div class="mb-1">
+                                <label class="block text-small">Width (mm)</label>
+                                <input type="text" app-model="new.delivery_width" class="text-right rounded">
+                            </div>
+                            <div class="mb-1">
+                                <label class="block text-small">Height (mm)</label>
+                                <input type="text" app-model="new.delivery_height" class="text-right rounded">
+                            </div>
+                            <div class="mb-1">
+                                <label class="block text-small">Length (mm)</label>
+                                <input type="text" app-model="new.delivery_length" class="text-right rounded">
+                            </div>
+                        </div>
+                    </div>
+
+                </div-->
+
+
+        </div>
+        </div>
+
+        <div class="modal-appointment-actions flex flex-middle-right">
+            <a class="btn bg-secondary" app-click="saveTable()">
+                <span app-show="new._key">Save Table</span>
+                <span app-hide="new._key">Add Table</span>
+                <span class="icon add white right"></span>
+            </a>
+        </div>
+
+    </div>
+
+</div>
+<script>
+
+
+</script>

@@ -1,0 +1,212 @@
+
+<% layout('dashboard.ejs') -%>
+
+<%- include ../../dashboard/partials/header.ejs %>
+
+
+<script>
+    var length1 = Number('<%- data1.length>0 && data1.services?data1.services.length:0 %>');
+    var length2 = Number('<%- data2.length>0 && data2.data?data2.data.length:0 %>');
+   
+function addNew (){
+
+            var new_input =`<div class="text-bold colspan-4 flex" id="servicesdv${length1}">`
+                new_input+=  `<input type='text' id='services${length1}' placeholder="Service Name" class=""><span onclick="remove('${length1}')"  class="icon close black right"></span></div>`;
+            document.getElementById("servicesDIv").innerHTML+=new_input;
+            length1+=1;
+        }
+function remove (ith){
+    ith=Number(ith)
+            document.getElementById(`servicesdv${ith}`).remove()
+            length1-=1;
+        }
+
+function deleteRow(num){
+    num=Number(num)
+    document.getElementById(`timelineRow${num}`).remove()
+    length2-=1;
+
+}
+
+function addNewRow(){
+    var new_inp=`<div  class="grid gap-1 col-7 mb-1 " id="timelineRow${length2}">
+                <div class="text-bold colspan-1">
+                    <label for="file${length2}" class="clickable">   
+                        <img id='img${length2}' class="object-fit" alt='Select Image'>
+                    </label>
+                    <input type="file"  id="file${length2}" >
+                </div>
+                <div class="text-bold colspan-2">
+                    <input type="text" id="title_${length2}" placeholder="title" class="">
+                </div>
+
+                <div class="text-bold colspan-3">
+                    <textarea   placeholder="Description" id="description_${length2}" class="text-left"></textarea>
+                </div>
+
+                <div class="text-right flex flex-middle-right">
+                    <a class="" id="close${length2}" onclick="deleteRow('${length2}')" ><span class="icon close black right"></span></a>
+                </div>
+
+
+                <div class="divider mb-1 colspan-7"></div>
+            </div>`
+            document.getElementById("timelineDiv").innerHTML+=new_inp;
+            length2+=1;
+}
+
+</script>
+
+<div class="page px-2 px-s-0 bg-white common-form common-form-border aboutPageAdmin">
+    <div class="mt-50 p-0">
+        <h4 class="text-weight-700 mb-1">Who We Are</h4>
+        <div class="divider mb-2 p-0"></div>
+    </div>
+    <div  class="grid col-6 gap-3 bg-white box-shadow p-2 radius-10 border">
+      
+        <div class="colspan-3">
+            <div class="">
+                <label>Heading</label>
+                <input type="text" id="heading"  value="<%- data1.heading %>" class="rounded mb-1"  placeholder="Heading">
+                <label>Description 1</label>
+                <textarea type="text" id="description1"  class="rounded mb-1"  placeholder="Description1"><%- data1.description1 %></textarea>
+                <label>Description 2</label>
+                <textarea type="text" id="description2"  class="rounded mb-1"  placeholder="Description2"><%- data1.description2 %></textarea>
+               
+            </div>
+        </div>
+
+        <div class="list-item-wrap colspan-3">
+            <label class="text-weight-700">Services </label> 
+            <div class="divider mb-2 mt-1"></div>
+            <div class="list-item-wrap aboutServicePoints">
+                <div  class="grid gap-1 col-7 mb-1 " id="servicesDIv">
+                    <% if(data1.length>0 && data1.services.length>0){ %>
+                    <% for(var i=0;i < data1.services.length;i++){ %>
+                    <div class="text-bold colspan-4 flex" id="servicesdv<%- i%>">
+                       
+                            <input type="text" id="services<%- i%>" value="<%- data1.services[i]%>" placeholder="Service Name" class=""><span onclick="remove('<%- i%>')" class="icon close black right"></span>
+                            
+                        <!-- <a class="" ><span class="icon close black right"></span></a> -->
+                    </div>
+                    <%}%>
+                    <%}%>
+                  
+                </div>
+            </div>
+            <div class="text-left my-1">
+                <button class="dp-btn bg-primary" onclick="addNew()" >Add Service<span class="icon add white right"></span></button>
+            </div>
+        </div>
+
+        <div class="colspan-6 mt-1 colspan-6 text-right">
+            <div class="divider mb-2 p-0"></div>    
+            <button type="submit" app-click="click11()" class="dp-btn bg-secondary">Submit </button>
+        </div>
+       
+        
+    </div>
+
+    <!-- ----------- Timeline -->
+    <div class="mt-50 p-0">
+        <h4 class="text-weight-700 mb-1">Timeline</h4>
+        <div class="divider mb-2 p-0"></div>
+    </div>
+    <div class=" p-2 bg-white border  box-shadow">
+        <div class="list-item-wrap">
+
+            <div  class="grid gap-1 col-7 mb-1 ">
+                <div class="text-bold colspan-1">
+                    <label>Icon (70 x 70)</label>   
+                </div>
+                <div class="text-bold colspan-2">
+                    <label>Title</label>   
+                </div>
+
+                <div class="text-bold colspan-3">
+                    <label>Description</label>   
+                </div>
+
+
+
+                <div class="divider mb-1 colspan-7"></div>
+            </div>
+            <div id="timelineDiv">
+            
+            <% for(var i=0;i< data2.data.length; i++){%>
+
+               
+            <div  class="grid gap-1 col-7 mb-1 " id="timelineRow<%- i%>">
+                <div class="text-bold colspan-1">
+                    <label for="file<%- i%>" class="clickable">   
+                        <img id="img<%- i%>" src='<%- data2.data[i].icon %>'  class="object-fit">
+                    </label>
+                    <input type="file" value="<%- data2.data[0].icon %>" id="file<%- i%>"  class="">
+                </div>
+                <div class="text-bold colspan-2">
+                    <input type="text" id="title_<%- i%>" value="<%- data2.data[0].title%>" placeholder="title" class="">
+                </div>
+
+                <div class="text-bold colspan-3">
+                    <textarea   placeholder="Description" id="description_<%- i%>" class="text-left"><%- data2.data[i].description%></textarea>
+                </div>
+
+                <div class="text-right flex flex-middle-right">
+                    <a class="" id="close<%- i%>" onclick="deleteRow('<%- i%>')" ><span class="icon close black right"></span></a>
+                </div>
+
+
+                <div class="divider mb-1 colspan-7"></div>
+            </div>
+            <%}%>
+        </div>
+
+        </div>
+        <div class="text-left my-1 flex">
+            <button class="dp-btn bg-primary" onclick="addNewRow()">Add More<span class="icon add white right"></span></button>
+           
+                <div class="divider ml-2 p-0"></div>    
+                <button type="submit" app-click="submitTimeline()" class="dp-btn bg-secondary">Submit </button>
+            
+        </div>
+    </div>
+    
+
+     <!-- ----------- Timeline -->
+     <div class="mt-50 p-0">
+         <h4 class="text-weight-700 mb-1">Today's    Tagline</h4>
+         <div class="divider mb-2 p-0"></div>
+        </div>
+        
+        <div class="bg-white border  box-shadow">
+            <div class="list-item-wrap">
+
+                <div  class="grid gap-1 col-7 ">
+                    <div class="text-bold colspan-3">
+                    <label>Title</label>   
+                        <input type="text" placeholder="title" class="">
+                        <div class="text-bold mt-1">
+
+                        <label>Description</label>   
+                        <textarea  placeholder="Description" class="text-left"></textarea>
+                    </div>
+                    </div>
+             
+
+                    <div class="divider mb-1 colspan-7"></div>
+                </div>
+
+            </div>
+            <div class="text-left my-1">
+                <button class="dp-btn bg-secondary" >Submit</button>
+            </div>
+        </div>
+
+        <div class="mb-50"></div>
+
+
+ 
+
+
+    
+</div>

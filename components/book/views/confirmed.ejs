@@ -1,0 +1,36 @@
+<% layout('customer-page.ejs') -%>
+
+<div class="vh-80 flex flex-middle">
+    <div class="vw-30 vw-s-100 px-s-2 text-center">
+
+        <% if (typeof appt != 'undefined' && appt.status && appt.status == 'confirmed'){ %>
+
+            <h3 class="mb-2"><span class="icon secondary confirm left"></span>Appointment Confirmed</h3>
+            <p>Thanks for confirming your appointment. We'll look forward to seeing you on the day.</p>
+            <!-- <div class="mt-1 bg-white p-2 rounded">
+                <p class="mb-2">You can now add products to your appointment! Select a few recommended products and we'll have them ready for you to collect, once your salon experience is over.</p>
+                <a class="btn bg-secondary" href="/shop">Add Products to your appointment<span class="icon white checkout right"></span></a>
+            </div> -->
+
+        <% } else { %>
+
+            <h3 class="mb-2"><span class="icon secondary noshow left"></span>The appointment confirmation you clicked is out of date.</h3>
+            <p>It could be that your appointment has already been confirmed, or we may need to send you a new confirmation link.</p>
+            <p>Please contact us on <a class="text-primary text-weight-600" href="tel:<%- view.site.tel %>"><%- view.site.tel %></a>.</p>
+
+
+        <% } %>
+
+        <% if (typeof user != 'undefined' && user.email && user.tel && user.address){ %>
+            <div class="text-center mt-2">
+                <a class="btn border" href="/account">Your Account<span class="icon black client right"></span></a>
+            </div>
+        <% } else { %>
+            <div class="text-center mt-2 bg-white p-2 rounded">
+                <h4 class="mb-2 text-weight-600">Whilst you're here...</h4><div>We've noticed that your account is missing some information. If you have a minute, please click the link below to complete your account details.</div>
+                <a class="btn bg-secondary mt-2 thick" href="/account/details">Update your details<span class="icon white arrowright right"></span></a>
+            </div>
+        <% } %>
+
+    </div>
+</div>

@@ -1,0 +1,170 @@
+$menu-contracted = 3.6rem
+$menu-expanded = 10.625rem
+
+section.dashboard {
+    font-family: 'Lato', sans-serif;
+    letter-spacing: normal;
+    height:100vh;
+    width:100vw;
+    overflow: hidden;
+    font-size: 0;
+}
+
+section.dashboard > .view {
+    position: relative;
+    background-color: #fff;
+    display: inline-block;
+    vertical-align: top;
+    height: 100vh;
+    font-size: 1rem;
+    transition: 0.2s width ease;
+    /* overflow-x: scroll;
+    overflow-y: scroll; */
+
+    @media small {
+        width:100vw;
+        height: 100vh;
+        overflow: scroll;
+    }
+}
+
+section.dashboard .view .page {
+    position: relative;
+    height: calc(100vh - 3.750em);
+    overflow-x: hidden;
+
+    @media small {
+        width:100vw;
+        height: auto;
+    }
+
+    > div {
+        padding: 1.5rem;
+    }
+}
+
+section.dashboard > .menu {
+    width: $menu-expanded;
+
+    @media small {
+        width: 100vw;
+    }
+
+    img {
+        &.logo {
+            display: block;
+        }
+
+        &.logo-small {
+            display: none;
+        }
+    }
+
+    a {
+        span {
+            display: inline;
+        }
+        .sidemenucollapse {
+            display: block;
+            height: 100%;
+        }
+        .sidemenuexpand {
+            display: none;
+        }
+    }
+
+    .sub-items {
+        display: block;
+    }
+
+    @media small {
+        width: 100vw;
+
+        a {
+            span {
+                display: block;
+            }
+        }
+
+        .sub-items {
+            display: block;
+        }
+    }
+
+}
+
+section.dashboard.mini-menu > .menu {
+    width: $menu-contracted;
+
+    img {
+        &.logo {
+            display: none;
+        }
+
+        &.logo-small {
+            display: block;
+        }
+    }
+
+    a {
+        span.text {
+            display: none;
+        }
+
+        .sidemenucollapse {
+            display: none;
+        }
+        .sidemenuexpand {
+            display: block;
+            height: 100%;
+        }
+    }
+
+    .sub-items {
+        display: none;
+    }
+
+    @media small {
+        width: 100vw;
+
+        a {
+            span {
+                display: block;
+            }
+        }
+
+        .sub-items {
+            display: block;
+        }
+    }
+
+}
+
+section.dashboard > .view {
+    width: "calc(100vw - %s)" % ($menu-expanded);
+
+    div.calendar {
+        width: "calc(100vw - %s)" % ($menu-expanded);
+    }
+
+    @media small {
+        width: 100vw !important;
+        div.calendar {
+            width: 100vw !important;
+        }
+    }
+}
+
+section.dashboard.mini-menu > .view {
+    width: "calc(100vw - %s)" % ($menu-contracted);
+
+    div.calendar {
+        width: "calc(100vw - %s)" % ($menu-contracted);
+    }
+    @media small {
+        width: 100vw !important;
+        div.calendar {
+            width: 100vw !important;
+        }
+    }
+}

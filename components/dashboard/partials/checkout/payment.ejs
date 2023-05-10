@@ -1,0 +1,118 @@
+<h4 class="mb-2 flex flex-middle-left" app-show="selected_customer.name">
+    <img src="/images/avatars/Profile_Placeholder.svg" app-src="selected_customer.avatar" class="avatar mr-1">
+    <span app-bind="parseName(selected_customer.name)"></span>
+</h4>
+
+<h4 class="text-weight-700" app-hide="selected_customer.name">Payment </h4>
+<div class="divider mb-2 p-0"></div>
+
+<div class="">
+
+
+    <div app-show="cart.refund_value" class="mb-2">
+
+        <div class="bg-white p-2 rounded mb-2">
+
+            <div class="mb-2 text-weight-600">A £<span app-bind="cart.refund_value"></span> refund has been created on this transaction. The total paid by the customer is now £<span app-bind="cart.refund_total"></span><span app-hide="cart.refund_total">0.00</span>.<br>Please select a refund method:</div>
+
+            <div class="mb-2 flex"">
+                <button class="btn border mr-05" app-click="cart.refund_method = 'cash'" app-class="{'bg-secondary':cart.refund_method == 'cash'}">Cash</button>
+                <button class="btn border mr-05" app-click="cart.refund_method = 'card'" app-class="{'bg-secondary':cart.refund_method == 'card'}">Card</button>
+                <button class="btn border mr-05" app-click="cart.refund_method = 'stripe'" app-class="{'bg-secondary':cart.refund_method == 'stripe'}">Stripe</button>
+            </div>
+
+            <div class="text-primary text-small italic mt-1">Please add a note to reflect what was refunded and why</div>
+
+        </div>
+
+    </div>
+
+
+    <div class="mb-1">Choose payment method:</div>
+   
+    <div app-hide="cart.method == 'petty_cash'">
+        
+        <div class="mb-1 text-primary" app-hide="selected_customer.stripe_id">This customer doesn't have a card on file. If possible, make a payment via Stipe.</div>
+
+        <div class="mb-2 flex" app-show="cart.total == '0.00'">
+            <button class="btn border mr-05" app-click="cart.method = 'cash'" app-class="{'bg-secondary':cart.method == 'cash'}">Cash</button>
+            <button class="btn border mr-05" app-click="cart.method = 'vouchers'" app-class="{'bg-secondary':cart.method == 'vouchers'}">Vouchers</button>
+            <button class="btn border mr-05" app-click="cart.method = 'account'" app-class="{'bg-secondary':cart.method == 'account'}">Account Credit</button>
+        </div>
+        <div class="mb-2 flex" app-hide="cart.total == '0.00'">
+            <button class="btn border mr-05" app-click="cart.method = 'card'" app-class="{'bg-secondary':cart.method == 'card'}">Card</button>
+            <button class="btn border mr-05" app-click="cart.method = 'cash'" app-class="{'bg-secondary':cart.method == 'cash'}">Cash</button>
+            <button class="btn border mr-05" app-click="cart.method = 'split'" app-class="{'bg-secondary':cart.method == 'split'}">Split Payment</button>
+            <button class="btn border mr-05" app-show="cart.customer_id" app-click="cart.method = 'payment_link'" app-class="{'bg-secondary':cart.method == 'payment_link'}">Payment Link</button>
+            <button class="btn border mr-05" app-click="cart.method = 'bacs'" app-class="{'bg-secondary':cart.method == 'bacs'}">BACS</button>
+            <% if (typeof user != 'undefined' && user.guard == 'admin' || typeof user != 'undefined' && user.role >= 2){ %>
+                <button class="btn border" app-show="cart.customer_id" app-click="cart.method = 'stripe'" app-class="{'bg-secondary':cart.method == 'stripe'}">Stripe</button>
+            <% } %>
+        </div>
+
+        <div class="text-primary text-small italic mb-2" app-hide="cart.customer_id">Add a client for Payment Link and Stripe payment options</div>
+
+    </div>
+
+    <% if (typeof cart.status == 'undefined' || cart.status != 'complete'){ %>
+
+    <div class="mb-2" app-show="cart.method == 'petty_cash'">
+
+        <button class="btn bg-secondary">Petty Cash</button>
+
+        <div class="mt-2">
+            <div class="flex"><div class="flex-1 flex flex-middle-left">Spent:</div><input type="text" app-model="cart.payment.petty_cash_out" class="flex-3 border"></div>
+        </div>
+
+    </div>
+
+    <div app-show="cart.method == 'split'" class="mb-2 w-60 w-m-100 w-s-100">
+        <div class="flex"><div class="flex-1 flex flex-middle-left">Card:</div><input type="number" step="0.01" app-model="cart.payment.card" class="flex-3 border"></div>
+        <div class="flex mt-1"><div class="flex-1 flex flex-middle-left">Cash Paid:</div><input type="number" step="0.01" app-model="cart.payment.cash" class="flex-3 border"></div>
+    </div>
+
+    <div app-show="cart.method == 'cash'" class="mb-2 w-60 w-m-100  w-s-100">
+        <div class="flex"><div class="flex-1 flex flex-middle-left">Cash Paid:</div><input type="number" step="0.01" app-model="cart.payment.cash" class="flex-3 border"></div>
+    </div>
+
+    <div class="bg-white pt-2 pl-2 pr-2 pb-1 rounded mb-2" app-show="cart.method">
+
+        <div class="mb-1" app-show="cart.method == 'payment_link'">
+            <div class="mb-2">
+                <button class="btn border mr-1" app-click="cart.pl_notification_method = 'email'" app-class="{'bg-secondary':cart.pl_notification_method == 'email'}">Send Via Email</button> <button class="btn border" app-click="cart.pl_notification_method = 'sms'" app-class="{'bg-secondary':cart.pl_notification_method == 'sms'}">Send Via SMS</button>
+            </div>
+            When you click complete the client will be <span app-hide="cart.pl_notification_method == 'sms'">emailed a link</span> <span app-show="cart.pl_notification_method == 'sms'">sent a link via text message</span>, so they can pay online.
+            <div class="mt-1">Amount Due:&nbsp;&nbsp;<b>£<span app-bind="cart.payment.payment_link"></span></b></div>
+        </div>
+
+        <div class="mb-1" app-show="cart.method == 'card'">
+            <div class="mb-1">You can now take the payment using the card terminal.</div>
+            <div>Amount Due:&nbsp;&nbsp;<b>£<span app-bind="cart.payment.card"></span></b></div>
+        </div>
+
+        <div class="mb-1" app-show="cart.method == 'bacs'">
+            <div class="mb-1">Select this option if the client has paid via bank transfer and click Complete</div>
+        </div>
+
+        <div class="mb-1" app-show="cart.method == 'stripe'">
+            <div class="mb-1">Select this option if the balance has been paid manually via Stripe, or click the button below to attempt payment</div>
+            <button class="btn bg-secondary" app-click="initStripe()" app-hide="cart.stripe_data.succeeded">Take Payment</button>
+            <span app-show="cart.stripe_data.succeeded" class="mt-1 text-weight-600">Payment taken: £<span app-bind="parseStripeAmount(cart.stripe_data.total)"></span> <i class="ml-1 fas fa-check text-33-green"></i></span>
+        </div>
+
+        <div class="mb-1" app-show="cart.payment.change">Click Complete to show change due</div>
+
+        <div class="mb-1" app-show="cart.outstanding">Amount Remaining:&nbsp;&nbsp;<b>£<span app-bind="cart.outstanding"></span></b></div>
+
+        <div class="mb-1" app-show="cart.method == 'petty_cash'">Return to petty cash:&nbsp;&nbsp;<b>£<span app-bind="cart.payment.petty_cash_in"></span></b></div>
+
+    </div>
+
+    <% } %>
+
+    <div class="relative layer-2 mt-2">
+        <p class="mb-1">Note</p>
+        <textarea class="border-dashed" app-model="cart.note" placeholder="Add any references, or additional information about this transaction"></textarea>
+    </div>
+
+</div>

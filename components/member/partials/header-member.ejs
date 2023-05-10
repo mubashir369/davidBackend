@@ -1,0 +1,472 @@
+<section class="header grid col-12 gap-1" app-show="view.header == 'calendar'">
+  <div
+    class="<% if (title.match(/new/i)) { %>colspan-8 colspan-s-10<% } else { %>colspan-3 colspan-s-10<% } %> flex flex-middle-left mob-show"
+  >
+    <h3>
+      <%- title %> <% if (title.match(/new appointment/i)) { %>:
+      <span
+        class="text-weight-500 text-secondary flex-1 text-left"
+        app-bind="selected_date.date_string_time"
+      ></span
+      ><% } %> <% if (view.dashboard_view == 'staff' && typeof staff_key !=
+      'undefined' && selected_date) { %> on <%-
+      moment(selected_date).format('dddd Do MMMM') %><% } %>
+    </h3>
+  </div>
+
+  <div
+    class="<% if (title.match(/new/i)) { %>colspan-1<% } else { %>colspan-6<% } %> flex flex-middle"
+  >
+    <% if (view.dashboard_view == 'calendar') { %>
+
+    <div class="relative flex-1 flex flex-middle">
+      <%- include('../partials/date-picker.ejs',{obj:'date'}) %>
+    </div>
+
+    <% } %> <% if (view.dashboard_view == 'clients' && !view.dashboard_sub_view)
+    { %>
+
+    <div class="flex-1 pr-1">
+      <input
+        type="text"
+        class="search colspan-2 border"
+        placeholder="Search by name, number or email"
+        app-model="view.search"
+        onkeyup="scope.searchApi('customers',this.value)"
+        spellcheck="false"
+      />
+    </div>
+    <div>
+      <a
+        class="dp-btn sm-btn text-white radius-50 bg-secondary"
+        app-click="newClient()"
+      >
+        Add Customer <span class="icon add right white"></span>
+      </a>
+    </div>
+
+    <% } %> <% if (view.dashboard_view == 'Appointments') { %>
+    <!-- <div class="row">
+      <div class="col-md-6">
+        <input
+          type="text"
+          class="search colspan-2 border"
+          placeholder="Search by name, number or email"
+          app-model="view.search"
+          onkeyup="scope.searchApi('customers',this.value)"
+          spellcheck="false"
+        />
+      </div>
+
+      <div class="col-md-3">
+        <select class="colspan-2 border" name="" id="">
+          <option value="">Filter</option>
+          <option value="service">Service</option>
+          <option value="source">Source</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <select class="colspan-2 border" name="" id="">
+          <option value="">Filter</option>
+          <option value="service">Service</option>
+          <option value="source">Source</option>
+        </select>
+      </div>
+    </div> -->
+
+    <% } %> <% if (view.dashboard_view == 'vouchers') { %>
+
+    <div class="flex-1 pr-1">
+      <input
+        id="table-search"
+        type="text"
+        class="search colspan-2 border"
+        placeholder="Search..."
+        spellcheck="false"
+        app-model="view.search"
+        onkeyup="scope.searchApi('<%- title.replace(/Salon\s/,'').toLowerCase() %>',this.value)"
+      />
+    </div>
+
+    <% } %> <%if (view.dashboard_view=="memberTransactions"){%> <%}%> <% if
+    (view.dashboard_view == 'products' || view.dashboard_view == 'staff' &&
+    typeof staff_key == 'undefined' || view.dashboard_view == 'services' ||
+    view.dashboard_view == 'offer codes') { %>
+
+    <div class="flex-1 pr-1">
+      <input
+        id="table-search"
+        type="text"
+        class="search colspan-2 border"
+        placeholder="Search..."
+        spellcheck="false"
+        app-model="view.search"
+        onkeyup="scope.searchApi('<%- title.replace(/Salon\s/,'').toLowerCase() %>',this.value)"
+      />
+    </div>
+    <div>
+      <a
+        class="btn bg-secondary"
+        app-click="newObj('<%- title.toLowerCase() %>')"
+      >
+        Add <%- title.replace(/s$/,'') %>
+        <span class="icon add right white"></span>
+      </a>
+    </div>
+
+    <% } %> <% if (view.dashboard_view == 'testimonials') { %>
+
+    <div class="flex-1 pr-1">
+      <input
+        id="table-search"
+        type="text"
+        class="search colspan-2 border"
+        placeholder="Search..."
+        spellcheck="false"
+        app-model="view.search"
+        onkeyup="scope.searchApi('<%- title.replace(/Salon\s/,'').toLowerCase() %>',this.value)"
+      />
+    </div>
+    <div>
+      <a
+        class="btn bg-secondary"
+        app-click="newObj('<%- title.toLowerCase() %>')"
+      >
+        Add <%- title.replace(/s$/,'') %>
+        <span class="icon add right white"></span>
+      </a>
+    </div>
+
+    <% } %> <% if (view.dashboard_view == 'transactions') { %>
+
+    <div class="relative flex pr-2">
+      <!-- <div class="text-left">
+                    <div class="btn border context-link" app-click="toggleContext('trans_filter')">
+                        Filter <span class="icon arrowdown right secondary"></span>
+                    </div>
+                    <div class="context dropdown" id="context-trans_filter" style="display: none">
+                        <div class="link" app-click="get('transactions','all?stylist_id=4381518')">
+                            In Store
+                        </div>
+                        <div class="link" app-click="">
+                            Online
+                        </div>
+                        <div class="link" app-click="">
+                            Recurring
+                        </div>
+                    </div>
+                </div> -->
+    </div>
+    <div class="flex-1 pr-1">
+      <input
+        id="table-search"
+        type="text"
+        class="search colspan-2 border"
+        placeholder="Search..."
+        spellcheck="false"
+        app-model="view.search"
+        onkeyup="scope.searchApi('transactions',this.value)"
+      />
+    </div>
+    <a class="btn bg-secondary" href="/dashboard/checkout/new"
+      >New Transaction<span class="icon add right white"></span
+    ></a>
+
+    <% } %> <% if (view.dashboard_view == 'checkout' && typeof cart_id !=
+    'undefined' && cart_id != null) { %>
+
+    <div class="relative flex flex-middle-left pr-2">
+      <div class="btn-wrap bg-white">
+        <button
+          class="btn btn-left border mr-1"
+          app-click="checkoutPage('items')"
+          app-class="{'is-today':view.checkout_page == 'items'}"
+        >
+          Items<span class="icon product right black"></span>
+        </button>
+        <button
+          class="btn btn-mid border"
+          app-click="checkoutPage('discounts')"
+          app-class="{'is-today':view.checkout_page == 'discounts'}"
+        >
+          Codes<span class="icon voucher right black"></span>
+        </button>
+        <button
+          class="btn btn-mid border"
+          app-click="checkoutPage('client_details')"
+          app-class="{'is-today':view.checkout_page == 'client_details'}"
+        >
+          Client<span class="icon client right black"></span>
+        </button>
+        <button
+          class="btn btn-right border"
+          app-click="checkoutPage('payment')"
+          app-class="{'is-today':view.checkout_page == 'payment'}"
+        >
+          Payment<span class="icon cardpayment right black"></span>
+        </button>
+      </div>
+
+      <!-- <a class="cart-breadcrumb" app-click="checkoutPage('items')" app-class="{'active':view.checkout_page == 'items'}">
+                    Items
+                </a>
+                <a class="cart-breadcrumb" app-click="checkoutPage('discounts')" app-class="{'active':view.checkout_page == 'discounts'}">
+                    Codes
+                </a>
+                <a class="cart-breadcrumb" app-click="checkoutPage('client_details')" app-class="{'active':view.checkout_page == 'client_details'}">
+                    Client
+                </a>
+                <a class="cart-breadcrumb" app-click="checkoutPage('payment')" app-class="{'active':view.checkout_page == 'payment'}">
+                    Payment
+                </a> -->
+    </div>
+
+    <% } %>
+  </div>
+
+  <div class="colspan-3 flex flex-middle-right">
+    <% if (view.dashboard_view == 'calendar') { %>
+
+    <div class="relative flex flex-middle-left mr-3">
+      <div
+        class="btn bg-secondary context-link"
+        app-click="toggleContext('new_event')"
+      >
+        New <span class="icon add white right"></span>
+      </div>
+      <div
+        class="context dropdown"
+        id="context-new_event"
+        style="display: none; min-width: 180px"
+      >
+        <a
+          app-click="goto('/dashboard/calendar/opening-times?date=',selected_date.full)"
+          class="link"
+        >
+          <span class="icon time left black"></span> Opening Times
+        </a>
+        <a href="/dashboard/calendar/new-appointment" class="link">
+          <span class="icon calendar left black"></span> Appointment
+        </a>
+        <a href="/dashboard/clients?new_client=true" class="link">
+          <span class="icon client left black"></span> Client
+        </a>
+        <a href="/dashboard/clients/consultation" class="link">
+          <span class="icon stylist left black"></span> Consultation
+        </a>
+        <a href="/dashboard/checkout/new" class="link">
+          <span class="icon sale left black"></span> Sale
+        </a>
+        <a app-click="newNotification('new')" class="link">
+          <span class="icon bell left black"></span> Notification
+        </a>
+      </div>
+    </div>
+
+    <% } %> <% if (view.dashboard_view == 'notifications') { %>
+
+    <div class="relative flex flex-middle-left mr-3">
+      <div
+        class="btn bg-secondary context-link"
+        app-click="newNotification('new')"
+      >
+        New <span class="icon add white right"></span>
+      </div>
+    </div>
+
+    <% } %> <% if (view.dashboard_view == 'memberships') { %>
+
+    <div class="relative flex flex-middle-left mr-3">
+      <div
+        class="btn bg-secondary context-link"
+        app-click="newMembership('new')"
+      >
+        New <span class="icon add white right"></span>
+      </div>
+    </div>
+
+    <% } %> <% if (view.dashboard_view == 'marketing') { %>
+
+    <div class="relative flex flex-middle-left mr-3">
+      <a
+        class="btn bg-secondary context-link"
+        href="/dashboard/clients/marketing/campaigns"
+      >
+        Campaigns <span class="icon arrowright white right"></span>
+      </a>
+    </div>
+
+    <% } %> <% if (view.dashboard_view == 'marketing_campaigns') { %>
+
+    <div class="relative flex flex-middle-left mr-3">
+      <div class="btn bg-secondary context-link" app-click="newCampaign('new')">
+        New <span class="icon add white right"></span>
+      </div>
+    </div>
+
+    <% } %>
+
+    <span
+      class="relative clickable mr-15"
+      app-click="goto('/dashboard/calendar/','notifications')"
+    >
+      <span class="icon bell grey lg"></span>
+      <div
+        class="notification-counter flex flex-middle"
+        app-show="view.user_notifications"
+      ></div>
+    </span>
+
+    <div class="relative flex flex-middle-left">
+      <div class="context-link" app-click="toggleContext('user_menu')">
+        <% if (typeof user != 'undefined' && user.avatar) { %>
+        <img src="<%- user.avatar %>" class="icon avatar clickable" />
+        <% } else { %>
+        <img
+          src="/images/avatars/Profile_Placeholder.svg"
+          class="icon avatar clickable"
+        />
+        <% } %>
+      </div>
+      <div
+        class="context dropdown right"
+        id="context-user_menu"
+        style="display: none"
+      >
+        <a href="/member/profile" class="link">
+          <span class="icon client left secondary"></span> Profile
+        </a>
+        <!--a href="/login/staff" class="link">
+
+                    /<%- user._key %>
+
+                    <span class="icon transaction left secondary"></span> Switch User
+                </a-->
+        <a href="#" id="memberLogOutTag" class="link">
+          <span class="icon signout left secondary"></span> Logout
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="colspan-2 mob-show flex flex-middle-right hidden hidden-m">
+    <a onclick="toggleMenu()" class="link">
+      <span class="icon options black right"></span>
+    </a>
+  </div>
+</section>
+
+<section
+  class="header bg-primary-light flex"
+  app-show="view.header == 'reschedule'"
+>
+  <div class="flex flex-middle-left">
+    <h3>Choose a time slot</h3>
+  </div>
+  <div class="flex-3 relative flex flex-middle">
+    <%- include('../partials/date-picker.ejs',{obj:'res_date'}) %>
+  </div>
+
+  <div class="flex-2 flex flex-middle-left">
+    <div class="btn-wrap w-m-75 w-s-100 bg-white">
+      <div class="relative flex-none">
+        <div
+          class="search-dropdown thin border context-link"
+          app-bind="view.reschedule.duration"
+          app-click="toggleContext('duration')"
+        >
+          Select...
+        </div>
+        <div
+          class="table search-select absolute context text-black"
+          id="context-duration"
+        >
+          <div
+            class="row clickable"
+            app-for="slot in getSlots()"
+            app-click="view.reschedule.duration = slot.duration"
+          >
+            <span app-bind="slot.duration"></span>&nbsp;mins
+          </div>
+        </div>
+      </div>
+      <button class="btn border bg-33-white" app-click="newEvent('confirm')">
+        Update Duration
+      </button>
+    </div>
+  </div>
+  <div class="flex flex-middle-right">
+    <button class="btn bg-secondary" app-click="reschedule()">
+      Cancel <span class="icon close right white"></span>
+    </button>
+  </div>
+</section>
+
+<section
+  class="header bg-primary-light grid col-4 gap-1"
+  app-show="view.header == 'chgLink'"
+>
+  <div class="flex flex-middle-left">
+    <h3>Select an appointment to link to</h3>
+  </div>
+  <div class="relative flex flex-middle"></div>
+
+  <div class="flex flex-middle-left"></div>
+  <div class="flex flex-middle-right">
+    <button class="btn bg-secondary" app-click="chgLink('cancel')">
+      Cancel <span class="icon close right white"></span>
+    </button>
+  </div>
+</section>
+
+<div
+  class="notification-bar text-left"
+  app-show="view.modal == 'notifications'"
+  anim="{'enter':'move-left'}"
+>
+  <div class="grid col-2 pb-1">
+    <div>
+      <h4 class="text-light">Notifications</h4>
+    </div>
+    <div class="text-right">
+      <h4 class="text-light clickable" app-click="view.modal = 'false'">
+        <span class="icon close black sm"></span>
+      </h4>
+    </div>
+  </div>
+
+  <div class="notification-wrap">
+    <div
+      class="bg-33-light-grey rounded p-1 grid col-6 gap-1 mb-1"
+      app-for="note in user_notifications"
+    >
+      <div class="colspan-5 clickable" app-click="goto(note.data.url,'')">
+        <div class="flex flex-middle-left">
+          <div
+            class="flex-none mr-1 indicator cancelled"
+            app-show="note.type == 'Appointment Cancellation'"
+          ></div>
+          <div
+            class="flex-none mr-1 indicator new"
+            app-show="note.type == 'New Online Booking'"
+          ></div>
+          <p class="flex-1 text-bold" app-bind="note.type"></p>
+        </div>
+        <p app-bind="note.msg"></p>
+      </div>
+      <div
+        class="flex flex-middle clickable"
+        app-click="delete('user_notifications',{{ index }})"
+      >
+        <span class="icon close black sm"></span>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  const LogOutTag = document.getElementById("memberLogOutTag");
+  LogOutTag.onclick = () => {
+    localStorage.removeItem("selected_seats");
+    LogOutTag.href = "/logout";
+  };
+</script>

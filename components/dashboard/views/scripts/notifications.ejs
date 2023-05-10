@@ -1,0 +1,184 @@
+
+<script>
+
+    extendedController = function(){
+
+        scope.view.msg = false
+
+        scope.viewNotification = function(msg){
+
+            scope.view.msg = msg
+            scope.view.notes = msg.notes
+
+            if (msg.status == 'new'){
+                msg.status = 'read'
+                scope.post('user_notifications/save',msg)
+                scope.view.user_notifications = 0
+                scope.notifications = scope.notifications.map(item=>{
+                    if (item._key == msg._key){
+                        item.status = 'read'
+                    }
+                    if (item.status == 'new'){
+                        scope.view.user_notifications++
+                    }
+                    return item
+                })
+            }
+
+        }
+
+        scope.claimNotification = function(user_name){
+
+            scope.view.msg.expiry = false
+            scope.view.msg.status = 'claimed'
+            scope.view.msg.claimed_by = user_name
+            scope.notifications = scope.notifications.map(item=>{
+                if (item._key == scope.view.msg._key){
+                    item.status = 'claimed'
+                }
+                return item
+            })
+
+            if (!scope.view.msg.notes){
+                scope.view.msg.notes = []
+            }
+            let note = {
+                date: moment().toISOString(),
+                user: user_name,
+                note: 'Claimed ticked'
+            }
+            scope.view.msg.notes.push(note)
+            scope.view.notes = scope.view.msg.notes
+
+            scope.post('user_notifications/save',scope.view.msg).then(()=>{
+                scope.notify('You have claimed this ticked')
+            })
+
+        }
+
+        scope.completeNotification = function(user_name){
+
+            scope.view.msg.status = 'complete'
+
+            if (!scope.view.msg.notes){
+                scope.view.msg.notes = []
+            }
+
+            let note = {
+                date: moment().toISOString(),
+                user: user_name,
+                note: 'Closed'
+            }
+            scope.view.msg.notes.push(note)
+            let next_msg = 0
+            scope.notifications = scope.notifications.filter((item,i)=>{
+                if (item.status == 'complete'){
+                    next_msg = i
+                }
+                return item.status != 'complete'
+            })
+
+            scope.post('user_notifications/save',scope.view.msg).then((data)=>{
+
+                scope.findNext(next_msg)
+                scope.notify('Marked as completed')
+            }).catch(err=>{
+                scope.notify(err, 'error')
+            })
+
+        }
+
+        scope.saveNotification = function(msg){
+
+            scope.post('user_notifications/save',msg).then((data)=>{
+                scope.notify('Saved')
+            }).catch(err=>{
+                scope.notify(err, 'error')
+            })
+
+        }
+
+        scope.addNotification = function(msg, user){
+
+            if (!msg.new_msg){
+                scope.notify('Please add a note before saving','error')
+                return
+            }
+
+            if (!msg.notes){
+                msg.notes = []
+            }
+            let note = {
+                date: moment().toISOString(),
+                user: user,
+                note: msg.new_msg
+            }
+            msg.notes.push(note)
+            delete msg.new_msg
+
+            scope.post('user_notifications/save',msg).then((data)=>{
+                scope.view.notes = data[0].notes
+                document.getElementById('new_msg').value = ''
+                scope.notify('Saved')
+            }).catch(err=>{
+                scope.notify(err, 'error')
+            })
+
+        }
+
+        scope.deleteNotification = function(msg){
+
+            if (!scope.view.delete_notification){
+
+                scope.view.modal = 'delete_notification'
+                scope.view.delete_notification = true
+
+            } else if (msg == 'cancel'){
+
+                scope.view.delete_notification = false
+                scope.view.modal = false
+
+            } else {
+
+                scope.view.delete_notification = false
+                scope.post('user_notifications/delete',msg).then((data)=>{
+                    scope.view.delete_notification = false
+                    scope.view.modal = false
+                    scope.view.msg = false
+                    let next_msg = 0
+                    scope.notifications = scope.notifications.filter((item,i)=>{
+                        if (item._key == msg._key){
+                            next_msg = i
+                        }
+                        if (item._key != msg._key){
+                            return true
+                        }
+                    })
+                    scope.findNext(next_msg)
+                    scope.notify('cancel')
+                    scope.notify('Deleted')
+                }).catch(err=>{
+                    scope.notify(err, 'error')
+                })
+            }
+
+        }
+
+        scope.findNext = function(idx){
+            scope.view.notes = []
+            if (scope.notifications && scope.notifications[idx]){
+                scope.view.msg = scope.notifications[idx]
+                scope.view.notes = scope.notifications[idx].notes
+            } else {
+                scope.view.msg = scope.notifications[0]
+                scope.view.notes = scope.notifications[0].notes
+            }
+        }
+
+        scope.parseLineBreak = function(str){
+            return str.replace(/\n/g,'<br>')
+        }
+
+    }
+
+</script>

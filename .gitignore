@@ -1,0 +1,12 @@
+/documents
+/node_modules
+/public/images/*
+modules/config.js
+package-lock.json
+documents/reports/*
+/uploads/*
+*.pem
+*.key
+.env
+*.lock.json
+*.pdf

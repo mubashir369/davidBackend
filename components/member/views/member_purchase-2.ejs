@@ -1,0 +1,44 @@
+<% layout('member.ejs') -%>
+
+<%- include ../partials/header-member.ejs %>
+
+    <div class="page">
+
+    <div>
+    <h2><%=subscription.name%></h2> 
+    <p><%=subscription.description%></p>
+    <!--table class="table app-parent-price puchaseSeat-addCart-table" >
+    <tr>
+	    <th>Date</th>
+	    <th>Price</th>
+	    <th>Action</th>
+    </tr>
+
+   
+ 	</table-->
+
+  <h2>£<%=subscription.unit_amount/100%></h2>
+    <p></p>
+    <p></p>
+
+    <button class="dp-btn bg-primary"  app-click="payPopup('<%-user._key%>','<%=subscription.unit_amount/100%>')">Pay Now</button>
+
+    </div>
+
+
+
+
+        <div id='calendar'></div>  
+    </div>
+
+    
+
+<script>
+
+console.log('User','<%-user._key%>')
+
+
+</script>
+<link href="/js/calendar-lib/main.css" rel='stylesheet' />
+
+<%- include('../partials/modal/pay_subscription.ejs') %>

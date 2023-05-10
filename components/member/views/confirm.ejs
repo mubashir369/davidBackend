@@ -1,0 +1,33 @@
+<% layout('member.ejs') -%>
+<% layout('customer-page.ejs') -%>
+
+
+<div class="vh-80 flex flex-middle dp-loginStyle">
+    <div class="vw-30 vw-s-100 px-s-2 text-center dp-loginStyle-box">
+        <h2 class="mb-1 capitalise">Member Email verification</h2>
+        <form method="post" action="/member/signup" class="grid col-1 gap-1 common-form common-form-border">            
+
+
+            <% if (typeof error != 'undefined'){ %>
+                <h3 class="text-33-red"><%- error %></h3>
+            <% } %>
+
+            <% if (typeof success != 'undefined'){ %>
+                <h3 class="text-33-green"><%- success %></h3>
+            <% } %>
+
+        
+
+
+           
+
+
+        </form>
+        <!-- <div class="my-2" style="background-color: #b6975b; height: 2px"></div> -->
+       
+            <!-- <div class="text-center mt-3" style="">
+                <a class="text-white dp-btn bg-primary @outline w-100" href="/login/member">Member Login?</a>
+            </div> -->
+       
+    </div>
+</div>

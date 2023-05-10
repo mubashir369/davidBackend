@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title><%= view.meta.title %></title>
+
+    <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
+    <link href="/font-awesome/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900&display=swap" rel="stylesheet">
+    <link href="/style/framework33.css?v=1.0.13" rel="stylesheet">
+    <link href="/style/style.css?v=1.0.11" rel="stylesheet">
+
+    <style>
+        @media print {
+            html, body, main, header, footer, .container {
+                background: transparent !important;
+                color: #000 !important;
+                box-shadow: none !important;
+                text-shadow: none !important;
+                position: relative !important;
+                text-indent: 0 !important;
+                clear: both !important;
+                width: auto !important;
+                height: auto !important;
+                border: none !important;
+                overflow: visible;
+                margin: 0 auto 0.5% auto !important;
+                top: auto !important;
+                left: auto !important;
+                right: auto !important;
+                bottom: auto !important;
+                padding: 0 !important;
+                text-align: left !important;
+                max-width: none !important;
+                min-width: auto !important;
+                min-height: auto !important;
+                max-height: auto !important;
+                direction: ltr !important;
+            }
+
+                /** Seitenränder einstellen */
+                @page { margin: 2cm !important}
+
+                /* Font auf 16px/13pt setzen, Background auf Weiß und Schrift auf Schwarz setzen.*/
+                /* Das spart Tinte */
+                body {
+                    font-family: Arial, Helvetica;
+                line-height: 1.3;
+                background: #fff !important;
+                color: #000;
+                }
+
+                h1 {
+                font-size: 24pt;
+                }
+
+                h2, h3, h4 {
+                font-size: 14pt;
+                margin-top: 25px;
+                }
+
+                /* Alle Seitenumbrüche definieren */
+                a {
+                    page-break-inside:avoid
+                }
+                blockquote {
+                    page-break-inside: avoid;
+                }
+                h1, h2, h3, h4, h5, h6 { page-break-after:avoid;
+                     page-break-inside:avoid }
+                img { page-break-inside:avoid;
+                     page-break-after:avoid; }
+                table, pre { page-break-inside:avoid }
+                ul, ol, dl  { page-break-before:avoid }
+
+                /* Linkfarbe und Linkverhalten darstellen */
+                a:link, a:visited, a {
+                background: transparent;
+                color: #520;
+                font-weight: bold;
+                text-decoration: underline;
+                text-align: left;
+                }
+
+                a {
+                    page-break-inside:avoid
+                }
+
+                a[href^=http]:after {
+                      content:" <" attr(href) "> ";
+                }
+
+                $a:after > img {
+                   content: "";
+                }
+
+                article a[href^="#"]:after {
+                   content: "";
+                }
+
+                a:not(:local-link):after {
+                   content:" <" attr(href) "> ";
+                }
+
+                /**
+                 * Eingebundene Videos verschwinden lassen und den Whitespace der iframes auf null reduzieren.
+                 */
+                .entry iframe, ins {
+                    display: none;
+                    width: 0 !important;
+                    height: 0 !important;
+                    overflow: hidden !important;
+                    line-height: 0pt !important;
+                    white-space: nowrap;
+                }
+                .embed-youtube, .embed-responsive {
+                  position: absolute;
+                  height: 0;
+                  overflow: hidden;
+                }
+
+                /* Unnötige Elemente ausblenden für den Druck */
+
+                #header-widgets, nav, aside.mashsb-container,
+                .sidebar, .mashshare-top, .mashshare-bottom,
+                .content-ads, .make-comment, .author-bio,
+                .heading, .related-posts, #decomments-form-add-comment,
+                #breadcrumbs, #footer, .post-byline, .meta-single,
+                .site-title img, .post-tags, .readability
+                {
+                display: none;
+                }
+
+                /* Benutzerdefinierte Nachrichten vor und nach dem Inhalt einfügen */
+                .entry:after {
+                content: "\ Alle Rechte vorbehalten. (c) 2014 - 2016 TechBrain - techbrain.de";
+                color: #999 !important;
+                font-size: 1em;
+                padding-top: 30px;
+                }
+                #header:before {
+                content: "\ Vielen herzlichen Dank für das Ausdrucken unseres Artikels. Wir hoffen, dass auch andere Artikel von uns Ihr Interesse wecken können.";
+                color: #777 !important;
+                font-size: 1em;
+                padding-top: 30px;
+                text-align: center !important;
+                }
+
+                /* Wichtige Elemente definieren */
+                p, address, li, dt, dd, blockquote {
+                font-size: 100%
+                }
+
+                /* Zeichensatz fuer Code Beispiele */
+                code, pre { font-family: "Courier New", Courier, mono}
+
+                ul, ol {
+                list-style: square; margin-left: 18pt;
+                margin-bottom: 20pt;
+                }
+
+                li {
+                line-height: 1.6em;
+                }
+        }
+    </style>
+
+</head>
+
+    <body id="print">
+    <div class="page px-2">
+
+        <div>
+            <div style="width: 100%; text-align: center">
+                <img src="https://www.davidrozman.co.uk/images/assets/dr_logo.svg" style="margin: auto; width: 20em">
+            </div>
+
+            <div class="table my-2" id="links">
+                <div class="row">
+                    <div class="cell text-left text-primary"><a class="btn outline" onclick="window.history.back()">Back</a></div>
+                    <div class="cell text-right text-primary"><a class="btn bg-secondary" onclick="printReceipt()">Print</a></div>
+                </div>
+            </div>
+
+            <div style="text-align: left;">
+
+                <div class="table mt-3">
+                    <div class="row">
+                        <div class="cell">
+                            <% if (customer.name){ %>
+                                <h4 class="capitalise"><span><%- customer.name.first %></span> <span><%- customer.name.last %></span></h4>
+                                <div><%- customer.email %></div>
+                                <div><%- customer.tel %></div>
+                            <% } %>
+
+
+                        </div>
+                        <div class="cell text-right">
+                            <h4 class="capitalise">David Rozman</h4>
+                            <div>28 Queen Street</div>
+                            <div>Manchester M2 5HX</div>
+                            <div class="mb-1">0161 832 0179</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-1">Transaction ID: <%- transaction._key %></div>
+                <div class="mb-1">Transaction Date: <%- view.functions.parseDate(transaction._created,'dddd Do MMM YYYY [at] h:mma') %></div>
+
+                <div class="py-3" style="text-align: left;">
+
+                    <div class="table" style="text-align: left;display:table">
+                        <div class="row table-header" style="text-align: left;display: table-row">
+                            <div class="cell middle" style="display: table-cell">Item</div>
+                            <div class="cell middle text-center" style="display: table-cell;width: 6em">Qty</div>
+                            <div class="cell middle text-right" style="display: table-cell;width: 7em">Price</div>
+                        </div>
+                        <% if (transaction.items){ %>
+
+                            <% transaction.items.forEach((item)=>{ %>
+                                <div class="row" style="width:100%;display: table-row">
+                                    <div class="cell middle" style="display: table-cell"><%- item.name %></div>
+                                    <div class="cell middle text-center" style="display: table-cell"><%- item.quantity %></div>
+                                    <div class="cell middle text-right" style="display: table-cell">£<%- view.functions.getPrice(item,false,true) %></div>
+                                </div>
+
+                                <% if (item.refund_value){ %>
+
+                                    <div class="row" style="width:100%;display: table-row">
+                                        <div class="cell middle" style="display: table-cell"></div>
+                                        <div class="cell middle text-center" style="display: table-cell">Refunded</div>
+                                        <div class="cell middle text-right" style="display: table-cell">£<%- item.refund_value.toFixed(2) %></div>
+                                    </div>
+
+                                <% } %>
+                            <% }) %>
+                        <% } %>
+                    </div>
+
+                </div>
+
+
+                <div class="table" style="text-align: left;display: table">
+                    <div class="row" style="display: table-row">
+                        <div class="cell" style="display: table-cell">
+                            <p>Payment Methods:</p>
+                            <div class="table">
+                                <div class="row">
+                                    <div class="cell" style="display: table-cell; border-bottom:none">
+
+                                        <p><%- view.functions.parseName(transaction.method) %></p>
+
+                                        <% if (transaction.payment.account){ %>
+                                            <p>Account Credit</p>
+                                        <% } %>
+                                        <% if (transaction.payment.vouchers){ %>
+                                            <p>Vouchers</p>
+                                        <% } %>
+
+                                    </div>
+                                    <div class="cell" style="display: table-cell; border-bottom:none">
+
+                                        <p>£<%- parseFloat(transaction.payment[transaction.method]).toFixed(2) %></p>
+                                        <% if (transaction.payment.account){ %>
+                                            <p>£<%- parseFloat(transaction.payment.account).toFixed(2) %></p>
+                                        <% } %>
+                                        <% if (transaction.payment.vouchers){ %>
+                                            <p>£<%- parseFloat(transaction.payment.vouchers).toFixed(2) %></p>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="cell" style="display: table-cell; text-align: right">
+                            <div class="table">
+                                <div class="row">
+                                    <div class="cell">
+                                        <p>Sub Total</p>
+                                        <p>VAT</p>
+                                        <% if (transaction.refund_value){ %>
+                                            <p>Refunded <% if (transaction.refund_method){ %>via <%- transaction.refund_method %><% } %><% if (transaction.refund_time){ %> on <%- moment(transaction.refund_time).format('DD/MM/YY HH:mm') %><% } %></p>
+                                        <% } %>
+                                        <h3>TOTAL</h3>
+                                    </div>
+                                    <div class="cell">
+                                        <p>£<%- transaction.sub_total %></p>
+                                        <p>£<%- transaction.tax %></p>
+                                        <% if (transaction.refund_value){ %>
+                                            <p>£<%- transaction.refund_value.toFixed(2) %></p>
+                                        <% } %>
+                                        <h3>£<%- transaction.item_total %></h3>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+    var printReceipt = function(){
+         document.getElementById('links').style.display = 'none'
+         window.print();
+         document.getElementById('links').style.display = 'table'
+     }
+     </script>
+ </body>
+</html>

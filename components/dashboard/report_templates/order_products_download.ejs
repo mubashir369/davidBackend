@@ -1,0 +1,18 @@
+<% if (typeof result == 'object' && result.data && result.data.length > 0){ %>
+
+    <div class="px-2">
+        <h4 class="text-light mb-1">Report Complete</h4>
+        <p class="mb-1">Please click the button below to download the order sheet</p>
+        <a href="<%- result.output %>" class="btn bg-secondary thick" download>Download Order Sheet</a><br><br><br>
+        <a href="/dashboard/reports/order_products" class="text-secondary"><span class="icon arrowleft secondary left"></span>Back to product list</a>
+    </div>
+
+
+<% } else if (typeof result == 'object' && result.data && result.data.length == 0){ %>
+
+    <h4 class="text-light mb-1">Report Complete</h4>
+    <p class="mb-1">All stock up to date</p>
+
+<% } else { %>
+    No file generated: <%- error %>
+<% } %>

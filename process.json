@@ -1,0 +1,8 @@
+{
+  "watch": ["server-dr.js"],
+"script": "server-dr.js",
+  "ignore_watch" : ["node_modules", "public/images"],
+  "watch_options": {
+    "followSymlinks": false
+  }
+}

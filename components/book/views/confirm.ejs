@@ -1,0 +1,176 @@
+<% layout('customer-page.ejs') -%>
+
+<div class="flex flex-middle">
+    <div class="vw-40 vw-s-100 px-s-0 py-3 text-center">
+
+        <% if (typeof appt != 'undefined' && appt[0] && appt[0].status && appt[0].status.match(/confirmed/)){ %>
+
+            <% if (appt[0].status == "confirmed"){ %>
+                <h3 class="mb-1">Appointment details for</h3>
+            <% } else { %>
+                <h3 class="mb-1">Please confirm your appointment for</h3>
+            <% } %>
+
+            <h2 class="text-primary mb-2"><%- functions.parseDate(appt[0].date,'dddd Do MMMM') %></h2>
+
+            <div class="bg-white rounded my-2 p-2">
+                <div class="grid col-5 gap-1 gap-s-0 text-left">
+
+                    <div class="text-weight-600 capitalise colspan-s-5 mb-s-05"><%- functions.parseDate(appt[0].date,'h:mma') %></div>
+                    <div class="capitalise colspan-4 colspan-s-5 mb-1"><div class="text-primary"><%- appt[0].service_name %></div>with <%- appt[0].staff_name %></div>
+
+                <% if (appt.length > 1){ %>
+
+                    <% for (var i=1; i<appt.length; i++){ %>
+
+                        <div class="text-weight-600 capitalise colspan-s-5 mt-s-1 mb-s-05"><%- functions.parseDate(appt[i].date,'h:mma') %></div>
+                        <div class="capitalise colspan-4 colspan-s-5 mb-1"><div class="text-primary"><%- appt[i].service_name %></div>with <%- appt[i].staff_name %></div>
+
+                    <% } %>
+
+                <% } %>
+
+                </div>
+            </div>
+
+            <% if (appt[0].status == "confirmed"){ %>
+
+                <div class="mt-3 mb-2 text-small text-33-dark-grey">You confirmed your appointment on <%- functions.parseDate(appt[0].confirmed,'Do MMMM') %> and have agreed to our <a href="/account/termsandconditions" target="terms" class="text-secondary">terms and conditions</a></div>
+                <div class="grid col-2 col-s-1 gap-1 mt-2">
+                    <a class="colspan-2 colspan-s-1 btn bg-secondary w-100 transparent-1 thick">Appointment Confirmed<span class="icon confirm right white"></span></a>
+                    <a class="btn bg-secondary w-100" app-click="view.modal = 'show_cancel'">Cancel<span class="icon delete right white"></span></a>
+                    <a class="btn bg-secondary w-100" app-click="view.modal = 'show_move'">Request a Change<span class="icon edit right white"></span></a>
+                </div>
+
+            <% } else { %>
+
+                <div class="mt-3 mb-2"><label class="text-primary"><input type="checkbox" onclick="scope.confirmTC(this.checked)" class="mr-1 border">Tick this box to confirm that you have read and agree to the <a href="https://www.davidrozman.co.uk/termsandconditions" target="terms" class="text-secondary">terms and conditions</a></label></div>
+                <div class="grid col-2 col-s-1 gap-1 mt-2">
+                    <a app-hide="view.tandc_confirm" class="colspan-2 colspan-s-1 btn bg-secondary w-100 transparent flex thick">Confirm Appointment<span class="icon calendar right white"></span></a>
+                    <a app-show="view.tandc_confirm" class="colspan-2 colspan-s-1 btn bg-secondary w-100 flex thick" href="/book/confirm/<%- confirm_id %>/ok">Confirm Appointment<span class="icon calendar right white"></span></a>
+                    <a class="btn border w-100" app-click="view.modal = 'show_cancel'">Cancel<span class="icon delete right black"></span></a>
+                    <a class="btn border w-100" app-click="view.modal = 'show_move'">Request a Change<span class="icon edit right black"></span></a>
+                </div>
+
+                <p class="mt-3 mb-2 text-small text-33-dark-grey">We understand that things crop up from time to time and appointments need to be changed we ask that you treat us with respect and follow our cancellation policy and we will return the same to you. If you wish to cancel your appointment you can do free of charge up to 48 hours before your appointment. Cancelling or moving within 48 hours we ask that you pay 50% of your charge and this will be placed on your account for your future spend.</p>
+
+                <p class="mb-2 text-small text-33-dark-grey">Unfortunately, measures to protect our business financially are needed and No-show appointments will be charged to your card in full.</p>
+
+            <% } %>
+
+            <% if (typeof user != 'undefined'){ %>
+                <div class="text-center mt-2">
+                    <a class="btn border" href="/account"><span class="icon arrowleft left black"></span>Back to your account</a>
+                </div>
+            <% } else { %>
+                <div class="text-center mt-2">
+                    <a class="btn bg-secondary" href="/account">Login to your account<span class="icon client left white"></span></a>
+                </div>
+            <% } %>
+
+        <% } else { %>
+
+            <h3 class="mb-2">The appointment confirmation you clicked is out of date.</h3>
+            <p>It could be that your appointment has already been confirmed, or we may need to send you a new confirmation link.</p>
+            <p>Please contact us on <a class="text-primary text-weight-600" href="tel:<%- view.site.tel %>"><%- view.site.tel %></a>.</p>
+
+        <% } %>
+
+    </div>
+</div>
+
+<% if (typeof appt != 'undefined' && appt[0] && appt[0].confirm_id) { %>
+
+    <div class="modal" app-show="view.modal == 'show_cancel'" anim="{'enter':'fade-in'}">
+
+        <div class="modal-body text-left" anim="{'enter':'move-up','duration':'0.2'}">
+
+            <div class="grid col-12 gap-2 pb-1">
+                <div class="colspan-11">
+                    <h4 class="">
+                        Are you sure you want to cancel your appointment?
+                    </h4>
+                </div>
+                <div class="text-right">
+                    <h4 class="text-light clickable" onclick="modalCloseAll()">&times;</h4>
+                </div>
+            </div>
+            <div class="grid col-2 col-s-1 gap-2 pb-1 pt-s-1">
+                <div class="text-right pt-1 pt-s-0 hidden-s">
+                    <a class="btn border w-100" onclick="modalCloseAll()">
+                        No, thanks
+                    </a>
+                </div>
+
+                <div class="text-right pt-1 pt-s-0">
+                    <% if (appt[0].status == 'confirmed'){ %>
+                        <a class="btn bg-secondary w-100" href="/book/confirm/<%- appt[0].link_id %>/cancel">
+                    <% } else { %>
+                        <a class="btn bg-secondary w-100" href="/book/confirm/<%- appt[0].confirm_id %>/cancel">
+                    <% } %>
+                        Yes, cancel<span class="icon delete white right"></span>
+                    </a>
+                </div>
+
+                <div class="text-right pt-1 pt-s-0 hidden hidden-m">
+                    <a class="btn border w-100" onclick="modalCloseAll()">
+                        No, thanks
+                    </a>
+                </div>
+            </div>
+
+            <div class="text-center text-light mt-1">
+                Please note: Appointments cancelled within 48 hours are subject to a cancellation fee.<br>
+                Our cancellation terms and conditions can be found <a href="/account/terms-and-conditions" class="text-secondary" target="terms">here</a>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="modal" app-show="view.modal == 'show_move'" anim="{'enter':'fade-in'}">
+
+        <div class="modal-body text-left" anim="{'enter':'move-up','duration':'0.2'}">
+
+            <div class="grid col-12 gap-2 pb-1">
+                <div class="colspan-11">
+                    <h4 class="text-light" style="max-width: 30rem">
+                        If you'd like to change your appointment, the salon will be notified and someone will be in contact as soon as possible. Would you like to send this request?
+                    </h4>
+                </div>
+                <div class="text-right hidden-s">
+                    <h4 class="text-light clickable" onclick="modalCloseAll()">&times;</h4>
+                </div>
+            </div>
+            <% if (appt[0].status == 'confirmed'){ %>
+                <form action="/book/confirm/<%- appt[0].link_id %>/reschedule" method="post">
+            <% } else { %>
+                <form action="/book/confirm/<%- appt[0].confirm_id %>/reschedule" method="post">
+            <% } %>
+
+                <textarea placeholder="Tell us what you'd like to change" name="note" id="note"></textarea>
+
+                <div class="grid col-2 col-s-1 gap-2 pb-1 pt-s-1">
+                    <div class="text-right pt-1 pt-s-0 hidden-s">
+                        <a class="btn border w-100" onclick="modalCloseAll()">
+                            No, thanks
+                        </a>
+                    </div>
+                    <div class="text-right pt-1 pt-s-0">
+                        <button class="btn bg-secondary w-100" type="submit">
+                            Yes, request change<span class="icon edit white right"></span>
+                        </button>
+                    </div>
+                    <div class="text-right pt-1 pt-s-0 hidden hidden-m">
+                        <a class="btn border w-100" onclick="modalCloseAll()">
+                            No, thanks
+                        </a>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+
+    </div>
+
+<% } %>

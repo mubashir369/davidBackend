@@ -1,0 +1,337 @@
+<% layout('dashboard.ejs') -%>
+
+    <%- include ../../dashboard/partials/header.ejs %>
+
+    <div class="page grid col-12 col-s-1 client overflow-hidden" app-init="get('salon','54855602')">
+
+        <div class="colspan-4 pr-2">
+
+            <div class="p-1 bg-secondary p-1 radius-10 box-shadow dashboard-card">
+                <div class="capitalise text-bold  dp-text-subTitle2 text-white" app-bind="salon.name"></div>
+                <div class="text-white" app-bind="salon.tel"></div>
+                <div class="text-white" app-bind="salon.email"></div>
+                <div><a class="dp-btn color-white bg-primary dp-btn-glow-black mt-1" app-click="view.modal = 'show_edit'">Edit Details <span class="icon edit right white"></span></a></div>
+            </div>
+
+            <div class="p-1 mt-1 salon-timimg-box">
+                <div app-for="time in salon.opening_times" class="grid col-3 gap-1">
+                    <div class="" app-bind="getDay({{index}})"></div>
+                    <div class="text-right text-weight-500" app-bind="time.open"></div>
+                    <div class="text-right text-weight-500" app-bind="time.close"></div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="colspan-8 p-2 bg-light-grey">
+
+            <div class="tabs">
+                <% if(user.role==='Salon'){%>
+                <a class="clickable" app-click="view.tab = 'one'" app-class="{'active':view.tab == 'one'}">Staff Settings</a>
+                <a class="clickable" app-click="view.tab = 'three'" app-class="{'active':view.tab == 'three'}">Service Settings</a>
+                <%}else if(user.role==='Ecommerce'){%>
+                
+                <a class="clickable" app-click="view.tab = 'five'" app-class="{'active':view.tab == 'five'}">Product Settings</a>
+                <%} else if(user.guard==='admin'){%>
+                    <a class="clickable" app-click="view.tab = 'one'" app-class="{'active':view.tab == 'one'}">Staff Settings</a>
+                <a class="clickable" app-click="view.tab = 'three'" app-class="{'active':view.tab == 'three'}">Service Settings</a>
+                <a class="clickable" app-click="view.tab = 'five'" app-class="{'active':view.tab == 'five'}">Product Settings</a>
+                    <%}%>
+                <!-- <a class="clickable" app-click="view.tab = 'four'" app-class="{'active':view.tab == 'four'}">Consultation Templates</a> -->
+            </div>
+
+
+            <div app-show="view.tab == 'one'" class="overflow-y pb-5 pr-2">
+
+                <h4 class="text-primary mt-2 mb-2">Staff Pricing Levels</h4>
+
+                <div class="not-sortable list-item-wrap" app-sort="post('salon',salon)">
+                    <div class="mb-1 grid col-4 px-15 py-05 bg-white rounded">
+                        <div class="colspan-3 flex flex-middle-left">
+                            <input type="text" app-model="new.level.name" class="no-style" placeholder="Type here to add a new level">
+                        </div>
+                        <div class="flex flex-middle-right"><button class="btn bg-secondary" app-click="push(salon.levels,new.level,'salon',salon)" app-show="new.level.name">Add <span class="icon add white right"></span></button></div>
+                    </div>
+                    <div app-for="level in salon.levels" class="grid col-4 list-item">
+                        <div class="colspan-3" app-click="view.save = 'salon'"><input type="text" app-model="level.name" class="no-style"></div>
+                        <div class="text-right"><button class="btn bg-white" app-click="splice(salon.levels,{{index}},'salon',salon)"><span class="icon close black"></span></button></div>
+                    </div>
+
+                </div>
+
+                <h4 class="text-primary mt-2 mb-2">Staff Access</h4>
+
+                <div class="not-sortable list-item-wrap common-form common-form-bordered" app-sort="post('salon',salon)">
+                    <div class="mb-1 grid col-4 px-15 py-05 bg-white rounded">
+                        <div class="colspan-3 flex flex-middle-left">
+                            <input type="text" app-model="new.role.name" class="no-style" placeholder="Type here to add a new role">
+                        </div>
+                        <div class="flex flex-middle-right"><button class="btn bg-secondary" app-click="push(salon.roles,new.role,'salon',salon)" app-show="new.role.name">Add <span class="icon add white right"></span></button></div>
+                    </div>
+                    <div app-for="role in salon.roles" class="grid col-4 list-item">
+                        <div class="colspan-3" app-click="view.save = 'salon'"><input type="text" app-model="role.name" class="no-style"></div>
+                        <div class="text-right"><button class="btn bg-white" app-click="splice(salon.roles,{{index}},'salon',salon)"><span class="icon close black"></span></button></div>
+                    </div>
+
+                </div>
+
+                <h4 class="text-primary mt-2 mb-2">Absence Categories</h4>
+
+                <div class="not-sortable list-item-wrap" app-sort="post('salon',salon)">
+                    <div class="mb-1 grid col-4 px-15 py-05 bg-white rounded">
+                        <div class="colspan-3 flex flex-middle-left">
+                            <input type="text" app-model="new.absence.name" class="no-style" placeholder="Type here to add a new category">
+                        </div>
+                        <div class="flex flex-middle-right"><button class="btn bg-secondary" app-click="push(salon.absence,new.absence,'salon',salon)" app-show="new.absence.name">Add <span class="icon add white right"></span></button></div>
+                    </div>
+                    <div app-for="absence in salon.absence" class="grid col-4 list-item">
+                        <div class="colspan-3" app-click="view.save = 'salon'"><input type="text" app-model="absence.name" class="no-style"></div>
+                        <div class="text-right"><button class="btn bg-white" app-click="splice(salon.absence,{{index}},'salon',salon)"><span class="icon close black"></span></button></div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div app-show="view.tab == 'three'" class="overflow-y pb-5 pr-2">
+
+                <h4 class="text-primary mt-2 mb-2">Service Categories</h4>
+
+                <div class="not-sortable list-item-wrap" app-sort="post('salon',salon)">
+                    <div class="mb-1 grid col-4 px-15 py-05 bg-white rounded">
+                        <div class="colspan-3 flex flex-middle-left">
+                            <input type="text" app-model="new.category.name" class="no-style" placeholder="Type here to add a new category">
+                        </div>
+                        <div class="flex flex-middle-right"><button class="btn bg-secondary" app-click="push(salon.categories,new.category,'salon',salon)" app-show="new.category.name">Add <span class="icon add white right"></span></button></div>
+                    </div>
+                    <div app-for="category in salon.categories" class="grid col-4 list-item">
+                        <div class="colspan-3" app-click="view.save = 'salon'"><input type="text" app-model="category.name" class="no-style"></div>
+                        <div class="text-right"><button class="btn bg-white" app-click="splice(salon.categories,{{index}},'salon',salon)"><span class="icon close black"></span></button></div>
+                    </div>
+                </div>
+
+                <h4 class="text-primary mt-2 mb-2">Service Skills</h4>
+
+                <div class="not-sortable list-item-wrap" app-sort="post('salon',salon)">
+                    <div class="mb-1 grid col-4 px-15 py-05 bg-white rounded">
+                        <div class="colspan-3 flex flex-middle-left">
+                            <input type="text" app-model="new.skill.name" class="no-style" placeholder="Type here to add a new category">
+                        </div>
+                        <div class="flex flex-middle-right"><button class="btn bg-secondary" app-click="push(salon.skills,new.skill,'salon',salon)" app-show="new.skill.name">Add <span class="icon add white right"></span></button></div>
+                    </div>
+                    <div app-for="skill in salon.skills" class="grid col-4 list-item">
+                        <div class="colspan-3" app-click="view.save = 'salon'"><input type="text" app-model="skill.name" class="no-style"></div>
+                        <div class="text-right"><button class="btn bg-white" app-click="splice(salon.skills,{{index}},'salon',salon)"><span class="icon close black"></span></button></div>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div app-show="view.tab == 'four'" class="overflow-y pb-5 pt-2 pr-2">
+
+                <button class="dp-btn bg-secondary text-white" app-click="newTemplate()">New Template<span class="icon add white right"></span></button>
+
+                <div app-for="template in salon.consultation_forms" class="grid col-4 list-item mt-2">
+                    <h4 app-bind="template.name" class="colspan-3 text-primary text-light mb-1"></h4>
+                    <div class="flex flex-middle-right mb-1">
+                        <button class="dp-btn bg-secondary text-white mr-05" app-click="newTemplate('edit',{{index}})"><span class="icon edit white"></span></button>
+                        <button class="dp-btn bg-primary  text-white" app-click="newTemplate('delete',{{index}})"><span class="icon delete white"></span></button>
+                    </div>
+
+                    <div class="px-2 pt-1 bg-white rounded colspan-4">
+                        <div app-for-sub="input in template.inputs" class="grid col-2 gap-2 list-item mb-1">
+                            <div><span app-bind="input.description"></span></div>
+                            <div app-bind="input.type" class="text-right"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div app-show="view.tab == 'five'" class="overflow-y pb-5 pr-2">
+
+                <h4 class="text-primary mt-2 mb-2">Product Categories</h4>
+
+                <div class="not-sortable list-item-wrap" app-sort="post('salon',salon)">
+                    <div class="mb-1 grid col-4 px-15 py-05 bg-white rounded">
+                        <div class="colspan-3 flex flex-middle-left">
+                            <input type="text" app-model="new.product_categories.name" class="no-style" placeholder="Type here to add a new category">
+                        </div>
+                        <div class="flex flex-middle-right"><button class="btn bg-secondary" app-click="push(salon.product_categories,new.product_categories,'salon',salon)" app-show="new.product_categories.name">Add <span class="icon add white right"></span></div>
+                    </div>
+                    <div app-for="product_category in salon.product_categories" class="grid col-4 list-item">
+                        <div class="colspan-3" app-click="view.save = 'salon'"><input type="text" app-model="product_category.name" class="no-style"></div>
+                        <div class="text-right"><button class="btn bg-white" app-click="splice(salon.product_categories,{{index}},'salon',salon)"><span class="icon close black"></span></button></div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <section class="footer flex flex-middle-right" app-show="view.save">
+
+            <button class="btn bg-secondary" app-click="save('salon',salon)">Save</button>
+
+        </section>
+
+    </div>
+
+    <div class="modal" app-show="view.modal == 'show_edit'" anim="{'enter':'fade-in'}">
+
+        <div class="modal-body p-0 w-80 w-m-90" anim="{'enter':'move-up','duration':'0.2'}">
+
+            <div class="modal-header text-primary">
+                <div class="title">
+                    <p class="m-0">Salon Details</p>
+                </div>
+                <div class="close">
+                    <span class="icon close white clickable" onclick="modalCloseAll()"></span>
+                </div>
+            </div>
+
+            <div class="modal-content p-2">
+
+                <div class="grid col-2 gap-2">
+
+                    <div>
+                        <div class="mb-1">
+                            <label>Salon Name</label>
+                            <input type="text" app-model="salon.name" placeholder="Name" class="rounded">
+                        </div>
+                        <div class="grid col-2 gap-1 pb-1">
+                            <div class="">
+                                <label>Phone Number</label>
+                                <input type="text" app-model="salon.tel" placeholder="Telephone" class="rounded">
+                            </div>
+                            <div class="">
+                                <label>Email Address</label>
+                                <input type="text" app-model="salon.email" placeholder="Email" class="rounded">
+                            </div>
+                        </div>
+                        <div class="grid col-2 gap-1 pb-1">
+                            <div class="">
+                                <label>Phone Number 2</label>
+                                <input type="text" app-model="salon.tel2" placeholder="Telephone" class="rounded">
+                            </div>
+                            <div class="">
+                                <label>Email Address 2</label>
+                                <input type="text" app-model="salon.email2" placeholder="Email" class="rounded">
+                            </div>
+                        </div>
+                        <div class="grid col-2 gap-1 pb-1">
+                            <div class="">
+                                <label>Address</label>
+                                <textarea type="text" app-model="salon.address" placeholder="Address" class="rounded"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label>Opening and Closing times</label>
+                        <div class="grid col-3 gap-1 mb-1">
+
+                            <% for (var day in [0,1,2,3,4,5,6]){ %>
+                                <div class="" app-bind="getDay('<%- day %>')"></div>
+                                <div class="">
+                                    <select app-model="salon.opening_times[<%- day %>].open" class="rounded">
+                                        <option app-value="closed">Closed</option>
+                                        <option app-for="hrs in getHrs" app-value="hrs" app-bind="hrs"></option>
+                                    </select>
+                                </div>
+                                <div class="">
+                                    <select app-model="salon.opening_times[<%- day %>].close" class="rounded">
+                                        <option value="closed">Closed</option>
+                                        <option app-for="hrs_close in getHrs" app-value="hrs_close" app-bind="hrs_close"></option>
+                                    </select>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-appointment-actions flex flex-middle-right">
+                <a class="btn border" onclick="modalCloseAll()">
+                    <span>Cancel</span>
+                    <span class="icon close right black"></span>
+                </a>
+                <a class="btn bg-secondary" app-click="saveSalon(salon)">
+                    <span>Save</span>
+                    <span class="icon add right white"></span>
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="modal" app-show="view.modal == 'show_template'" anim="{'enter':'fade-in'}">
+
+        <div class="modal-body p-0" anim="{'enter':'move-up','duration':'0.2'}">
+
+            <div class="modal-header">
+                <div class="title">
+                    <div>
+                        <h3 class="text-primary">Consultation Template</h3>
+
+                    </div>
+                </div>
+                <div class="text-right">
+                    <h4 class="close-icon  clickable" onclick="modalCloseAll()">&times;</h4>
+                </div>
+            </div>
+            <div class="modal-content p-2">
+            <div class="pb-1">
+                <label>Template Name</label>
+                <input type="text" app-model="new.name" placeholder="Template Name">
+            </div>
+            <div class="">
+                <label>Template Fields</label>
+                <div>
+                    <div class="mb-1 grid col-4 gap-2" app-for="input in new.inputs">
+                        <div class="flex">
+                            <a class="flex-none mr-1" app-click="newTemplate('remove_input',{{index}})">&times;</a>
+                            <input type="text" app-model="input.description" placeholder="description" class="flex-4">
+                        </div>
+                        <select app-model="input.type">
+                            <option value="textparagraph">Custom Text</option>
+                            <option value="text">Text Input</option>
+                            <option value="textarea">Text Multiple Line Input</option>
+                            <option value="image">Image</option>
+                            <option value="checkbox">Tick Box</option>
+                            <option value="select">Select List</option>
+                        </select>
+
+                        <div class="colspan-2" app-show="input.type == 'textparagraph'">
+                            <textarea app-model="input.value" placeholder="Enter text here..."></textarea>
+                        </div>
+
+                        <div class="colspan-2" app-show="input.type == 'select'">
+                            <div>
+                                <div class="mb-05" app-for-sub="option in input.options">
+                                    <input type="text" app-model="option.value">
+                                </div>
+                            </div>
+                            <p class="text-primary text-right clickable" app-click="newTemplate('add_option',{{index}})">+ Add Option</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="dp-btn bg-primary text-white" app-click="newTemplate('add_input')">Add Field</button>
+            </div>
+        </div>
+
+        <div class="modal-appointment-actions flex flex-middle-right">
+            <a class="btn bg-secondary" app-click="newTemplate('save')">
+                <span class="icon add right white "> </span> &nbsp; 
+                <span>Save</span>
+            </a>
+        </div>
+
+        </div>
+
+    </div>

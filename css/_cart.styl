@@ -1,0 +1,38 @@
+.cart {
+
+    &-new {
+        background-color: white;
+
+        &.cart-selected {
+            background-color: #daefde;
+        }
+    }
+
+    &-pending {
+        background-color: white;
+        opacity: 0.4
+    }
+
+    &-breadcrumb {
+
+        font-size: 0.875rem;
+        display: block;
+        padding: 0 1.8rem 0 0;
+        margin: 0 1.4rem 0 0;
+        background-image: url('/icons/masks/Icon-ArrowRight.svg');
+        background-position: center right;
+        background-size: 0.4rem;
+        background-repeat: no-repeat;
+        color: #B7B7B7;
+
+        &:last-of-type {
+            background: none;
+        }
+
+        &.active {
+            color: $brand-primary;
+            font-weight: 600;
+        }
+
+    }
+}
